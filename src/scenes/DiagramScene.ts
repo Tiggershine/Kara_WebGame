@@ -50,7 +50,7 @@ export default class DiagramScene extends Phaser.Scene {
     addButton.on('dragstart', (pointer: Phaser.Input.Pointer) => {
       newStateCircle = this.createStateCircle(pointer.x, pointer.y);
       if (newStateCircle) {
-        newStateCircle.setSelected(true);
+        newStateCircle.setSelected(true); // Set color to sign selected
       }
     });
 
