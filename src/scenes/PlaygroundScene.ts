@@ -5,13 +5,13 @@ export default class PlaygroundScene extends Phaser.Scene {
     super('PlaygroundScene');
   }
 
-  // Values for style
-  private container = {
+  // Values for Style
+  private containerStyle = {
     size: 500,
     borderRadius: 10,
     backgroundColor: 0xfcf6f5,
   };
-  private tile = {
+  private tileStyle = {
     size: 50,
     lineWidth: 1,
     lineColor: 0x2bae66,
@@ -24,36 +24,36 @@ export default class PlaygroundScene extends Phaser.Scene {
 
     // Container Object
     const containerGraphics = this.add.graphics({
-      fillStyle: { color: this.container.backgroundColor },
+      fillStyle: { color: this.containerStyle.backgroundColor },
     });
     containerGraphics.fillRoundedRect(
       0,
       0,
-      this.container.size,
-      this.container.size,
-      this.container.borderRadius
+      this.containerStyle.size,
+      this.containerStyle.size,
+      this.containerStyle.borderRadius
     );
 
     // Tile Object
     const tileGraphics = this.add.graphics({
       lineStyle: {
-        width: this.tile.lineWidth,
-        color: this.tile.lineColor,
-        alpha: this.tile.lineColorAlpha,
+        width: this.tileStyle.lineWidth,
+        color: this.tileStyle.lineColor,
+        alpha: this.tileStyle.lineColorAlpha,
       },
     });
     for (let i = 1; i < 10; i++) {
       tileGraphics.lineBetween(
-        i * this.tile.size,
+        i * this.tileStyle.size,
         0,
-        i * this.tile.size,
-        this.container.size
+        i * this.tileStyle.size,
+        this.containerStyle.size
       ); // Vertical line
       tileGraphics.lineBetween(
         0,
-        i * this.tile.size,
-        this.container.size,
-        i * this.tile.size
+        i * this.tileStyle.size,
+        this.containerStyle.size,
+        i * this.tileStyle.size
       ); // Horizontal line
     }
   }
