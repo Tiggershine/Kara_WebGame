@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import StateCircle from '../classes/StateCicle';
+import { InputManager } from '../classes/InputManager';
 
 export default class DiagramScene extends Phaser.Scene {
   stateCircles: StateCircle[] = [];
@@ -98,6 +99,11 @@ export default class DiagramScene extends Phaser.Scene {
         }
       }
     );
+
+    // 새로운 State를 Input Manager에 추가
+    const inputManager = new InputManager();
+    inputManager.addStateInput(newStateCircle.name);
+
     return newStateCircle;
   }
 

@@ -1,5 +1,10 @@
 import Phaser from 'phaser';
 import ControlButton, { ButtonType } from '../classes/ControlButton';
+import {
+  DropdownMenu,
+  DropdownOption,
+  SensorType,
+} from '../classes/DropdownMenu';
 
 export default class InputWindowScene extends Phaser.Scene {
   private validArea!: Phaser.GameObjects.Rectangle;
@@ -40,6 +45,7 @@ export default class InputWindowScene extends Phaser.Scene {
   };
 
   preload() {
+    // Images for ControlButtons
     this.load.image('yesButtonImage', 'assets/YesButton.png');
     this.load.image('noButtonImage', 'assets/NoButton.png');
     this.load.image('yesNoButtonImage', 'assets/YesNoButton.png');
@@ -49,9 +55,18 @@ export default class InputWindowScene extends Phaser.Scene {
       'yesNoButtonSelectedImage',
       'assets/YesNoButtonSelected.png'
     );
+
+    // Images for DropdownMenu
+    this.load.image('dropdownButton', 'assets/DropdownButton.png');
+    this.load.image('wallFront', 'assets/WallFront.png');
+    this.load.image('wallLeft', 'assets/WallLeft.png');
+    this.load.image('wallRight', 'assets/WallRight.png');
+    this.load.image('monsterFront', 'assets/MonsterFront.png');
+    this.load.image('starBottom', 'assets/StarBottom.png');
   }
 
   create() {
+    /** Graphics for Background */
     // Background for Input container
     const containerGraphics = this.createRoundRectGraphics(
       this.containerStyle.x,
@@ -82,20 +97,21 @@ export default class InputWindowScene extends Phaser.Scene {
       this.controllerContainerStyle.backgroundColor
     );
 
-    // Divider lines of background container
+    // Divider graphics
     const dividerGraphics = this.add.graphics({
       lineStyle: {
         width: 1,
         color: 14277081, // #D9D9D9
       },
     });
-    // Divider for Input container
+    // Set Divider for Input container
     dividerGraphics.lineBetween(559, 457, 1041, 457);
     dividerGraphics.lineBetween(750, 408, 750, 774);
     dividerGraphics.lineBetween(950, 428, 950, 774);
-    // Divider for Controller container
+    // Set Divider for Controller container
     dividerGraphics.lineBetween(230, 700, 510, 700);
 
+    /** Objects for Control Button */
     // Yes button object
     this.yesButton = this.createControlButton(
       375,
@@ -114,7 +130,7 @@ export default class InputWindowScene extends Phaser.Scene {
       ButtonType.NoButton
     );
     this.add.existing(this.noButton);
-    this.setButtonDraggable(this.noButton, 'noButtonSelectedImage');
+    this.setButtonDraggable(this.noButton, 'noButtonSelectedImage'); // Set Draggable
 
     // YesNo button object
     this.yesNoButton = this.createControlButton(
@@ -124,10 +140,48 @@ export default class InputWindowScene extends Phaser.Scene {
       ButtonType.YesNoButton
     );
     this.add.existing(this.yesNoButton);
-    this.setButtonDraggable(this.yesNoButton, 'yesNoButtonSelectedImage');
+    this.setButtonDraggable(this.yesNoButton, 'yesNoButtonSelectedImage'); // Set Draggable
+
+    /** Objects for DropdownMenu */
+    const options: DropdownOption[] = [
+      {
+        texture: 'wallFront',
+        value: 'wallFront',
+        type: SensorType.WallFront,
+      },
+      {
+        texture: 'wallLeft',
+        value: 'wallLeft',
+        type: SensorType.WallLeft,
+      },
+      {
+        texture: 'wallRight',
+        value: 'wallRight',
+        type: SensorType.WallRight,
+      },
+      {
+        texture: 'monsterFront',
+        value: 'monsterFront',
+        type: SensorType.MonsterFront,
+      },
+      {
+        texture: 'starBottom',
+        value: 'starBottom',
+        type: SensorType.StarBottom,
+      },
+    ];
+
+    const dropdownButton = new DropdownMenu(
+      this,
+      586,
+      432,
+      'dropdownButton',
+      options
+    );
+    dropdownButton.on('pointerdown', dropdownButton.toggleMenu); // Add Click-EnventListner to Menu button
   }
 
-  // Function returns the RoundRectGraphics onject
+  // Function returns a RoundRectGraphics object
   createRoundRectGraphics = (
     x: number,
     y: number,
@@ -144,6 +198,14 @@ export default class InputWindowScene extends Phaser.Scene {
     return roundRectGraphics;
   };
 
+  /**
+   *
+   * @param x x coordinate
+   * @param y y coordinate
+   * @param texture Namespace used to import image file
+   * @param type Button type
+   * @returns ControlButton Object
+   */
   createControlButton = (
     x: number,
     y: number,
@@ -155,6 +217,7 @@ export default class InputWindowScene extends Phaser.Scene {
     return newControlButton;
   };
 
+  /** Function set ControllButton Draggable */
   setButtonDraggable = (button: ControlButton, selectedButtonImage: string) => {
     button.setInteractive();
 
