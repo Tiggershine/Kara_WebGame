@@ -8,9 +8,72 @@ import {
 
 export default class InputWindowScene extends Phaser.Scene {
   private validArea!: Phaser.GameObjects.Rectangle;
-  private yesButton!: ControlButton;
-  private noButton!: ControlButton;
-  private yesNoButton!: ControlButton;
+  private buttonConfigurations = [
+    {
+      name: 'yesButton',
+      type: ButtonType.YesButton,
+      texture: 'yesButton',
+      selectedTexture: 'yesButtonSelected',
+      x: 370,
+      y: 665,
+    },
+    {
+      name: 'noButton',
+      type: ButtonType.NoButton,
+      texture: 'noButton',
+      selectedTexture: 'noButtonSelected',
+      x: 430,
+      y: 665,
+    },
+    {
+      name: 'yesNoButton',
+      type: ButtonType.YesNoButton,
+      texture: 'yesNoButton',
+      selectedTexture: 'yesNoButtonSelected',
+      x: 490,
+      y: 665,
+    },
+    {
+      name: 'forwardButton',
+      type: ButtonType.ForwardButton,
+      texture: 'forwardButton',
+      selectedTexture: 'forwardButtonSelected',
+      x: 250,
+      y: 745,
+    },
+    {
+      name: 'leftButton',
+      type: ButtonType.LeftButton,
+      texture: 'leftButton',
+      selectedTexture: 'leftButtonSelected',
+      x: 310,
+      y: 745,
+    },
+    {
+      name: 'rightButton',
+      type: ButtonType.RightButton,
+      texture: 'rightButton',
+      selectedTexture: 'rightButtonSelected',
+      x: 370,
+      y: 745,
+    },
+    {
+      name: 'putButton',
+      type: ButtonType.PutButton,
+      texture: 'putButton',
+      selectedTexture: 'putButtonSelected',
+      x: 430,
+      y: 745,
+    },
+    {
+      name: 'pickButton',
+      type: ButtonType.PickButton,
+      texture: 'pickButton',
+      selectedTexture: 'pickButtonSelected',
+      x: 490,
+      y: 745,
+    },
+  ];
 
   constructor() {
     super('InputWindowScene');
@@ -45,18 +108,28 @@ export default class InputWindowScene extends Phaser.Scene {
   };
 
   preload() {
-    // Images for ControlButtons
-    this.load.image('yesButtonImage', 'assets/YesButton.png');
-    this.load.image('noButtonImage', 'assets/NoButton.png');
-    this.load.image('yesNoButtonImage', 'assets/YesNoButton.png');
-    this.load.image('yesButtonSelectedImage', 'assets/YesButtonSelected.png');
-    this.load.image('noButtonSelectedImage', 'assets/NoButtonSelected.png');
+    // Preload Images for ControlButtons
+    this.load.image('yesButton', 'assets/YesButton.png');
+    this.load.image('noButton', 'assets/NoButton.png');
+    this.load.image('yesNoButton', 'assets/YesNoButton.png');
+    this.load.image('yesButtonSelected', 'assets/YesButtonSelected.png');
+    this.load.image('noButtonSelected', 'assets/NoButtonSelected.png');
+    this.load.image('yesNoButtonSelected', 'assets/YesNoButtonSelected.png');
+    this.load.image('forwardButton', 'assets/ForwardButton.png');
+    this.load.image('leftButton', 'assets/LeftButton.png');
+    this.load.image('rightButton', 'assets/RightButton.png');
+    this.load.image('putButton', 'assets/PutButton.png');
+    this.load.image('pickButton', 'assets/PickButton.png');
     this.load.image(
-      'yesNoButtonSelectedImage',
-      'assets/YesNoButtonSelected.png'
+      'forwardButtonSelected',
+      'assets/ForwardButtonSelected.png'
     );
+    this.load.image('leftButtonSelected', 'assets/LeftButtonSelected.png');
+    this.load.image('rightButtonSelected', 'assets/RightButtonSelected.png');
+    this.load.image('putButtonSelected', 'assets/PutButtonSelected.png');
+    this.load.image('pickButtonSelected', 'assets/PickButtonSelected.png');
 
-    // Images for DropdownMenu
+    // Preload Images for DropdownMenu
     this.load.image('dropdownButton', 'assets/DropdownButton.png');
     this.load.image('wallFront', 'assets/WallFront.png');
     this.load.image('wallLeft', 'assets/WallLeft.png');
@@ -112,35 +185,17 @@ export default class InputWindowScene extends Phaser.Scene {
     dividerGraphics.lineBetween(230, 700, 510, 700);
 
     /** Objects for Control Button */
-    // Yes button object
-    this.yesButton = this.createControlButton(
-      375,
-      665,
-      'yesButtonImage',
-      ButtonType.YesButton
-    );
-    this.add.existing(this.yesButton);
-    this.setButtonDraggable(this.yesButton, 'yesButtonSelectedImage'); // Set Draggable
-
-    // No button object
-    this.noButton = this.createControlButton(
-      435,
-      665,
-      'noButtonImage',
-      ButtonType.NoButton
-    );
-    this.add.existing(this.noButton);
-    this.setButtonDraggable(this.noButton, 'noButtonSelectedImage'); // Set Draggable
-
-    // YesNo button object
-    this.yesNoButton = this.createControlButton(
-      495,
-      665,
-      'yesNoButtonImage',
-      ButtonType.YesNoButton
-    );
-    this.add.existing(this.yesNoButton);
-    this.setButtonDraggable(this.yesNoButton, 'yesNoButtonSelectedImage'); // Set Draggable
+    this.buttonConfigurations.forEach((config) => {
+      const button = this.createControlButton(
+        config.x,
+        config.y,
+        config.texture,
+        config.type
+      );
+      button.name = config.name;
+      this.setButtonDraggable(button, config.selectedTexture);
+      this.add.existing(button);
+    });
 
     /** Objects for DropdownMenu */
     const options: DropdownOption[] = [
@@ -218,7 +273,10 @@ export default class InputWindowScene extends Phaser.Scene {
   };
 
   /** Function set ControllButton Draggable */
-  setButtonDraggable = (button: ControlButton, selectedButtonImage: string) => {
+  setButtonDraggable = (
+    button: ControlButton,
+    selectedButtonImage: string
+  ): void => {
     button.setInteractive();
 
     this.input.setDraggable(button);
