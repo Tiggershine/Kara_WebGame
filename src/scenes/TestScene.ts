@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import StateCircle from '../classes/StateCicle';
+import StateCircle from '../classes/StateCircle';
 
 export default class TestScene extends Phaser.Scene {
   constructor() {

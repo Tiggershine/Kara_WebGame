@@ -44,6 +44,7 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
           // TODO: DELETE the under test code
           console.log(option.value + ' selected!');
           this.selectedOptionTexture = option.texture;
+          this.selectedHightlight(menuItem, this.selectedOptionTexture);
           this.button.setTexture(this.selectedOptionTexture);
           this.closeMenu();
         });
@@ -59,17 +60,17 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
   }
 
   /***
-   * @description Function for Toggle on and off
+   * @description Toggle on and off
    */
   toggleMenu = () => {
     this.isMenuOpen ? this.closeMenu() : this.openMenu();
   };
 
   /**
-   * @description Function for Toggle open (all options are expanded downward)
+   * @description Toggle open (all options are expanded downward)
    * @description Y coordinate of each option - index * height of option image
    */
-  openMenu = () => {
+  private openMenu = () => {
     this.isMenuOpen = true;
     this.menuItems.forEach((item, index) => {
       this.scene.tweens.add({
@@ -83,15 +84,15 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
   };
 
   /**
-   * @description Funciton for Toggle close (all options are folded again)
+   * @description Toggle close (all options are folded again)
    */
-  closeMenu = () => {
+  private closeMenu = () => {
     this.isMenuOpen = false;
     this.menuItems.forEach((item) => {
       this.scene.tweens.add({
         targets: item,
         y: 0,
-        duration: 400,
+        duration: 500,
         ease: 'Sine.easeInOut',
         onComplete: () => item.setVisible(false),
       });
@@ -99,7 +100,7 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
   };
 
   /**
-   * @description Function for closing the dropdown menu, if munu is opened and user click the outside area of menu
+   * @description Close the dropdown menu, if munu is opened and user click the outside area of menu
    * @param pointer Mouse (or touch) input
    */
   private handleOutsideClick(pointer: Phaser.Input.Pointer) {
@@ -118,6 +119,26 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
     }
   }
 
+  /**
+   * @description Highlight the selected option by changing its texture for a short duration.
+   * @param menuItem The menu item to highlight.
+   * @param originalTexture The original texture of the menu item.
+   */
+  private selectedHightlight = (
+    menuItem: Phaser.GameObjects.Image,
+    originalTexture: string
+  ): void => {
+    menuItem.setTexture(originalTexture + 'Selected');
+
+    this.scene.time.delayedCall(500, () => {
+      menuItem.setTexture(originalTexture);
+    });
+  };
+
+  /**
+   * @description Used to clean up resources and event listeners associated with the DropdownMenu object, ensuring a proper cleanup process when the object is no longer needed.
+   * @param fromScene boolean
+   */
   destroy(fromScene?: boolean) {
     this.scene.input.off('pointerdown', this.handleOutsideClick, this);
     super.destroy(fromScene);

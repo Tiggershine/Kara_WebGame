@@ -38,22 +38,53 @@ export default class ControlButton extends GameObjects.Image {
         this.inputValue = 'yesNo';
         this.buttonType = ButtonType.YesNoButton;
         break;
+      case ButtonType.ForwardButton:
+        this.inputValue = 'forward';
+        this.buttonType = ButtonType.ForwardButton;
+        break;
+      case ButtonType.LeftButton:
+        this.inputValue = 'left';
+        this.buttonType = ButtonType.LeftButton;
+        break;
+      case ButtonType.RightButton:
+        this.inputValue = 'right';
+        this.buttonType = ButtonType.RightButton;
+        break;
+      case ButtonType.PutButton:
+        this.inputValue = 'put';
+        this.buttonType = ButtonType.PutButton;
+        break;
+      case ButtonType.PickButton:
+        this.inputValue = 'pick';
+        this.buttonType = ButtonType.PickButton;
+        break;
     }
 
+    // Adds an existing Game Object to this Scene.
     scene.add.existing(this);
-    // scene.physics.add.existing(this);
   }
 
+  /**
+   * @description Getter for Input value: string
+   */
   get getInputValue(): string {
     return this.inputValue;
   }
+  /**
+   * @description Getter for Button type: ButtonType
+   */
   get getType(): ButtonType {
     return this.buttonType;
   }
-
+  /**
+   * @description Getter for Selected: boolean
+   */
   get getSelected(): boolean {
     return this.selected;
   }
+  /**
+   * @description Setter for Selected: boolean
+   */
   set setSelected(newSelected: boolean) {
     this.selected = newSelected;
   }

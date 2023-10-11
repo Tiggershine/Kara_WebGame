@@ -1,10 +1,10 @@
 import Phaser from 'phaser';
-import StateCircle from '../classes/StateCicle';
+import StateCircle from '../classes/StateCircle';
 import { InputManager } from '../classes/InputManager';
 
 export default class DiagramScene extends Phaser.Scene {
   stateCircles: StateCircle[] = [];
-  validArea!: Phaser.GameObjects.Rectangle;
+  validArea!: Phaser.Geom.Rectangle;
 
   constructor() {
     super('DiagramScene');
@@ -20,12 +20,18 @@ export default class DiagramScene extends Phaser.Scene {
     backgroundColor: 0xfcf6f5,
   };
 
+  preload() {
+    this.load.image('addState', 'assets/AddState.png');
+    this.load.image('startState', 'assets/StartState.png');
+    this.load.image('stateCircle', 'assets/StateCircle.png');
+    this.load.image('stateCircleSelected', 'assets/StateCircleSelected.png');
+  }
+
   create() {
     this.createAddButton();
-    this.createAddButtonLabel();
 
-    // Valid area allows state circle on that
-    this.validArea = this.add.rectangle(800, 215, 500 - 50, 250 - 50);
+    // Valid area allows state circle on
+    this.validArea = new Phaser.Geom.Rectangle(750, 165, 500 - 50, 250 - 50);
 
     // Background container
     const containerGraphics = this.add.graphics({
@@ -42,8 +48,7 @@ export default class DiagramScene extends Phaser.Scene {
 
   // Add button for creating new state circle
   createAddButton() {
-    const addButton = this.add.circle(575, 55, 25, 0xfcf6f5).setInteractive();
-    addButton.setStrokeStyle(3, 0x2bae66);
+    const addButton = this.add.image(575, 55, 'addState').setInteractive();
     this.input.setDraggable(addButton);
 
     let newStateCircle: StateCircle | null = null;
@@ -65,10 +70,7 @@ export default class DiagramScene extends Phaser.Scene {
     );
 
     addButton.on('dragend', (pointer: Phaser.Input.Pointer) => {
-      if (
-        !this.validArea.getBounds().contains(pointer.x, pointer.y) &&
-        newStateCircle
-      ) {
+      if (!this.validArea.contains(pointer.x, pointer.y) && newStateCircle) {
         newStateCircle.destroy();
         this.stateCircles.pop();
       }
@@ -80,22 +82,42 @@ export default class DiagramScene extends Phaser.Scene {
       this,
       x,
       y,
-      this.stateCircles.length,
-      'State' + this.stateCircles.length
-    );
-    this.stateCircles.push(newStateCircle);
-    newStateCircle.setInteractive(
-      new Phaser.Geom.Circle(0, 0, 25),
-      Phaser.Geom.Circle.Contains
+      'State ' + this.stateCircles.length,
+      'stateCircle',
+      this.validArea
     );
 
-    this.input.setDraggable(newStateCircle);
+    this.stateCircles.push(newStateCircle);
+
+    // newStateCircle.setInteractive(
+    //   new Phaser.Geom.Circle(0, 0, 25),
+    //   Phaser.Geom.Circle.Contains
+    // );
+
+    // this.input.setDraggable(newStateCircle);
     newStateCircle.on(
       'drag',
       (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
-        if (this.validArea.getBounds().contains(dragX, dragY)) {
+        if (this.validArea.contains(dragX, dragY)) {
           newStateCircle.x = dragX;
           newStateCircle.y = dragY;
+        } else {
+          // 오른쪽 경계를 넘지 않도록 함
+          if (dragX > this.validArea.right) {
+            newStateCircle.x = this.validArea.right;
+          }
+          // 왼쪽 경계를 넘지 않도록 함
+          if (dragX < this.validArea.left) {
+            newStateCircle.x = this.validArea.left;
+          }
+          // 아래 경계를 넘지 않도록 함
+          if (dragY > this.validArea.bottom) {
+            newStateCircle.y = this.validArea.bottom;
+          }
+          // 위 경계를 넘지 않도록 함
+          if (dragY < this.validArea.top) {
+            newStateCircle.y = this.validArea.top;
+          }
         }
       }
     );
@@ -105,17 +127,5 @@ export default class DiagramScene extends Phaser.Scene {
     inputManager.addStateInput(newStateCircle.name);
 
     return newStateCircle;
-  }
-
-  // Add label on addButton
-  createAddButtonLabel() {
-    const addButtonLabel = this.add
-      .text(575, 55, 'New\nState', {
-        fontFamily: 'Roboto Flex',
-        fontSize: '14px',
-        color: '1776669',
-        align: 'center',
-      })
-      .setOrigin(0.5, 0.5);
   }
 }

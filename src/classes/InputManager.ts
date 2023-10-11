@@ -1,16 +1,16 @@
 import { ButtonType } from './ControlButton';
 import { SensorType } from './DropdownMenu';
 
-type StateInput = {
+export interface StateInput {
   stateName: string;
   sensors: { sensorType: SensorType; condition: boolean }[];
   moveButtons: ButtonType[];
   nextState: string;
-};
+}
 
 export class InputManager {
   /**
-   * Array of all input values
+   * Array contains all input values (Sensor, Condition, Move, Next state)
    */
   private stateInputs: StateInput[] = [];
 

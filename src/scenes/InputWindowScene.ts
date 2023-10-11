@@ -108,38 +108,48 @@ export default class InputWindowScene extends Phaser.Scene {
   };
 
   preload() {
-    // Preload Images for ControlButtons
-    this.load.image('yesButton', 'assets/YesButton.png');
-    this.load.image('noButton', 'assets/NoButton.png');
-    this.load.image('yesNoButton', 'assets/YesNoButton.png');
-    this.load.image('yesButtonSelected', 'assets/YesButtonSelected.png');
-    this.load.image('noButtonSelected', 'assets/NoButtonSelected.png');
-    this.load.image('yesNoButtonSelected', 'assets/YesNoButtonSelected.png');
-    this.load.image('forwardButton', 'assets/ForwardButton.png');
-    this.load.image('leftButton', 'assets/LeftButton.png');
-    this.load.image('rightButton', 'assets/RightButton.png');
-    this.load.image('putButton', 'assets/PutButton.png');
-    this.load.image('pickButton', 'assets/PickButton.png');
-    this.load.image(
-      'forwardButtonSelected',
-      'assets/ForwardButtonSelected.png'
-    );
-    this.load.image('leftButtonSelected', 'assets/LeftButtonSelected.png');
-    this.load.image('rightButtonSelected', 'assets/RightButtonSelected.png');
-    this.load.image('putButtonSelected', 'assets/PutButtonSelected.png');
-    this.load.image('pickButtonSelected', 'assets/PickButtonSelected.png');
+    const imageSources = {
+      // Images for ControlButtons
+      yesButton: 'assets/YesButton.png',
+      noButton: 'assets/NoButton.png',
+      yesNoButton: 'assets/YesNoButton.png',
+      yesButtonSelected: 'assets/YesButtonSelected.png',
+      noButtonSelected: 'assets/NoButtonSelected.png',
+      yesNoButtonSelected: 'assets/YesNoButtonSelected.png',
+      forwardButton: 'assets/ForwardButton.png',
+      leftButton: 'assets/LeftButton.png',
+      rightButton: 'assets/RightButton.png',
+      putButton: 'assets/PutButton.png',
+      pickButton: 'assets/PickButton.png',
+      forwardButtonSelected: 'assets/ForwardButtonSelected.png',
+      leftButtonSelected: 'assets/LeftButtonSelected.png',
+      rightButtonSelected: 'assets/RightButtonSelected.png',
+      putButtonSelected: 'assets/PutButtonSelected.png',
+      pickButtonSelected: 'assets/PickButtonSelected.png',
+      // Images for DropdownMenu
+      dropdownButton: 'assets/DropdownButton.png',
+      wallFront: 'assets/WallFront.png',
+      wallLeft: 'assets/WallLeft.png',
+      wallRight: 'assets/WallRight.png',
+      monsterFront: 'assets/MonsterFront.png',
+      starBottom: 'assets/StarBottom.png',
+      wallFrontSelected: 'assets/WallFrontSelected.png',
+      wallLeftSelected: 'assets/WallLeftSelected.png',
+      wallRightSelected: 'assets/WallRightSelected.png',
+      monsterFrontSelected: 'assets/MonsterFrontSelected.png',
+      starBottomSelected: 'assets/StarBottomSelected.png',
+    };
 
-    // Preload Images for DropdownMenu
-    this.load.image('dropdownButton', 'assets/DropdownButton.png');
-    this.load.image('wallFront', 'assets/WallFront.png');
-    this.load.image('wallLeft', 'assets/WallLeft.png');
-    this.load.image('wallRight', 'assets/WallRight.png');
-    this.load.image('monsterFront', 'assets/MonsterFront.png');
-    this.load.image('starBottom', 'assets/StarBottom.png');
+    for (let key in imageSources) {
+      if (imageSources.hasOwnProperty(key)) {
+        this.load.image(key, imageSources[key as keyof typeof imageSources]);
+      }
+    }
   }
 
   create() {
     /** Graphics for Background */
+
     // Background for Input container
     const containerGraphics = this.createRoundRectGraphics(
       this.containerStyle.x,
