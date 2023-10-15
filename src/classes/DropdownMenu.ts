@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { InputManager } from './InputManager';
 
 export enum SensorType {
   WallFront,

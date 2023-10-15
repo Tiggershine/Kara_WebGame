@@ -11,7 +11,6 @@ export default class Game extends Phaser.Scene {
     this.scene.launch('BackgroundScene');
     this.scene.launch('PlaygroundScene');
     this.scene.launch('DiagramScene');
-    this.scene.launch('TestScene');
     this.scene.launch('InputWindowScene');
   }
 

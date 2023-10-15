@@ -5,9 +5,12 @@ import {
   DropdownOption,
   SensorType,
 } from '../classes/DropdownMenu';
+import { InputGuideline } from '../classes/InputGuideline';
+import InputManager from '../classes/InputManager';
+import { InputLabel } from '../classes/InputLabel';
 
 export default class InputWindowScene extends Phaser.Scene {
-  private validArea!: Phaser.GameObjects.Rectangle;
+  inputManager: InputManager = new InputManager();
   private buttonConfigurations = [
     {
       name: 'yesButton',
@@ -138,6 +141,11 @@ export default class InputWindowScene extends Phaser.Scene {
       wallRightSelected: 'assets/WallRightSelected.png',
       monsterFrontSelected: 'assets/MonsterFrontSelected.png',
       starBottomSelected: 'assets/StarBottomSelected.png',
+      // Images for Label
+      moveLabel: 'assets/LabelMove.png',
+      nextStateLabel: 'assets/LabelNextState.png',
+      // Image for Inputguideline
+      inputGuideline: 'assets/InputGuideline.png',
     };
 
     for (let key in imageSources) {
@@ -149,7 +157,6 @@ export default class InputWindowScene extends Phaser.Scene {
 
   create() {
     /** Graphics for Background */
-
     // Background for Input container
     const containerGraphics = this.createRoundRectGraphics(
       this.containerStyle.x,
@@ -159,6 +166,8 @@ export default class InputWindowScene extends Phaser.Scene {
       this.containerStyle.borderRadius,
       this.containerStyle.backgroundColor
     );
+
+    // this.addLabels();
 
     // Label for Input container
     const bookmarkGraphics = this.createRoundRectGraphics(
@@ -189,12 +198,31 @@ export default class InputWindowScene extends Phaser.Scene {
     });
     // Set Divider for Input container
     dividerGraphics.lineBetween(559, 457, 1041, 457);
-    dividerGraphics.lineBetween(750, 408, 750, 774);
-    dividerGraphics.lineBetween(950, 428, 950, 774);
+    dividerGraphics.lineBetween(775, 408, 775, 774);
+    dividerGraphics.lineBetween(950, 408, 950, 774);
     // Set Divider for Controller container
     dividerGraphics.lineBetween(230, 700, 510, 700);
 
-    /** Objects for Control Button */
+    // Label for Inputwindow
+    this.add.image(862.5, 433, 'moveLabel');
+    this.add.image(995, 433, 'nextStateLabel');
+
+    /** InputGuideline */
+    const guidlinePositions = [
+      { x: 800, y: 490 },
+      { x: 800, y: 550 },
+      { x: 800, y: 605 },
+      { x: 800, y: 650 },
+      { x: 800, y: 715 },
+    ];
+    const inputGutideline = new InputGuideline(
+      this,
+      guidlinePositions,
+      'inputGuideline'
+    );
+    this.add.existing(inputGutideline);
+
+    /** Control Button */
     this.buttonConfigurations.forEach((config) => {
       const button = this.createControlButton(
         config.x,
@@ -203,7 +231,7 @@ export default class InputWindowScene extends Phaser.Scene {
         config.type
       );
       button.name = config.name;
-      this.setButtonDraggable(button, config.selectedTexture);
+      this.setButtonDraggable(button, config.selectedTexture, inputGutideline);
       this.add.existing(button);
     });
 
@@ -285,7 +313,8 @@ export default class InputWindowScene extends Phaser.Scene {
   /** Function set ControllButton Draggable */
   setButtonDraggable = (
     button: ControlButton,
-    selectedButtonImage: string
+    selectedButtonImage: string,
+    guideline: InputGuideline
   ): void => {
     button.setInteractive();
 
@@ -310,12 +339,35 @@ export default class InputWindowScene extends Phaser.Scene {
       (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
         if (newButton) {
           newButton.setPosition(dragX, dragY);
+          guideline.isInsideValidArea(newButton, dragX, dragY);
         }
       }
     );
 
     button.on('dragend', (pointer: Phaser.Input.Pointer) => {
       newButton?.destroy();
+      guideline.setAllGuidelinesVisible(false);
     });
   };
+
+  // addLabels = () => {
+  //   // 550, 360
+  //   let startX = 550;
+  //   const y = 360;
+  //   const gap = 15;
+
+  //   const labels = this.inputManager.labels;
+
+  //   labels.forEach((labelInfo) => {
+  //     const label = new InputLabel(
+  //       this,
+  //       startX,
+  //       y,
+  //       labelInfo.name,
+  //       labelInfo.isSelected
+  //     );
+  //     this.add.existing(label);
+  //     startX += gap;
+  //   });
+  // };
 }
