@@ -36,7 +36,6 @@ export default class InputManager {
     };
   }
 
-  setStatename = (name: string) => {};
 
   /**
    * @param stateName Identifier

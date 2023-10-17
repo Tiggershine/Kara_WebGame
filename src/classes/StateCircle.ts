@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import InputManager, { StateInput } from './InputManager';
 import DiagramScene from '../scenes/DiagramScene';
+import InputWindowScene from '../scenes/InputWindowScene';
 
 interface StateCircleType {
   id: number;
@@ -26,6 +27,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
   constructor(
     scene: DiagramScene,
+    // scene: Phaser.Scene,
     x: number,
     y: number,
     id: number,
@@ -63,7 +65,9 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.on(
       'drag',
       (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
-        if (scene.validArea.getBounds().contains(dragX, dragY)) {
+        if (
+          (scene as DiagramScene).validArea.getBounds().contains(dragX, dragY)
+        ) {
           this.x = dragX;
           this.y = dragY;
           // this.updateEdges(); // Update Edges btw. connected circles
@@ -76,7 +80,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
         return;
       } else {
         this.select();
-        scene.stateCircles.forEach((circle) => {
+        (scene as DiagramScene).getStateCircles.forEach((circle) => {
           if (circle !== this) {
             circle.deselect();
           }
@@ -110,12 +114,33 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   }
 
   select = (): void => {
+    // console.log('Event emit', this.isSelected);
     this.setIsSelected(true);
+
+    // (this.scene as InputWindowScene).setInputLabelSelected(
+    //   this.getId,
+    //   this.getIsSelected
+    // );
+    // this.emit('selectedChanged', this.isSelected);
   };
 
   deselect = (): void => {
+    // console.log('Event emit', this.isSelected);
     this.setIsSelected(false);
+    // this.emit('selectedChanged', this.isSelected);
   };
+
+  get getId(): number {
+    return this.id;
+  }
+
+  get getName(): string {
+    return this.name;
+  }
+
+  get getIsSelected(): boolean {
+    return this.isSelected;
+  }
 
   // Update the edge between two state circles
   updateEdges = (): void => {

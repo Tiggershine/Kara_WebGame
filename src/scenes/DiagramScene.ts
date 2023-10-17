@@ -1,13 +1,15 @@
 import Phaser from 'phaser';
 import StateCircle from '../classes/StateCircle';
+import InputWindowScene from './InputWindowScene';
 import InputManager from '../classes/InputManager';
 import { StateInput } from '../classes/InputManager';
 
 export default class DiagramScene extends Phaser.Scene {
-  validArea!: Phaser.GameObjects.Rectangle;
+  private inputWindowScene?: InputWindowScene;
   inputManager: InputManager = new InputManager();
-  startStateCircle!: StateCircle;
-  stateCircles: StateCircle[] = [];
+  validArea!: Phaser.GameObjects.Rectangle;
+  private startStateCircle!: StateCircle;
+  private stateCircles: StateCircle[] = [];
 
   constructor() {
     super('DiagramScene');
@@ -24,6 +26,10 @@ export default class DiagramScene extends Phaser.Scene {
   };
 
   create() {
+    this.inputWindowScene = this.scene.get(
+      'InputWindowScene'
+    ) as InputWindowScene;
+
     this.createAddButton();
     this.createButtonLabel(575, 55, 'New');
 
@@ -57,7 +63,6 @@ export default class DiagramScene extends Phaser.Scene {
     let newStateCircle: StateCircle | null = null;
 
     addButton.on('dragstart', (pointer: Phaser.Input.Pointer) => {
-      console.log('AddButton dragStart');
       newStateCircle = this.createStateCircle(pointer.x, pointer.y);
       newStateCircle && newStateCircle.select();
 
@@ -71,7 +76,6 @@ export default class DiagramScene extends Phaser.Scene {
     addButton.on(
       'drag',
       (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
-        console.log('AddButton drag');
         newStateCircle && newStateCircle.setPosition(dragX, dragY);
       }
     );
@@ -84,7 +88,6 @@ export default class DiagramScene extends Phaser.Scene {
         newStateCircle.destroy();
         this.stateCircles.pop();
       }
-      console.log('AddButton dragEnd');
       newStateCircle = null;
     });
   }
@@ -102,9 +105,21 @@ export default class DiagramScene extends Phaser.Scene {
       stateId,
       stateName,
       newStateInput
-    ); // StateInput 객체 전달
+    );
+
+    // Deselect all other circles
+    this.stateCircles.forEach((circle) => {
+      if (circle !== newStateCircle) {
+        circle.deselect();
+      }
+    });
 
     this.stateCircles.push(newStateCircle); // stateCircles 배열에 추가
+
+    // Label 추가
+    if (this.inputWindowScene) {
+      this.inputWindowScene.addLabels();
+    }
 
     if (newStateCircle.circle) {
       newStateCircle.setInteractive(
@@ -116,7 +131,6 @@ export default class DiagramScene extends Phaser.Scene {
       newStateCircle.on(
         'drag',
         (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
-          console.log('Button drag');
           if (this.validArea.getBounds().contains(dragX, dragY)) {
             newStateCircle.x = dragX;
             newStateCircle.y = dragY;
@@ -126,13 +140,6 @@ export default class DiagramScene extends Phaser.Scene {
     } else {
       console.error('newStateCircle.circle is not initialized');
     }
-
-    // Deselect all other circles
-    this.stateCircles.forEach((circle) => {
-      if (circle !== newStateCircle) {
-        circle.deselect();
-      }
-    });
 
     newStateCircle.select(); // Ensure the newStateCircle is selected upon creation
 
@@ -172,4 +179,9 @@ export default class DiagramScene extends Phaser.Scene {
     circleA.updateEdges();
     circleB.updateEdges();
   };
+
+  // Getter for StateCircles (Array contains generated states)
+  get getStateCircles(): StateCircle[] {
+    return this.stateCircles;
+  }
 }

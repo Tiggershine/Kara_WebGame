@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import DiagramScene from './DiagramScene';
 import ControlButton, { ButtonType } from '../classes/ControlButton';
 import {
   DropdownMenu,
@@ -77,6 +78,8 @@ export default class InputWindowScene extends Phaser.Scene {
       y: 745,
     },
   ];
+  private inputLabels: InputLabel[] = [];
+  private diagramScene?: DiagramScene;
 
   constructor() {
     super('InputWindowScene');
@@ -92,14 +95,14 @@ export default class InputWindowScene extends Phaser.Scene {
     backgroundColor: 0xfcf6f5,
   };
 
-  private bookmarkStyle = {
-    x: 550,
-    y: 360,
-    width: 80,
-    height: 60,
-    borderRadius: 10,
-    backgroundColor: 0xfcf6f5,
-  };
+  // private bookmarkStyle = {
+  //   x: 550,
+  //   y: 360,
+  //   width: 80,
+  //   height: 60,
+  //   borderRadius: 10,
+  //   backgroundColor: 0xfcf6f5,
+  // };
 
   private controllerContainerStyle = {
     x: 210,
@@ -156,6 +159,27 @@ export default class InputWindowScene extends Phaser.Scene {
   }
 
   create() {
+    this.diagramScene = this.scene.get('DiagramScene') as DiagramScene;
+
+    this.addLabels();
+
+    // if (this.diagramScene) {
+    //   this.diagramScene.getStateCircles.forEach((stateCircle) => {
+    //     console.log(stateCircle);
+    //     stateCircle.on('selectedChanged', (isSelected: boolean) => {
+    //       const matchingLabel = this.inputLabels.find(
+    //         (label) => label.getId === stateCircle.id
+    //       );
+
+    //       if (matchingLabel) {
+    //         console.log('update');
+    //         // 일치하는 inputLabel의 isSelected 값을 업데이트합니다.
+    //         matchingLabel.setLabelColor(isSelected);
+    //       }
+    //     });
+    //   });
+    // }
+
     /** Graphics for Background */
     // Background for Input container
     const containerGraphics = this.createRoundRectGraphics(
@@ -166,18 +190,17 @@ export default class InputWindowScene extends Phaser.Scene {
       this.containerStyle.borderRadius,
       this.containerStyle.backgroundColor
     );
-
-    // this.addLabels();
+    // containerGraphics.setDepth(10);
 
     // Label for Input container
-    const bookmarkGraphics = this.createRoundRectGraphics(
-      this.bookmarkStyle.x,
-      this.bookmarkStyle.y,
-      this.bookmarkStyle.width,
-      this.bookmarkStyle.height,
-      this.bookmarkStyle.borderRadius,
-      this.bookmarkStyle.backgroundColor
-    );
+    // const bookmarkGraphics = this.createRoundRectGraphics(
+    //   this.bookmarkStyle.x,
+    //   this.bookmarkStyle.y,
+    //   this.bookmarkStyle.width,
+    //   this.bookmarkStyle.height,
+    //   this.bookmarkStyle.borderRadius,
+    //   this.bookmarkStyle.backgroundColor
+    // );
 
     // Background for Controller Container
     const controllerContainerGraphics = this.createRoundRectGraphics(
@@ -350,24 +373,56 @@ export default class InputWindowScene extends Phaser.Scene {
     });
   };
 
-  // addLabels = () => {
-  //   // 550, 360
-  //   let startX = 550;
-  //   const y = 360;
-  //   const gap = 15;
+  get getInputLabels(): InputLabel[] {
+    return this.inputLabels;
+  }
 
-  //   const labels = this.inputManager.labels;
+  setInputLabelSelected = (id: number, isSelected: boolean): void => {
+    const matchingLabel = this.inputLabels.find(
+      (inputLabel) => inputLabel.getId === id
+    );
 
-  //   labels.forEach((labelInfo) => {
-  //     const label = new InputLabel(
-  //       this,
-  //       startX,
-  //       y,
-  //       labelInfo.name,
-  //       labelInfo.isSelected
-  //     );
-  //     this.add.existing(label);
-  //     startX += gap;
-  //   });
-  // };
+    if (matchingLabel) {
+      matchingLabel.setIsSelected = isSelected;
+    } else {
+      console.error(`No input label found with ID: ${id}`);
+    }
+  };
+
+  addLabels = () => {
+    // Start Coordinate: 550, 360
+    let startX = 550;
+    const y = 360;
+    const gap = 95;
+
+    if (!this.diagramScene) {
+      console.error('DiagramScene is not intitialized');
+      return;
+    }
+
+    this.diagramScene.getStateCircles.forEach((state) => {
+      const label = new InputLabel(
+        this,
+        state.id,
+        startX,
+        y,
+        state.name,
+        state.isSelected
+      );
+
+      this.inputLabels.push(label);
+
+      this.add.existing(label);
+      startX += gap;
+
+      console.log(
+        'Generated State: ',
+        state.name,
+        'Selected: ',
+        state.isSelected,
+        'Name: ',
+        state.name
+      );
+    });
+  };
 }
