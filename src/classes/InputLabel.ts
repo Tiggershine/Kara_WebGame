@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import StateCircle from './StateCircle';
 import DiagramScene from '../scenes/DiagramScene';
 
 export interface Label {
@@ -52,11 +53,6 @@ export class InputLabel extends Phaser.GameObjects.Container {
     this.setDepth(-1);
 
     scene.add.existing(this);
-
-    // const stateCircle = scene.getStateCircles.find(circle => circle.id === stateId);
-    // if (stateCircle) {
-    //   stateCircle.on('selectedChanged', this.updateLabelColor);
-    // }
   }
 
   set setIsSelected(isSelected: boolean) {
@@ -68,5 +64,15 @@ export class InputLabel extends Phaser.GameObjects.Container {
   }
   get getIsSelected(): boolean {
     return this.isSelected;
+  }
+
+  setLableColor(selected: boolean): void {
+    this.isSelected = selected;
+
+    this.graphic.clear();
+    this.graphic
+      .fillStyle(this.isSelected ? 0xfcf6f5 : 6710886)
+      .fillRoundedRect(0, 0, 80, 60, 10);
+    this.label.setColor(this.isSelected ? '#666666' : '#FCF6F5');
   }
 }

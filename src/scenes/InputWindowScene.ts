@@ -377,13 +377,19 @@ export default class InputWindowScene extends Phaser.Scene {
     return this.inputLabels;
   }
 
+  // State Select에 따라 InputLabel 색상 변경
   setInputLabelSelected = (id: number, isSelected: boolean): void => {
     const matchingLabel = this.inputLabels.find(
       (inputLabel) => inputLabel.getId === id
     );
 
     if (matchingLabel) {
+      console.log(
+        `(InputWindowScene.ts) Matching label: ${matchingLabel.getId}`
+      );
       matchingLabel.setIsSelected = isSelected;
+
+      this.addLabels();
     } else {
       console.error(`No input label found with ID: ${id}`);
     }
@@ -414,7 +420,7 @@ export default class InputWindowScene extends Phaser.Scene {
 
       this.add.existing(label);
       startX += gap;
-
+      // TODO: DELETE TEST CODE
       console.log(
         'Generated State: ',
         state.name,

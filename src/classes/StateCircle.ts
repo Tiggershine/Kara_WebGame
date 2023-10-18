@@ -24,10 +24,12 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   }[] = [];
   inputManager: InputManager = new InputManager();
   stateInput!: StateInput[];
+  InputWindowScene?: InputWindowScene;
+  DiagramScene?: DiagramScene;
 
   constructor(
-    scene: DiagramScene,
-    // scene: Phaser.Scene,
+    // scene: DiagramScene,
+    scene: Phaser.Scene,
     x: number,
     y: number,
     id: number,
@@ -80,9 +82,20 @@ export default class StateCircle extends Phaser.GameObjects.Container {
         return;
       } else {
         this.select();
-        (scene as DiagramScene).getStateCircles.forEach((circle) => {
+        const id: number = this.id;
+        const isSelected: boolean = this.isSelected;
+        this.setLabel(id, isSelected);
+
+        const diagramScene = this.scene.scene.get(
+          'DiagramScene'
+        ) as DiagramScene;
+        diagramScene.getStateCircles.forEach((circle) => {
           if (circle !== this) {
             circle.deselect();
+
+            let id: number = circle.id;
+            let isSelected: boolean = circle.isSelected;
+            this.setLabel(id, isSelected);
           }
         });
       }
@@ -114,20 +127,21 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   }
 
   select = (): void => {
-    // console.log('Event emit', this.isSelected);
     this.setIsSelected(true);
-
-    // (this.scene as InputWindowScene).setInputLabelSelected(
-    //   this.getId,
-    //   this.getIsSelected
-    // );
-    // this.emit('selectedChanged', this.isSelected);
   };
 
   deselect = (): void => {
-    // console.log('Event emit', this.isSelected);
     this.setIsSelected(false);
-    // this.emit('selectedChanged', this.isSelected);
+  };
+
+  setLabel = (id: number, isSelected: boolean): void => {
+    const inputWindowScene = this.scene.scene.get(
+      'InputWindowScene'
+    ) as InputWindowScene;
+
+    // TODO: DELETE TEST CODE
+    console.log(`(StateCircle.ts)Set Label : ${id}, ${isSelected}`);
+    inputWindowScene.setInputLabelSelected(id, isSelected);
   };
 
   get getId(): number {
