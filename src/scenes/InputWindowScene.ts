@@ -190,7 +190,6 @@ export default class InputWindowScene extends Phaser.Scene {
       this.containerStyle.borderRadius,
       this.containerStyle.backgroundColor
     );
-    // containerGraphics.setDepth(10);
 
     // Label for Input container
     // const bookmarkGraphics = this.createRoundRectGraphics(
@@ -378,25 +377,22 @@ export default class InputWindowScene extends Phaser.Scene {
   }
 
   // State Select에 따라 InputLabel 색상 변경
-  setInputLabelSelected = (id: number, isSelected: boolean): void => {
-    const matchingLabel = this.inputLabels.find(
-      (inputLabel) => inputLabel.getId === id
-    );
+  // setInputLabelSelected = (id: number, isSelected: boolean): void => {
+  //   const matchingLabel = this.inputLabels.find(
+  //     (inputLabel) => inputLabel.getId === id
+  //   );
 
-    if (matchingLabel) {
-      console.log(
-        `(InputWindowScene.ts) Matching label: ${matchingLabel.getId}`
-      );
-      matchingLabel.setIsSelected = isSelected;
+  //   if (matchingLabel) {
+  //     matchingLabel.setIsSelected(isSelected);
 
-      this.addLabels();
-    } else {
-      console.error(`No input label found with ID: ${id}`);
-    }
-  };
+  //     this.addLabels();
+  //   } else {
+  //     console.error(`No input label found with ID: ${id}`);
+  //   }
+  // };
 
   addLabels = () => {
-    // Start Coordinate: 550, 360
+    // Start Coordinate - x: 550, y: 360
     let startX = 550;
     const y = 360;
     const gap = 95;
@@ -406,7 +402,11 @@ export default class InputWindowScene extends Phaser.Scene {
       return;
     }
 
+    // Update 시, 기존의 Array 초기화
+    this.inputLabels = [];
+
     this.diagramScene.getStateCircles.forEach((state) => {
+      // console.log('state name: ', state.name);
       const label = new InputLabel(
         this,
         state.id,
@@ -420,15 +420,23 @@ export default class InputWindowScene extends Phaser.Scene {
 
       this.add.existing(label);
       startX += gap;
+
       // TODO: DELETE TEST CODE
-      console.log(
-        'Generated State: ',
-        state.name,
-        'Selected: ',
-        state.isSelected,
-        'Name: ',
-        state.name
-      );
+      // console.log(
+      //   'Generated State: ',
+      //   state.name,
+      //   'Selected: ',
+      //   state.isSelected,
+      //   'Name: ',
+      //   state.name
+      // );
+
+      // TODO: 지울것
+      // this.getInputLabels.forEach((inputLabel) =>
+      //   console.log(
+      //     `(InputWindowScene.ts) inputLabel - id: ${inputLabel.getId}, isSelected: ${inputLabel.getIsSelected}, name: ${inputLabel.getName}`
+      //   )
+      // );
     });
   };
 }

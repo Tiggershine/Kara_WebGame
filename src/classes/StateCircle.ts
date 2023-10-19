@@ -18,12 +18,12 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   isSelected: boolean = false;
   circle: Phaser.GameObjects.Arc;
   label: Phaser.GameObjects.Text;
+  stateInput!: StateInput[];
   connectedCircles: {
     targetCircle: StateCircle;
     edge: Phaser.GameObjects.Graphics;
   }[] = [];
   inputManager: InputManager = new InputManager();
-  stateInput!: StateInput[];
   InputWindowScene?: InputWindowScene;
   DiagramScene?: DiagramScene;
 
@@ -56,14 +56,23 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     );
     this.circle.setDepth(10);
     this.circle.setStrokeStyle(3, 1776669);
-    // this.circle.setInteractive({ draggable: true });
 
+    // Create Label Text
+    this.label = new Phaser.GameObjects.Text(scene, 0, 0, name, {
+      fontSize: '14px',
+      fontFamily: 'Roboto Flex',
+      color: '#1B1C1D',
+    });
+    this.label.setOrigin(0.5);
+
+    // Set interactive
     this.setInteractive(
       new Phaser.Geom.Circle(0, 0, 25),
       Phaser.Geom.Circle.Contains
     );
     scene.input.setDraggable(this);
 
+    // Set to handle drag event
     this.on(
       'drag',
       (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
@@ -77,14 +86,14 @@ export default class StateCircle extends Phaser.GameObjects.Container {
       }
     );
 
+    // Set to handle pointerdown event
     this.on('pointerdown', () => {
       if (this.isSelected) {
         return;
       } else {
         this.select();
-        const id: number = this.id;
-        const isSelected: boolean = this.isSelected;
-        this.setLabel(id, isSelected);
+
+        // this.setLabel(this.getId, this.getIsSelected);
 
         const diagramScene = this.scene.scene.get(
           'DiagramScene'
@@ -93,21 +102,22 @@ export default class StateCircle extends Phaser.GameObjects.Container {
           if (circle !== this) {
             circle.deselect();
 
-            let id: number = circle.id;
-            let isSelected: boolean = circle.isSelected;
-            this.setLabel(id, isSelected);
+            // this.setLabel(this.getId, this.getIsSelected);
           }
         });
+        // TODO: DELETE TEST CODE
+        // diagramScene.getStateCircles.forEach((circle) =>
+        //   console.log(
+        //     'Array로부터: ',
+        //     circle.getId,
+        //     'isSelected: ',
+        //     circle.getIsSelected
+        //   )
+        // );
       }
-    });
 
-    // Create Label Text
-    this.label = new Phaser.GameObjects.Text(scene, 0, 0, name, {
-      fontSize: '14px',
-      fontFamily: 'Roboto Flex',
-      color: '#1B1C1D',
+      this.setLabel();
     });
-    this.label.setOrigin(0.5);
 
     // Add the object to scene
     this.add(this.circle);
@@ -120,11 +130,6 @@ export default class StateCircle extends Phaser.GameObjects.Container {
    *
    * @param selected
    */
-  setIsSelected(selected: boolean): void {
-    this.isSelected = selected;
-    this.label.setColor(this.isSelected ? '#FCF6F5' : '#1B1C1D');
-    this.circle.setFillStyle(this.isSelected ? 0xef3d38 : 0xfcf6f5);
-  }
 
   select = (): void => {
     this.setIsSelected(true);
@@ -134,14 +139,29 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.setIsSelected(false);
   };
 
-  setLabel = (id: number, isSelected: boolean): void => {
+  setIsSelected(selected: boolean): void {
+    this.isSelected = selected;
+    this.label.setColor(this.isSelected ? '#FCF6F5' : '#1B1C1D');
+    this.circle.setFillStyle(this.isSelected ? 0xef3d38 : 0xfcf6f5);
+  }
+
+  // Set label of InputWindowScene
+  // setLabel = (id: number, isSelected: boolean): void => {
+  //   const inputWindowScene = this.scene.scene.get(
+  //     'InputWindowScene'
+  //   ) as InputWindowScene;
+
+  //   // inputWindowScene.setInputLabelSelected(id, isSelected);
+  //   inputWindowScene.setInputLabelSelected(id, isSelected);
+
+  // };
+
+  setLabel = (): void => {
     const inputWindowScene = this.scene.scene.get(
       'InputWindowScene'
     ) as InputWindowScene;
 
-    // TODO: DELETE TEST CODE
-    console.log(`(StateCircle.ts)Set Label : ${id}, ${isSelected}`);
-    inputWindowScene.setInputLabelSelected(id, isSelected);
+    inputWindowScene.addLabels();
   };
 
   get getId(): number {
@@ -152,9 +172,29 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     return this.name;
   }
 
+  get getX(): number {
+    return this.x;
+  }
+
+  get getY(): number {
+    return this.y;
+  }
+
   get getIsSelected(): boolean {
     return this.isSelected;
   }
+
+  get getStateInput(): StateInput[] {
+    return this.stateInput;
+  }
+
+  set setId(id: number) {
+    this.id = id;
+  }
+
+  // set setIsSelected(isSelected: boolean) {
+  //   this.isSelected = isSelected;
+  // }
 
   // Update the edge between two state circles
   updateEdges = (): void => {

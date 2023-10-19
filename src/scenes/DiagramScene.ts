@@ -109,39 +109,18 @@ export default class DiagramScene extends Phaser.Scene {
 
     // Deselect all other circles
     this.stateCircles.forEach((circle) => {
-      if (circle !== newStateCircle) {
-        circle.deselect();
-      }
+      circle.deselect();
     });
+    // Ensure the newStateCircle is selected upon creation
+    newStateCircle.select();
 
     this.stateCircles.push(newStateCircle); // stateCircles 배열에 추가
 
-    // Label 추가
+    // InputLabel 추가
     if (this.inputWindowScene) {
+      // console.log(`InputLabel ${newStateCircle.getId} 추가`);
       this.inputWindowScene.addLabels();
     }
-
-    if (newStateCircle.circle) {
-      newStateCircle.setInteractive(
-        new Phaser.Geom.Circle(0, 0, 25),
-        Phaser.Geom.Circle.Contains
-      );
-
-      this.input.setDraggable(newStateCircle);
-      newStateCircle.on(
-        'drag',
-        (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
-          if (this.validArea.getBounds().contains(dragX, dragY)) {
-            newStateCircle.x = dragX;
-            newStateCircle.y = dragY;
-          }
-        }
-      );
-    } else {
-      console.error('newStateCircle.circle is not initialized');
-    }
-
-    newStateCircle.select(); // Ensure the newStateCircle is selected upon creation
 
     return newStateCircle;
   }
@@ -171,6 +150,50 @@ export default class DiagramScene extends Phaser.Scene {
 
     return buttonLabel;
   };
+
+  // stateCircle 색상 변경 (Selected)
+  setStateCircleSelection = (id: number, isSelected: boolean): void => {
+    const matchingState = this.stateCircles.find(
+      (stateCircle) => stateCircle.getId === id
+    );
+
+    if (matchingState) {
+      matchingState.setIsSelected(isSelected);
+
+      // this.rerenderStateCircle(
+      //   matchingState.getId,
+      //   matchingState.getName,
+      //   matchingState.getX,
+      //   matchingState.getY,
+      //   matchingState.isSelected,
+      //   matchingState.getStateInput
+      // );
+    } else {
+      console.error(`No state circle found with ID: ${id}`);
+    }
+  };
+
+  // rerenderStateCircle = (
+  //   id: number,
+  //   name: string,
+  //   x: number,
+  //   y: number,
+  //   isSelected: boolean,
+  //   stateInput: StateInput[]
+  // ) => {
+  //   const stateCircle = new StateCircle(this, id, x, y, name, stateInput);
+  //   stateCircle.setIsSelected(isSelected);
+
+  //   // Update 시, 해당 id의 기존 객체 제거
+  //   this.stateCircles = this.stateCircles.filter(
+  //     (stateCircle) => stateCircle.getId !== id
+  //   );
+  //   this.stateCircles.push(stateCircle);
+
+  //   this.add.existing(stateCircle);
+
+  //   // return stateCircle;
+  // };
 
   connectCircles = (circleA: StateCircle, circleB: StateCircle): void => {
     const edge = this.add.graphics();
