@@ -93,27 +93,14 @@ export default class StateCircle extends Phaser.GameObjects.Container {
       } else {
         this.select();
 
-        // this.setLabel(this.getId, this.getIsSelected);
-
         const diagramScene = this.scene.scene.get(
           'DiagramScene'
         ) as DiagramScene;
         diagramScene.getStateCircles.forEach((circle) => {
           if (circle !== this) {
             circle.deselect();
-
-            // this.setLabel(this.getId, this.getIsSelected);
           }
         });
-        // TODO: DELETE TEST CODE
-        // diagramScene.getStateCircles.forEach((circle) =>
-        //   console.log(
-        //     'Array로부터: ',
-        //     circle.getId,
-        //     'isSelected: ',
-        //     circle.getIsSelected
-        //   )
-        // );
       }
 
       this.setLabel();
@@ -144,17 +131,6 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.label.setColor(this.isSelected ? '#FCF6F5' : '#1B1C1D');
     this.circle.setFillStyle(this.isSelected ? 0xef3d38 : 0xfcf6f5);
   }
-
-  // Set label of InputWindowScene
-  // setLabel = (id: number, isSelected: boolean): void => {
-  //   const inputWindowScene = this.scene.scene.get(
-  //     'InputWindowScene'
-  //   ) as InputWindowScene;
-
-  //   // inputWindowScene.setInputLabelSelected(id, isSelected);
-  //   inputWindowScene.setInputLabelSelected(id, isSelected);
-
-  // };
 
   setLabel = (): void => {
     const inputWindowScene = this.scene.scene.get(
@@ -191,10 +167,6 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   set setId(id: number) {
     this.id = id;
   }
-
-  // set setIsSelected(isSelected: boolean) {
-  //   this.isSelected = isSelected;
-  // }
 
   // Update the edge between two state circles
   updateEdges = (): void => {

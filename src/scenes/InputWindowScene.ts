@@ -406,7 +406,6 @@ export default class InputWindowScene extends Phaser.Scene {
     this.inputLabels = [];
 
     this.diagramScene.getStateCircles.forEach((state) => {
-      // console.log('state name: ', state.name);
       const label = new InputLabel(
         this,
         state.id,
@@ -420,23 +419,6 @@ export default class InputWindowScene extends Phaser.Scene {
 
       this.add.existing(label);
       startX += gap;
-
-      // TODO: DELETE TEST CODE
-      // console.log(
-      //   'Generated State: ',
-      //   state.name,
-      //   'Selected: ',
-      //   state.isSelected,
-      //   'Name: ',
-      //   state.name
-      // );
-
-      // TODO: 지울것
-      // this.getInputLabels.forEach((inputLabel) =>
-      //   console.log(
-      //     `(InputWindowScene.ts) inputLabel - id: ${inputLabel.getId}, isSelected: ${inputLabel.getIsSelected}, name: ${inputLabel.getName}`
-      //   )
-      // );
     });
   };
 }

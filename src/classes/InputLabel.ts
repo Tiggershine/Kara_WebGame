@@ -12,12 +12,10 @@ export interface Label {
 export class InputLabel extends Phaser.GameObjects.Container {
   private label!: Phaser.GameObjects.Text;
   private graphic!: Phaser.GameObjects.Graphics;
-  // private inputLabels: Label[] = [];
   private isSelected: boolean = false;
   private stateId: number = 0;
-  // private labelName: string = '';
-  // private InputWindowScene?: InputWindowScene;
-  // private DiagramScene?: DiagramScene;
+  private pressDuration: number = 0;
+  private timerEvent?: Phaser.Time.TimerEvent;
 
   constructor(
     scene: Phaser.Scene,
@@ -58,35 +56,83 @@ export class InputLabel extends Phaser.GameObjects.Container {
     );
 
     // Set to handle pointerdown event
+    // this.on('pointerdown', () => {
+    //   if (this.getIsSelected) {
+    //     return;
+    //   } else {
+    //     const diagramScene = this.scene.scene.get(
+    //       'DiagramScene'
+    //     ) as DiagramScene;
+
+    //     // Find the corresponding StateCircle object
+    //     const correspondingStateCircle = diagramScene.getStateCircles.find(
+    //       (stateCircle) => stateCircle.getId === this.getId
+    //     );
+
+    //     if (correspondingStateCircle) {
+    //       // Trigger the pointerdown event on the corresponding StateCircle object
+    //       correspondingStateCircle.emit('pointerdown');
+    //     }
+    //   }
+    // });
+
+    // Set to handle pointerdown event
     this.on('pointerdown', () => {
-      if (this.getIsSelected) {
-        return;
-      } else {
-        const diagramScene = this.scene.scene.get(
-          'DiagramScene'
-        ) as DiagramScene;
+      this.timerEvent = scene.time.addEvent({
+        delay: 1000, // 2초 후에 실행
+        callback: this.handleLongPress,
+        callbackScope: this,
+      });
+    });
 
-        // Find the corresponding StateCircle object
-        const correspondingStateCircle = diagramScene.getStateCircles.find(
-          (stateCircle) => stateCircle.getId === this.getId
-        );
-
-        if (correspondingStateCircle) {
-          // Trigger the pointerdown event on the corresponding StateCircle object
-          correspondingStateCircle.emit('pointerdown');
-        }
+    // Set to handle pointerup event
+    this.on('pointerup', () => {
+      if (this.timerEvent) {
+        this.timerEvent.remove(); // pointerup 이벤트가 발생하면 타이머 이벤트를 제거
+        this.handleShortPress();
       }
     });
 
     this.add(this.graphic);
     this.add(this.label);
 
-    // InputWindow보다 아래 위치하도록 depth 설정
+    // Label이 InputWindow보다 아래 위치하도록 depth 설정
     this.setDepth(-1);
     this.label.setDepth(2);
 
     scene.add.existing(this);
   }
+
+  private updatePressDuration = (): void => {
+    this.pressDuration += 100;
+  };
+
+  private handleLongPress = (): void => {
+    console.log('LongPress event');
+    // 길게 누르면 실행될 코드를 여기에 작성하세요.
+    // 예: 이름 변경 UI 표시
+    // this.showNameChangeUI();
+  };
+
+  private handleShortPress = (): void => {
+    console.log('ShortPress event');
+    // 기존 pointerdown 이벤트 핸들러 코드를 여기로 이동
+    if (this.getIsSelected) {
+      return;
+    } else {
+      const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+
+      // Find the corresponding StateCircle object
+      const correspondingStateCircle = diagramScene.getStateCircles.find(
+        (stateCircle) => stateCircle.getId === this.getId
+      );
+
+      if (correspondingStateCircle) {
+        // Trigger the pointerdown event on the corresponding StateCircle object
+        correspondingStateCircle.emit('pointerdown');
+      }
+    }
+  };
 
   set setNewName(newName: string) {
     this.name = newName;
@@ -95,10 +141,6 @@ export class InputLabel extends Phaser.GameObjects.Container {
   get getId(): number {
     return this.stateId;
   }
-
-  // get getLabelName(): string {
-  //   return this.labelName;
-  // }
 
   get getName(): string {
     return this.name;
