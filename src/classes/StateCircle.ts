@@ -13,22 +13,21 @@ interface StateCircleType {
 }
 
 export default class StateCircle extends Phaser.GameObjects.Container {
+  circle: Phaser.GameObjects.Arc;
+  label: Phaser.GameObjects.Text;
   id: number;
   name: string;
   isSelected: boolean = false;
-  circle: Phaser.GameObjects.Arc;
-  label: Phaser.GameObjects.Text;
-  stateInput!: StateInput[];
+  stateInput: StateInput[] = [];
   connectedCircles: {
     targetCircle: StateCircle;
     edge: Phaser.GameObjects.Graphics;
   }[] = [];
   inputManager: InputManager = new InputManager();
-  InputWindowScene?: InputWindowScene;
-  DiagramScene?: DiagramScene;
+  // InputWindowScene?: InputWindowScene;
+  // DiagramScene?: DiagramScene;
 
   constructor(
-    // scene: DiagramScene,
     scene: Phaser.Scene,
     x: number,
     y: number,
@@ -54,10 +53,10 @@ export default class StateCircle extends Phaser.GameObjects.Container {
       false,
       this.isSelected ? 0xef3d38 : 0xfcf6f5
     );
-    this.circle.setDepth(10);
     this.circle.setStrokeStyle(3, 1776669);
+    this.circle.setDepth(10);
 
-    // Create Label Text
+    // Create Text on Circle
     this.label = new Phaser.GameObjects.Text(scene, 0, 0, name, {
       fontSize: '14px',
       fontFamily: 'Roboto Flex',
@@ -102,7 +101,6 @@ export default class StateCircle extends Phaser.GameObjects.Container {
           }
         });
       }
-
       this.setLabel();
     });
 
@@ -113,10 +111,9 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     scene.add.existing(this);
   }
 
-  /**
-   *
-   * @param selected
-   */
+  addStateInput = (input: StateInput): void => {
+    this.stateInput.push(input);
+  };
 
   select = (): void => {
     this.setIsSelected(true);
@@ -132,6 +129,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.circle.setFillStyle(this.isSelected ? 0xef3d38 : 0xfcf6f5);
   }
 
+  // Call function in InputWindowScene to render InputLabels
   setLabel = (): void => {
     const inputWindowScene = this.scene.scene.get(
       'InputWindowScene'
@@ -167,6 +165,11 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   set setId(id: number) {
     this.id = id;
   }
+
+  updateName = (newName: string): void => {
+    this.name = newName;
+    this.label.text = newName;
+  };
 
   // Update the edge between two state circles
   updateEdges = (): void => {

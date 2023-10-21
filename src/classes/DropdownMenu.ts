@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
-import { InputManager } from './InputManager';
+import { SensorCheck } from './InputManager';
+import InputWindowScene from '../scenes/InputWindowScene';
 
 export enum SensorType {
   WallFront,
@@ -21,6 +22,7 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
   private menuItems: Phaser.GameObjects.Image[] = [];
   private selectedOptionTexture: string = '';
   private sensorButtonHeight: number = 42;
+  private hasEventHandlerExecuted: boolean = false;
 
   constructor(
     scene: Phaser.Scene,
@@ -44,10 +46,22 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
         .on('pointerdown', () => {
           // TODO: DELETE the under test code
           console.log(option.value + ' selected!');
+
           this.selectedOptionTexture = option.texture;
           this.selectedHightlight(menuItem, this.selectedOptionTexture);
           this.button.setTexture(this.selectedOptionTexture);
           this.closeMenu();
+
+          // Check if the event handler has already been executed
+          if (!this.hasEventHandlerExecuted) {
+            const inputWindowScene = this.scene.scene.get(
+              'InputWindowScene'
+            ) as InputWindowScene;
+            inputWindowScene.handleDropdownAndToggleMenu(this);
+
+            // Set the flag to true after executing the event handler
+            this.hasEventHandlerExecuted = true;
+          }
         });
       this.menuItems.push(menuItem);
       this.add(menuItem);

@@ -1,5 +1,10 @@
 import Phaser from 'phaser';
-import DiagramScene from './DiagramScene';
+import StateCircle from '../classes/StateCircle';
+import InputManager, {
+  SensorCheck,
+  StateInput,
+  TemporaryStateInput,
+} from '../classes/InputManager';
 import ControlButton, { ButtonType } from '../classes/ControlButton';
 import {
   DropdownMenu,
@@ -7,11 +12,44 @@ import {
   SensorType,
 } from '../classes/DropdownMenu';
 import { InputGuideline } from '../classes/InputGuideline';
-import InputManager from '../classes/InputManager';
 import { InputLabel } from '../classes/InputLabel';
+import DiagramScene from './DiagramScene';
+
+/** Objects for DropdownMenu */
+const options: DropdownOption[] = [
+  {
+    texture: 'wallFront',
+    value: 'wallFront',
+    type: SensorType.WallFront,
+  },
+  {
+    texture: 'wallLeft',
+    value: 'wallLeft',
+    type: SensorType.WallLeft,
+  },
+  {
+    texture: 'wallRight',
+    value: 'wallRight',
+    type: SensorType.WallRight,
+  },
+  {
+    texture: 'monsterFront',
+    value: 'monsterFront',
+    type: SensorType.MonsterFront,
+  },
+  {
+    texture: 'starBottom',
+    value: 'starBottom',
+    type: SensorType.StarBottom,
+  },
+];
 
 export default class InputWindowScene extends Phaser.Scene {
+  private dropdownButtons: DropdownMenu[] = [];
+  private currentDropdownCount: number = 0; // Move currentDropdownCount here
   inputManager: InputManager = new InputManager();
+  private tempSensorType?: SensorType;
+
   private buttonConfigurations = [
     {
       name: 'yesButton',
@@ -95,15 +133,6 @@ export default class InputWindowScene extends Phaser.Scene {
     backgroundColor: 0xfcf6f5,
   };
 
-  // private bookmarkStyle = {
-  //   x: 550,
-  //   y: 360,
-  //   width: 80,
-  //   height: 60,
-  //   borderRadius: 10,
-  //   backgroundColor: 0xfcf6f5,
-  // };
-
   private controllerContainerStyle = {
     x: 210,
     y: 620,
@@ -163,23 +192,6 @@ export default class InputWindowScene extends Phaser.Scene {
 
     this.addLabels();
 
-    // if (this.diagramScene) {
-    //   this.diagramScene.getStateCircles.forEach((stateCircle) => {
-    //     console.log(stateCircle);
-    //     stateCircle.on('selectedChanged', (isSelected: boolean) => {
-    //       const matchingLabel = this.inputLabels.find(
-    //         (label) => label.getId === stateCircle.id
-    //       );
-
-    //       if (matchingLabel) {
-    //         console.log('update');
-    //         // 일치하는 inputLabel의 isSelected 값을 업데이트합니다.
-    //         matchingLabel.setLabelColor(isSelected);
-    //       }
-    //     });
-    //   });
-    // }
-
     /** Graphics for Background */
     // Background for Input container
     const containerGraphics = this.createRoundRectGraphics(
@@ -190,16 +202,6 @@ export default class InputWindowScene extends Phaser.Scene {
       this.containerStyle.borderRadius,
       this.containerStyle.backgroundColor
     );
-
-    // Label for Input container
-    // const bookmarkGraphics = this.createRoundRectGraphics(
-    //   this.bookmarkStyle.x,
-    //   this.bookmarkStyle.y,
-    //   this.bookmarkStyle.width,
-    //   this.bookmarkStyle.height,
-    //   this.bookmarkStyle.borderRadius,
-    //   this.bookmarkStyle.backgroundColor
-    // );
 
     // Background for Controller Container
     const controllerContainerGraphics = this.createRoundRectGraphics(
@@ -258,33 +260,33 @@ export default class InputWindowScene extends Phaser.Scene {
     });
 
     /** Objects for DropdownMenu */
-    const options: DropdownOption[] = [
-      {
-        texture: 'wallFront',
-        value: 'wallFront',
-        type: SensorType.WallFront,
-      },
-      {
-        texture: 'wallLeft',
-        value: 'wallLeft',
-        type: SensorType.WallLeft,
-      },
-      {
-        texture: 'wallRight',
-        value: 'wallRight',
-        type: SensorType.WallRight,
-      },
-      {
-        texture: 'monsterFront',
-        value: 'monsterFront',
-        type: SensorType.MonsterFront,
-      },
-      {
-        texture: 'starBottom',
-        value: 'starBottom',
-        type: SensorType.StarBottom,
-      },
-    ];
+    // const options: DropdownOption[] = [
+    //   {
+    //     texture: 'wallFront',
+    //     value: 'wallFront',
+    //     type: SensorType.WallFront,
+    //   },
+    //   {
+    //     texture: 'wallLeft',
+    //     value: 'wallLeft',
+    //     type: SensorType.WallLeft,
+    //   },
+    //   {
+    //     texture: 'wallRight',
+    //     value: 'wallRight',
+    //     type: SensorType.WallRight,
+    //   },
+    //   {
+    //     texture: 'monsterFront',
+    //     value: 'monsterFront',
+    //     type: SensorType.MonsterFront,
+    //   },
+    //   {
+    //     texture: 'starBottom',
+    //     value: 'starBottom',
+    //     type: SensorType.StarBottom,
+    //   },
+    // ];
 
     const dropdownButton = new DropdownMenu(
       this,
@@ -293,7 +295,11 @@ export default class InputWindowScene extends Phaser.Scene {
       'dropdownButton',
       options
     );
-    dropdownButton.on('pointerdown', dropdownButton.toggleMenu); // Add Click-EnventListner to Menu button
+    this.dropdownButtons.push(dropdownButton);
+
+    dropdownButton.on('pointerdown', () => {
+      this.handleDropdownAndToggleMenu(dropdownButton);
+    });
   }
 
   // Function returns a RoundRectGraphics object
@@ -332,6 +338,67 @@ export default class InputWindowScene extends Phaser.Scene {
     return newControlButton;
   };
 
+  // Dropdown 메뉴 선택 option 임시저장
+  handleSensprTypeSelection = (sensorType: SensorType): void => {
+    this.tempSensorType = sensorType;
+  };
+
+  // sensorChecks입력 임시 저장
+  handleSensorChecksInput = (
+    key: string,
+    sensorChecks: SensorCheck[]
+  ): void => {
+    this.inputManager.setTemporaryInput(key, { sensorChecks });
+  };
+
+  // Move입력 임시 저장
+  handleMoveInput = (key: string, move: ButtonType[]): void => {
+    this.inputManager.setTemporaryInput(key, { move });
+  };
+
+  // NextState입력 임시 저장
+  handleNextStateInput = (key: string, nextState: number): void => {
+    this.inputManager.setTemporaryInput(key, { nextState });
+  };
+
+  // 저장된 입력값(SensorChecks, Move, NextState) StateCircl의 StateInput property에 저장
+  commitUserInput = (): void => {
+    const temporaryStateInputs = this.inputManager.getAllTemporaryInputs();
+
+    const selectedStateCircle = this.findSelectedStateCircle();
+
+    if (selectedStateCircle) {
+      for (const key in temporaryStateInputs) {
+        const tempInput = temporaryStateInputs[key];
+        if (
+          tempInput.sensorChecks &&
+          tempInput.move &&
+          tempInput.nextState !== undefined
+        ) {
+          const stateInput: StateInput = {
+            sensorChecks: tempInput.sensorChecks,
+            move: tempInput.move,
+            nextState: tempInput.nextState,
+          };
+          selectedStateCircle.addStateInput(stateInput);
+          this.inputManager.clearTemporaryInput(key); // Clear temporary input after committing
+        } else {
+          console.error('Incomplete user input for key:', key);
+        }
+      }
+    }
+  };
+
+  findSelectedStateCircle(): StateCircle | undefined {
+    if (!this.diagramScene) {
+      console.error('DiagramScene is not initialized');
+      return;
+    }
+    return this.diagramScene.getStateCircles.find(
+      (circle) => circle.isSelected
+    );
+  }
+
   /** Function set ControllButton Draggable */
   setButtonDraggable = (
     button: ControlButton,
@@ -367,7 +434,26 @@ export default class InputWindowScene extends Phaser.Scene {
     );
 
     button.on('dragend', (pointer: Phaser.Input.Pointer) => {
-      newButton?.destroy();
+      if (newButton) {
+        const distance = Phaser.Math.Distance.Between(
+          newButton.x,
+          newButton.y,
+          586,
+          490
+        );
+
+        if (distance <= 40) {
+          newButton.setSelected = false;
+
+          const originButtonImage = newButton.texture.key.slice(0, -8);
+          newButton.setTexture(`${originButtonImage}`);
+
+          newButton.setPosition(586, 490);
+        } else {
+          newButton.destroy();
+        }
+      }
+
       guideline.setAllGuidelinesVisible(false);
     });
   };
@@ -376,21 +462,7 @@ export default class InputWindowScene extends Phaser.Scene {
     return this.inputLabels;
   }
 
-  // State Select에 따라 InputLabel 색상 변경
-  // setInputLabelSelected = (id: number, isSelected: boolean): void => {
-  //   const matchingLabel = this.inputLabels.find(
-  //     (inputLabel) => inputLabel.getId === id
-  //   );
-
-  //   if (matchingLabel) {
-  //     matchingLabel.setIsSelected(isSelected);
-
-  //     this.addLabels();
-  //   } else {
-  //     console.error(`No input label found with ID: ${id}`);
-  //   }
-  // };
-
+  // InputLabel 그래픽 추가
   addLabels = () => {
     // Start Coordinate - x: 550, y: 360
     let startX = 550;
@@ -421,4 +493,33 @@ export default class InputWindowScene extends Phaser.Scene {
       startX += gap;
     });
   };
+
+  /** Dropdown Menu */
+  handleDropdownAndToggleMenu(dropdownButton: DropdownMenu) {
+    console.log('1번 함수 실행');
+    this.handleDropdownClick(dropdownButton); // Then handle the dropdown click to potentially create a new button
+    dropdownButton.toggleMenu(); // Call toggleMenu on the DropdownMenu instance
+  }
+
+  handleDropdownClick(clickedDropdown: DropdownMenu) {
+    console.log('2번 함수 실행');
+    if (this.currentDropdownCount < 3) {
+      console.log('2번 함수 if문 안으로 들어옴');
+      const newDropdownButton = new DropdownMenu(
+        this,
+        clickedDropdown.x + 50,
+        clickedDropdown.y,
+        'dropdownButton',
+        options
+      );
+      this.dropdownButtons.push(newDropdownButton);
+      console.log('New Dropdown Button:', newDropdownButton); // Log the new DropdownMenu instance
+      console.log('Dropdown Buttons Array:', this.dropdownButtons); //
+      this.currentDropdownCount++; // Increment the count here
+      newDropdownButton.on('pointerdown', () => {
+        this.handleDropdownAndToggleMenu(newDropdownButton); // Update this line to call the new method
+      });
+      return;
+    }
+  }
 }

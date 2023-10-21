@@ -5,11 +5,11 @@ import InputManager from '../classes/InputManager';
 import { StateInput } from '../classes/InputManager';
 
 export default class DiagramScene extends Phaser.Scene {
-  private inputWindowScene?: InputWindowScene;
-  inputManager: InputManager = new InputManager();
   validArea!: Phaser.GameObjects.Rectangle;
-  private startStateCircle!: StateCircle;
+  inputManager: InputManager = new InputManager();
+  private inputWindowScene?: InputWindowScene;
   private stateCircles: StateCircle[] = [];
+  private startStateCircle!: StateCircle;
 
   constructor() {
     super('DiagramScene');
@@ -95,7 +95,6 @@ export default class DiagramScene extends Phaser.Scene {
   createStateCircle(x: number, y: number): StateCircle {
     const stateId = this.stateCircles.length + 1;
     const stateName = 'State ' + Number(this.stateCircles.length + 1);
-
     const newStateInput: StateInput[] = [];
 
     const newStateCircle = new StateCircle(
@@ -116,9 +115,8 @@ export default class DiagramScene extends Phaser.Scene {
 
     this.stateCircles.push(newStateCircle); // stateCircles 배열에 추가
 
-    // InputLabel 추가
+    // Add corresponding InputLabel
     if (this.inputWindowScene) {
-      // console.log(`InputLabel ${newStateCircle.getId} 추가`);
       this.inputWindowScene.addLabels();
     }
 
@@ -150,50 +148,6 @@ export default class DiagramScene extends Phaser.Scene {
 
     return buttonLabel;
   };
-
-  // stateCircle 색상 변경 (Selected)
-  setStateCircleSelection = (id: number, isSelected: boolean): void => {
-    const matchingState = this.stateCircles.find(
-      (stateCircle) => stateCircle.getId === id
-    );
-
-    if (matchingState) {
-      matchingState.setIsSelected(isSelected);
-
-      // this.rerenderStateCircle(
-      //   matchingState.getId,
-      //   matchingState.getName,
-      //   matchingState.getX,
-      //   matchingState.getY,
-      //   matchingState.isSelected,
-      //   matchingState.getStateInput
-      // );
-    } else {
-      console.error(`No state circle found with ID: ${id}`);
-    }
-  };
-
-  // rerenderStateCircle = (
-  //   id: number,
-  //   name: string,
-  //   x: number,
-  //   y: number,
-  //   isSelected: boolean,
-  //   stateInput: StateInput[]
-  // ) => {
-  //   const stateCircle = new StateCircle(this, id, x, y, name, stateInput);
-  //   stateCircle.setIsSelected(isSelected);
-
-  //   // Update 시, 해당 id의 기존 객체 제거
-  //   this.stateCircles = this.stateCircles.filter(
-  //     (stateCircle) => stateCircle.getId !== id
-  //   );
-  //   this.stateCircles.push(stateCircle);
-
-  //   this.add.existing(stateCircle);
-
-  //   // return stateCircle;
-  // };
 
   connectCircles = (circleA: StateCircle, circleB: StateCircle): void => {
     const edge = this.add.graphics();
