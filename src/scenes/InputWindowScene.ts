@@ -259,35 +259,6 @@ export default class InputWindowScene extends Phaser.Scene {
       this.add.existing(button);
     });
 
-    /** Objects for DropdownMenu */
-    // const options: DropdownOption[] = [
-    //   {
-    //     texture: 'wallFront',
-    //     value: 'wallFront',
-    //     type: SensorType.WallFront,
-    //   },
-    //   {
-    //     texture: 'wallLeft',
-    //     value: 'wallLeft',
-    //     type: SensorType.WallLeft,
-    //   },
-    //   {
-    //     texture: 'wallRight',
-    //     value: 'wallRight',
-    //     type: SensorType.WallRight,
-    //   },
-    //   {
-    //     texture: 'monsterFront',
-    //     value: 'monsterFront',
-    //     type: SensorType.MonsterFront,
-    //   },
-    //   {
-    //     texture: 'starBottom',
-    //     value: 'starBottom',
-    //     type: SensorType.StarBottom,
-    //   },
-    // ];
-
     const dropdownButton = new DropdownMenu(
       this,
       586,

@@ -34,6 +34,13 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
     super(scene, x, y);
 
     this.button = this.scene.add.image(0, 0, buttonTexture).setInteractive();
+    // Adding a tween animation to the button when it is added
+    this.scene.tweens.add({
+      targets: this.button,
+      alpha: { from: 0, to: 1 }, // Fade-in effect
+      ease: 'Sine.easeOut', // Easing function
+      duration: 500, // Duration of the animation in milliseconds
+    });
     this.button.on('pointerdown', this.toggleMenu, this);
     this.add(this.button);
 
