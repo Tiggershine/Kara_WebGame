@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { SensorCheck } from './InputManager';
 import InputWindowScene from '../scenes/InputWindowScene';
+import { InputWindow } from './InputWindow';
 
 export enum SensorType {
   WallFront,
@@ -17,22 +18,27 @@ export interface DropdownOption {
 }
 
 export class DropdownMenu extends Phaser.GameObjects.Container {
+  private options: DropdownOption[] = [];
   private isMenuOpen: boolean = false;
   private button!: Phaser.GameObjects.Image;
   private menuItems: Phaser.GameObjects.Image[] = [];
   private selectedOptionTexture: string = '';
   private sensorButtonHeight: number = 42;
   private hasEventHandlerExecuted: boolean = false;
+  private inputWindow?: InputWindow;
 
   constructor(
     scene: Phaser.Scene,
     x: number,
     y: number,
     buttonTexture: string,
-    options: DropdownOption[]
+    options: DropdownOption[],
+    inputWindow?: InputWindow // Adding a new parameter to store a reference to the InputWindow instance
   ) {
     super(scene, x, y);
+    this.inputWindow = inputWindow; // Storing the reference to the InputWindow instance
 
+    this.options = options;
     this.button = this.scene.add.image(0, 0, buttonTexture).setInteractive();
     // Adding a tween animation to the button when it is added
     this.scene.tweens.add({
@@ -50,9 +56,10 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
         .setInteractive()
         .setVisible(false)
         .setData('value', option.value)
+        .setDepth(10)
         .on('pointerdown', () => {
           // TODO: DELETE the under test code
-          console.log(option.value + ' selected!');
+          // console.log(option.value + ' selected!');
 
           this.selectedOptionTexture = option.texture;
           this.selectedHightlight(menuItem, this.selectedOptionTexture);
@@ -60,11 +67,11 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
           this.closeMenu();
 
           // Check if the event handler has already been executed
-          if (!this.hasEventHandlerExecuted) {
-            const inputWindowScene = this.scene.scene.get(
-              'InputWindowScene'
-            ) as InputWindowScene;
-            inputWindowScene.handleDropdownAndToggleMenu(this);
+          if (
+            !this.hasEventHandlerExecuted &&
+            this.inputWindow?.getInputwindowActive()
+          ) {
+            this.inputWindow?.handleDropdownClick(this);
 
             // Set the flag to true after executing the event handler
             this.hasEventHandlerExecuted = true;
@@ -81,6 +88,39 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
     this.scene.input.on('pointerdown', this.handleOutsideClick, this);
   }
 
+  unfoldOptions = () => {
+    this.options.forEach((option, index) => {
+      const menuItem = this.scene.add
+        .image(0, (index + 1) * 40, option.texture)
+        .setInteractive()
+        .setVisible(false)
+        .setData('value', option.value)
+        .setDepth(10)
+        .on('pointerdown', () => {
+          // TODO: DELETE the under test code
+          // console.log(option.value + ' selected!');
+
+          this.selectedOptionTexture = option.texture;
+          this.selectedHightlight(menuItem, this.selectedOptionTexture);
+          this.button.setTexture(this.selectedOptionTexture);
+          this.closeMenu();
+
+          // Check if the event handler has already been executed
+          if (
+            !this.hasEventHandlerExecuted &&
+            this.inputWindow?.getInputwindowActive()
+          ) {
+            this.inputWindow?.handleDropdownClick(this);
+
+            // Set the flag to true after executing the event handler
+            this.hasEventHandlerExecuted = true;
+          }
+        });
+      this.menuItems.push(menuItem);
+      this.add(menuItem);
+    });
+  };
+
   /***
    * @description Toggle on and off
    */
@@ -95,12 +135,14 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
   private openMenu = () => {
     this.isMenuOpen = true;
     this.menuItems.forEach((item, index) => {
+      // TODO: DELETE TEST CODE
+      // console.log(item.depth);
       this.scene.tweens.add({
         targets: item,
         y: (index + 1) * this.sensorButtonHeight,
         duration: 300,
         ease: 'Sine.easeOut',
-        onStart: () => item.setVisible(true),
+        onStart: () => item.setVisible(true).setDepth(10),
       });
     });
   };
@@ -164,5 +206,13 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
   destroy(fromScene?: boolean) {
     this.scene.input.off('pointerdown', this.handleOutsideClick, this);
     super.destroy(fromScene);
+  }
+
+  get getX() {
+    return this.x;
+  }
+
+  get getY() {
+    return this.y;
   }
 }

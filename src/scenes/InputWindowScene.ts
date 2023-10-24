@@ -1,10 +1,6 @@
 import Phaser from 'phaser';
 import StateCircle from '../classes/StateCircle';
-import InputManager, {
-  SensorCheck,
-  StateInput,
-  TemporaryStateInput,
-} from '../classes/InputManager';
+import InputManager, { SensorCheck, StateInput } from '../classes/InputManager';
 import ControlButton, { ButtonType } from '../classes/ControlButton';
 import {
   DropdownMenu,
@@ -12,10 +8,11 @@ import {
   SensorType,
 } from '../classes/DropdownMenu';
 import { InputGuideline } from '../classes/InputGuideline';
-import { InputLabel } from '../classes/InputLabel';
+// import { InputLabel } from '../classes/InputLabel';
 import DiagramScene from './DiagramScene';
+import { InputWindow } from '../classes/InputWindow';
 
-/** Objects for DropdownMenu */
+/** DropdownMenu Options */
 const options: DropdownOption[] = [
   {
     texture: 'wallFront',
@@ -45,10 +42,11 @@ const options: DropdownOption[] = [
 ];
 
 export default class InputWindowScene extends Phaser.Scene {
-  private dropdownButtons: DropdownMenu[] = [];
-  private currentDropdownCount: number = 0; // Move currentDropdownCount here
+  // private dropdownButtons: DropdownMenu[] = [];
+  // private currentDropdownCount: number = 0; // Move currentDropdownCount here
   inputManager: InputManager = new InputManager();
   private tempSensorType?: SensorType;
+  private inputWindow?: InputWindow;
 
   private buttonConfigurations = [
     {
@@ -116,15 +114,17 @@ export default class InputWindowScene extends Phaser.Scene {
       y: 745,
     },
   ];
-  private inputLabels: InputLabel[] = [];
+  // private inputLabels: InputLabel[] = [];
   private diagramScene?: DiagramScene;
 
   constructor() {
     super('InputWindowScene');
   }
 
+  // 210, 400
+
   // Values for Style
-  private containerStyle = {
+  private inputContainerStyle = {
     x: 550,
     y: 400,
     width: 500,
@@ -142,76 +142,31 @@ export default class InputWindowScene extends Phaser.Scene {
     backgroundColor: 0xfcf6f5,
   };
 
-  preload() {
-    const imageSources = {
-      // Images for ControlButtons
-      yesButton: 'assets/YesButton.png',
-      noButton: 'assets/NoButton.png',
-      yesNoButton: 'assets/YesNoButton.png',
-      yesButtonSelected: 'assets/YesButtonSelected.png',
-      noButtonSelected: 'assets/NoButtonSelected.png',
-      yesNoButtonSelected: 'assets/YesNoButtonSelected.png',
-      forwardButton: 'assets/ForwardButton.png',
-      leftButton: 'assets/LeftButton.png',
-      rightButton: 'assets/RightButton.png',
-      putButton: 'assets/PutButton.png',
-      pickButton: 'assets/PickButton.png',
-      forwardButtonSelected: 'assets/ForwardButtonSelected.png',
-      leftButtonSelected: 'assets/LeftButtonSelected.png',
-      rightButtonSelected: 'assets/RightButtonSelected.png',
-      putButtonSelected: 'assets/PutButtonSelected.png',
-      pickButtonSelected: 'assets/PickButtonSelected.png',
-      // Images for DropdownMenu
-      dropdownButton: 'assets/DropdownButton.png',
-      wallFront: 'assets/WallFront.png',
-      wallLeft: 'assets/WallLeft.png',
-      wallRight: 'assets/WallRight.png',
-      monsterFront: 'assets/MonsterFront.png',
-      starBottom: 'assets/StarBottom.png',
-      wallFrontSelected: 'assets/WallFrontSelected.png',
-      wallLeftSelected: 'assets/WallLeftSelected.png',
-      wallRightSelected: 'assets/WallRightSelected.png',
-      monsterFrontSelected: 'assets/MonsterFrontSelected.png',
-      starBottomSelected: 'assets/StarBottomSelected.png',
-      // Images for Label
-      moveLabel: 'assets/LabelMove.png',
-      nextStateLabel: 'assets/LabelNextState.png',
-      // Image for Inputguideline
-      inputGuideline: 'assets/InputGuideline.png',
-    };
-
-    for (let key in imageSources) {
-      if (imageSources.hasOwnProperty(key)) {
-        this.load.image(key, imageSources[key as keyof typeof imageSources]);
-      }
-    }
-  }
+  preload() {}
 
   create() {
     this.diagramScene = this.scene.get('DiagramScene') as DiagramScene;
 
-    this.addLabels();
-
     /** Graphics for Background */
     // Background for Input container
-    const containerGraphics = this.createRoundRectGraphics(
-      this.containerStyle.x,
-      this.containerStyle.y,
-      this.containerStyle.width,
-      this.containerStyle.height,
-      this.containerStyle.borderRadius,
-      this.containerStyle.backgroundColor
-    );
+    // const inputContainerGraphics = this.createRoundRectGraphics(
+    //   this.inputContainerStyle.x,
+    //   this.inputContainerStyle.y,
+    //   this.inputContainerStyle.width,
+    //   this.inputContainerStyle.height,
+    //   this.inputContainerStyle.borderRadius,
+    //   this.inputContainerStyle.backgroundColor
+    // );
 
     // Background for Controller Container
-    const controllerContainerGraphics = this.createRoundRectGraphics(
-      this.controllerContainerStyle.x,
-      this.controllerContainerStyle.y,
-      this.controllerContainerStyle.width,
-      this.controllerContainerStyle.height,
-      this.controllerContainerStyle.borderRadius,
-      this.controllerContainerStyle.backgroundColor
-    );
+    // const controllerContainerGraphics = this.createRoundRectGraphics(
+    //   this.controllerContainerStyle.x,
+    //   this.controllerContainerStyle.y,
+    //   this.controllerContainerStyle.width,
+    //   this.controllerContainerStyle.height,
+    //   this.controllerContainerStyle.borderRadius,
+    //   this.controllerContainerStyle.backgroundColor
+    // );
 
     // Divider graphics
     const dividerGraphics = this.add.graphics({
@@ -221,23 +176,23 @@ export default class InputWindowScene extends Phaser.Scene {
       },
     });
     // Set Divider for Input container
-    dividerGraphics.lineBetween(559, 457, 1041, 457);
-    dividerGraphics.lineBetween(775, 408, 775, 774);
-    dividerGraphics.lineBetween(950, 408, 950, 774);
+    // dividerGraphics.lineBetween(559, 457, 1041, 457);
+    // dividerGraphics.lineBetween(775, 408, 775, 774);
+    // dividerGraphics.lineBetween(950, 408, 950, 774);
     // Set Divider for Controller container
-    dividerGraphics.lineBetween(230, 700, 510, 700);
+    // dividerGraphics.lineBetween(230, 700, 510, 700);
 
     // Label for Inputwindow
-    this.add.image(862.5, 433, 'moveLabel');
-    this.add.image(995, 433, 'nextStateLabel');
+    // this.add.image(862.5, 433, 'moveLabel');
+    // this.add.image(995, 433, 'nextStateLabel');
 
     /** InputGuideline */
     const guidlinePositions = [
       { x: 800, y: 490 },
-      { x: 800, y: 550 },
-      { x: 800, y: 605 },
-      { x: 800, y: 650 },
-      { x: 800, y: 715 },
+      { x: 800, y: 555 },
+      { x: 800, y: 620 },
+      { x: 800, y: 685 },
+      { x: 800, y: 750 },
     ];
     const inputGutideline = new InputGuideline(
       this,
@@ -247,30 +202,30 @@ export default class InputWindowScene extends Phaser.Scene {
     this.add.existing(inputGutideline);
 
     /** Control Button */
-    this.buttonConfigurations.forEach((config) => {
-      const button = this.createControlButton(
-        config.x,
-        config.y,
-        config.texture,
-        config.type
-      );
-      button.name = config.name;
-      this.setButtonDraggable(button, config.selectedTexture, inputGutideline);
-      this.add.existing(button);
-    });
+    // this.buttonConfigurations.forEach((config) => {
+    //   const button = this.createControlButton(
+    //     config.x,
+    //     config.y,
+    //     config.texture,
+    //     config.type
+    //   );
+    //   button.name = config.name;
+    //   this.setButtonDraggable(button, config.selectedTexture, inputGutideline);
+    //   this.add.existing(button);
+    // });
 
-    const dropdownButton = new DropdownMenu(
-      this,
-      586,
-      432,
-      'dropdownButton',
-      options
-    );
-    this.dropdownButtons.push(dropdownButton);
+    // const dropdownButton = new DropdownMenu(
+    //   this,
+    //   586,
+    //   432,
+    //   'dropdownButton',
+    //   options
+    // );
+    // this.dropdownButtons.push(dropdownButton);
 
-    dropdownButton.on('pointerdown', () => {
-      this.handleDropdownAndToggleMenu(dropdownButton);
-    });
+    // dropdownButton.on('pointerdown', () => {
+    //   this.handleDropdownAndToggleMenu(dropdownButton);
+    // });
   }
 
   // Function returns a RoundRectGraphics object
@@ -371,126 +326,70 @@ export default class InputWindowScene extends Phaser.Scene {
   }
 
   /** Function set ControllButton Draggable */
-  setButtonDraggable = (
-    button: ControlButton,
-    selectedButtonImage: string,
-    guideline: InputGuideline
-  ): void => {
-    button.setInteractive();
+  // setButtonDraggable = (
+  //   button: ControlButton,
+  //   selectedButtonImage: string,
+  //   guideline: InputGuideline
+  // ): void => {
+  //   button.setInteractive();
 
-    this.input.setDraggable(button);
+  //   this.input.setDraggable(button);
 
-    let newButton: ControlButton | null = null;
+  //   let newButton: ControlButton | null = null;
 
-    button.on('dragstart', (pointer: Phaser.Input.Pointer) => {
-      newButton = this.createControlButton(
-        pointer.x,
-        pointer.y,
-        selectedButtonImage,
-        button.getType
-      );
-      if (newButton) {
-        newButton!.setSelected = true;
-      }
-    });
+  //   button.on('dragstart', (pointer: Phaser.Input.Pointer) => {
+  //     newButton = this.createControlButton(
+  //       pointer.x,
+  //       pointer.y,
+  //       selectedButtonImage,
+  //       button.getType
+  //     );
+  //     if (newButton) {
+  //       newButton!.setSelected = true;
+  //     }
+  //   });
 
-    button.on(
-      'drag',
-      (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
-        if (newButton) {
-          newButton.setPosition(dragX, dragY);
-          guideline.isInsideValidArea(newButton, dragX, dragY);
-        }
-      }
-    );
+  //   button.on(
+  //     'drag',
+  //     (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+  //       if (newButton) {
+  //         newButton.setPosition(dragX, dragY);
+  //         guideline.isInsideValidArea(newButton, dragX, dragY);
+  //       }
+  //     }
+  //   );
 
-    button.on('dragend', (pointer: Phaser.Input.Pointer) => {
-      if (newButton) {
-        const distance = Phaser.Math.Distance.Between(
-          newButton.x,
-          newButton.y,
-          586,
-          490
-        );
+  //   button.on('dragend', (pointer: Phaser.Input.Pointer) => {
+  //     if (newButton) {
+  //       const distance = Phaser.Math.Distance.Between(
+  //         newButton.x,
+  //         newButton.y,
+  //         586,
+  //         490
+  //       );
 
-        if (distance <= 40) {
-          newButton.setSelected = false;
+  //       if (distance <= 40) {
+  //         newButton.setSelected = false;
 
-          const originButtonImage = newButton.texture.key.slice(0, -8);
-          newButton.setTexture(`${originButtonImage}`);
+  //         const originButtonImage = newButton.texture.key.slice(0, -8);
+  //         newButton.setTexture(`${originButtonImage}`);
 
-          newButton.setPosition(586, 490);
-        } else {
-          newButton.destroy();
-        }
-      }
+  //         const selectedStateCircle = this.findSelectedStateCircle();
 
-      guideline.setAllGuidelinesVisible(false);
-    });
-  };
+  //         if (selectedStateCircle) {
+  //           const inputWindow = selectedStateCircle.getInputWindow();
+  //           if (inputWindow) {
+  //             inputWindow.addControlButton(newButton, 586, 490); // Add the new button to the InputWindow of the selected StateCircle
+  //           }
+  //         }
 
-  get getInputLabels(): InputLabel[] {
-    return this.inputLabels;
-  }
+  //         // newButton.setPosition(586, 490);
+  //       } else {
+  //         newButton.destroy();
+  //       }
+  //     }
 
-  // InputLabel 그래픽 추가
-  addLabels = () => {
-    // Start Coordinate - x: 550, y: 360
-    let startX = 550;
-    const y = 360;
-    const gap = 95;
-
-    if (!this.diagramScene) {
-      console.error('DiagramScene is not intitialized');
-      return;
-    }
-
-    // Update 시, 기존의 Array 초기화
-    this.inputLabels = [];
-
-    this.diagramScene.getStateCircles.forEach((state) => {
-      const label = new InputLabel(
-        this,
-        state.id,
-        startX,
-        y,
-        state.name,
-        state.isSelected
-      );
-
-      this.inputLabels.push(label);
-
-      this.add.existing(label);
-      startX += gap;
-    });
-  };
-
-  /** Dropdown Menu */
-  handleDropdownAndToggleMenu(dropdownButton: DropdownMenu) {
-    console.log('1번 함수 실행');
-    this.handleDropdownClick(dropdownButton); // Then handle the dropdown click to potentially create a new button
-    dropdownButton.toggleMenu(); // Call toggleMenu on the DropdownMenu instance
-  }
-
-  handleDropdownClick(clickedDropdown: DropdownMenu) {
-    console.log('2번 함수 실행');
-    if (this.currentDropdownCount < 3) {
-      console.log('2번 함수 if문 안으로 들어옴');
-      const newDropdownButton = new DropdownMenu(
-        this,
-        clickedDropdown.x + 50,
-        clickedDropdown.y,
-        'dropdownButton',
-        options
-      );
-      this.dropdownButtons.push(newDropdownButton);
-      console.log('New Dropdown Button:', newDropdownButton); // Log the new DropdownMenu instance
-      console.log('Dropdown Buttons Array:', this.dropdownButtons); //
-      this.currentDropdownCount++; // Increment the count here
-      newDropdownButton.on('pointerdown', () => {
-        this.handleDropdownAndToggleMenu(newDropdownButton); // Update this line to call the new method
-      });
-      return;
-    }
-  }
+  //     guideline.setAllGuidelinesVisible(false);
+  //   });
+  // };
 }

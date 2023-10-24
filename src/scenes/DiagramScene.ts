@@ -3,6 +3,9 @@ import StateCircle from '../classes/StateCircle';
 import InputWindowScene from './InputWindowScene';
 import InputManager from '../classes/InputManager';
 import { StateInput } from '../classes/InputManager';
+import { InputWindow } from '../classes/InputWindow';
+import { InputLabel } from '../classes/InputLabel';
+import { InputGuideline } from '../classes/InputGuideline';
 
 export default class DiagramScene extends Phaser.Scene {
   validArea!: Phaser.GameObjects.Rectangle;
@@ -10,6 +13,7 @@ export default class DiagramScene extends Phaser.Scene {
   private inputWindowScene?: InputWindowScene;
   private stateCircles: StateCircle[] = [];
   private startStateCircle!: StateCircle;
+  private inputLabels: InputLabel[] = [];
 
   constructor() {
     super('DiagramScene');
@@ -116,9 +120,15 @@ export default class DiagramScene extends Phaser.Scene {
     this.stateCircles.push(newStateCircle); // stateCircles 배열에 추가
 
     // Add corresponding InputLabel
-    if (this.inputWindowScene) {
-      this.inputWindowScene.addLabels();
-    }
+    // if (this.inputWindowScene) {
+    //   this.inputWindowScene.addLabels();
+    // }
+    this.addLabels();
+
+    // StateCirle 객체에 InputWindow 객체 추가
+    const inputWindow = new InputWindow(this, 0, 0);
+
+    newStateCircle.setInputWindow(inputWindow);
 
     return newStateCircle;
   }
@@ -161,4 +171,30 @@ export default class DiagramScene extends Phaser.Scene {
   get getStateCircles(): StateCircle[] {
     return this.stateCircles;
   }
+
+  /** InputWindow Label */
+  // InputLabel 그래픽 추가
+  addLabels = () => {
+    // Start Coordinate - x: 550, y: 360
+    let startX = 550;
+    const y = 360;
+    const gap = 95;
+
+    // Update 시, 기존의 Array 초기화
+    this.inputLabels = [];
+
+    this.getStateCircles.forEach((state) => {
+      const label = new InputLabel(
+        this,
+        state.id,
+        startX,
+        y,
+        state.name,
+        state.isSelected
+      );
+      this.inputLabels.push(label);
+      this.add.existing(label);
+      startX += gap;
+    });
+  };
 }

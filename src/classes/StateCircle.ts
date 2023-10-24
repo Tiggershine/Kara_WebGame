@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import InputManager, { StateInput } from './InputManager';
 import DiagramScene from '../scenes/DiagramScene';
 import InputWindowScene from '../scenes/InputWindowScene';
+import { InputWindow } from './InputWindow';
 
 interface StateCircleType {
   id: number;
@@ -24,9 +25,10 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     edge: Phaser.GameObjects.Graphics;
   }[] = [];
   inputManager: InputManager = new InputManager();
-  // InputWindowScene?: InputWindowScene;
+  inputWindowScene?: InputWindowScene;
   // DiagramScene?: DiagramScene;
-
+  // public inputWindowSceneKey: string;
+  private inputWindow?: InputWindow | undefined;
   constructor(
     scene: Phaser.Scene,
     x: number,
@@ -41,6 +43,12 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.name = name;
     this.stateInput = stateInput;
     this.isSelected = true;
+
+    // // Generate a unique key for this InputWindowScene
+    // this.inputWindowSceneKey = `InputWindowScene${this.getId}`;
+
+    // // Add a new InputWindowScene instance for this StateCircle
+    // scene.scene.add(this.inputWindowSceneKey, InputWindowScene, false); // The false flag means the scene is not started immediately
 
     // Create StateCircle Object
     this.circle = new Phaser.GameObjects.Arc(
@@ -117,10 +125,30 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
   select = (): void => {
     this.setIsSelected(true);
+
+    if (this.inputWindow) {
+      this.inputWindow.setInputWindowActive(true);
+      console.log(
+        this.getId,
+        'Visible true',
+        this.inputWindow.getInputwindowActive()
+      );
+      this.inputWindow.setVisible(true); // Show the InputWindow
+    }
   };
 
   deselect = (): void => {
     this.setIsSelected(false);
+
+    if (this.inputWindow) {
+      this.inputWindow.setInputWindowActive(false);
+      console.log(
+        this.getId,
+        'Visible false',
+        this.inputWindow.getInputwindowActive()
+      );
+      this.inputWindow.setVisible(false); // Hide the InputWindow
+    }
   };
 
   setIsSelected(selected: boolean): void {
@@ -131,11 +159,9 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
   // Call function in InputWindowScene to render InputLabels
   setLabel = (): void => {
-    const inputWindowScene = this.scene.scene.get(
-      'InputWindowScene'
-    ) as InputWindowScene;
+    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
 
-    inputWindowScene.addLabels();
+    diagramScene.addLabels();
   };
 
   get getId(): number {
@@ -171,7 +197,16 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.label.text = newName;
   };
 
-  // Update the edge between two state circles
+  /** InputWindow */
+  setInputWindow(inputWindow: InputWindow): void {
+    this.inputWindow = inputWindow;
+  }
+
+  getInputWindow(): InputWindow | undefined {
+    return this.inputWindow;
+  }
+
+  /** Edge */
   updateEdges = (): void => {
     for (const connection of this.connectedCircles) {
       const targetCircle = connection.targetCircle;
