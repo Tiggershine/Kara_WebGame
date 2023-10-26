@@ -11,9 +11,9 @@ export default class DiagramScene extends Phaser.Scene {
   validArea!: Phaser.GameObjects.Rectangle;
   inputManager: InputManager = new InputManager();
   private inputWindowScene?: InputWindowScene;
-  private stateCircles: StateCircle[] = [];
-  private startStateCircle!: StateCircle;
+  private stateCircles: StateCircle[] = []; // 등록된 StateCircle 모음 Array
   private inputLabels: InputLabel[] = [];
+  private startStateCircle!: StateCircle;
 
   constructor() {
     super('DiagramScene');
@@ -96,6 +96,15 @@ export default class DiagramScene extends Phaser.Scene {
     });
   }
 
+  ///////** METHODS*////////////////////////////////////////////////////////////////////////////////////
+
+  // stateCircles array 관련 함수
+  // StateCircle 중 Select된 객체 알려줌
+  getSelectedCircle = (): StateCircle | undefined => {
+    return this.stateCircles.find((circle) => circle.isSelected);
+  };
+
+  // StateCircle 객체 관련 함수
   createStateCircle(x: number, y: number): StateCircle {
     const stateId = this.stateCircles.length + 1;
     const stateName = 'State ' + Number(this.stateCircles.length + 1);

@@ -4,10 +4,12 @@ import {
   DropdownOption,
   SensorType,
 } from '../classes/DropdownMenu';
+import { StateInput, SensorCheck } from './InputManager';
 import { InputGuideline } from '../classes/InputGuideline';
 import ControlButton, { ButtonType } from './ControlButton';
 import DiagramScene from '../scenes/DiagramScene';
 import StateCircle from './StateCircle';
+import { NextStateButton } from './NextStateButton';
 
 /** DropdownMenu Options */
 const options: DropdownOption[] = [
@@ -148,6 +150,9 @@ const inputCoordinates = [
   { key: 'dummyButton_13', x: 686, y: 490 },
   { key: 'dummyButton_14', x: 736, y: 490 },
 ];
+
+const nextStateButtonOptions = ['Start', 'State 1', 'State 2'];
+
 /** InputGuideline Coordinate */
 const guidlinePositions = [
   { x: 800, y: 490 },
@@ -169,6 +174,12 @@ export class InputWindow extends Phaser.GameObjects.Container {
   private dummyButton_13!: Phaser.GameObjects.Image;
   private dummyButton_14!: Phaser.GameObjects.Image;
   [key: string]: any;
+
+  private tempStateInputs: StateInput[] = Array(5).fill({
+    sensorChecks: [],
+    move: [],
+    nextState: 0,
+  });
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
@@ -256,13 +267,28 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
     scene.add.existing(this);
 
-    this.addDummyButtons();
+    // this.addDummyButtons();
     this.addControlButtons();
-    this.addDropdownButton(586, 432, options);
+    this.addDropdownButton(586, 432, 'dropdownButton', options);
+
+    this.addNextStateButton(
+      1000,
+      553,
+      'nextStateButton2',
+      'nextStateButton',
+      nextStateButtonOptions
+    );
+    this.addNextStateButton(
+      1000,
+      488,
+      'nextStateButton2',
+      'nextStateButton',
+      nextStateButtonOptions
+    );
   }
 
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-  /** METHODS */
+  ///////** METHODS *//////////////////////////////////////////////////////////////////////////////////////////////////////
+
   getInputwindowActive = (): boolean => {
     return this.isActive;
   };
@@ -289,21 +315,21 @@ export class InputWindow extends Phaser.GameObjects.Container {
   };
 
   /** Dropdown Button */
-  // Used to add dropdown button
+  // Used to add dropdown button into Scene
   addDropdownButton = (
     x: number,
     y: number,
+    texture: string,
     options: DropdownOption[]
   ): DropdownMenu => {
     const dropdownButton = new DropdownMenu(
       this.scene,
       x,
       y,
-      'dropdownButton',
+      texture,
       options,
       this
     );
-    // dropdownButton.setDepth(2);
     this.add(dropdownButton);
     this.dropdownButtons.push(dropdownButton);
     dropdownButton.on(
@@ -317,13 +343,48 @@ export class InputWindow extends Phaser.GameObjects.Container {
     return dropdownButton;
   };
 
+  addNextStateButton = (
+    x: number,
+    y: number,
+    buttonTexture: string,
+    backgroundTexture: string,
+    options: string[]
+  ): NextStateButton => {
+    const nextStateButton = new NextStateButton(
+      this.scene,
+      x,
+      y,
+      buttonTexture,
+      backgroundTexture,
+      options,
+      this
+    );
+    this.add(nextStateButton);
+    // this.dropdownButtons.push(dropdownButton);
+    nextStateButton.on(
+      'pointerdown',
+      () => {
+        nextStateButton.toggleMenu();
+      },
+      this
+    );
+
+    return nextStateButton;
+  };
+
+  // Used to create addtional dropdown button, when a option selected
   handleDropdownClick(clickedDropdown: DropdownMenu) {
     console.log('handleDropdownClick function executed');
     if (this.currentDropdownCount < 3 && this.getInputwindowActive()) {
       let newX = clickedDropdown.getX + 50;
       let newY = clickedDropdown.getY;
 
-      const newDropdownButton = this.addDropdownButton(newX, newY, options);
+      const newDropdownButton = this.addDropdownButton(
+        newX,
+        newY,
+        'dropdownButton',
+        options
+      );
 
       this.dropdownButtons.push(newDropdownButton);
       console.log('New Dropdown Button:', newDropdownButton); // Log the new DropdownMenu instance
@@ -335,6 +396,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
   }
 
   /** Control Buttons */
+  // Add control button which are draggable into ContorlButtonContainer
   addControlButtons = (): void => {
     buttonConfigurations.forEach((config) => {
       const button = this.createControlButton(
@@ -355,41 +417,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
     });
   };
 
-  // Dummy Buttons for Drag Input
-  addDummyButtons = (): void => {
-    // this.scene.add.image(586, 490, 'yesNoButton');
-    // dummyButtonConfigurations.forEach((config) => {
-    //   // const dummyButton = this.createControlButton(
-    //   //   config.x,
-    //   //   config.y,
-    //   //   config.texture,
-    //   //   config.type
-    //   // );
-    //   // dummyButton.name = config.name;
-    //   const dummyButton = this.scene.add.image(
-    //     config.x,
-    //     config.y,
-    //     config.texture
-    //   );
-    //   dummyButton.setDepth(0);
-    //   // dummyButton.setVisible(false);
-    //   this.scene.add.existing(dummyButton);
-    //   // TODO: DELETE TEST CODE
-    //   console.log('더미 코드 추가됨', dummyButton.depth);
-    // });
-  };
-
-  // onDummyButtons = () => {
-  //   this.dummyButtons.forEach((dummyButton) => {
-  //     this.scene.tweens.add({
-  //       targets: dummyButton,
-  //       duration: 300,
-  //       ease: 'Sine.easeOut',
-  //       onStart: () => dummyButton.setVisible(true),
-  //     });
-  //   });
-  // };
-
+  // Add control button object
   createControlButton = (
     x: number,
     y: number,
@@ -401,7 +429,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
     return newControlButton;
   };
 
-  /** Function set ControllButton Draggable */
+  // Set ControllButton Draggable
   setButtonDraggable = (
     button: ControlButton,
     selectedButtonImage: string,

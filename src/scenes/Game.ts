@@ -39,6 +39,9 @@ export default class Game extends Phaser.Scene {
       // Images for Label
       moveLabel: 'assets/LabelMove.png',
       nextStateLabel: 'assets/LabelNextState.png',
+      // Image for NextButton
+      nextStateButton: 'assets/NextStateButton.png',
+      nextStateButton2: 'assets/NextStateButton2.png',
       // Image for Inputguideline
       inputGuideline: 'assets/InputGuideline.png',
     };

@@ -26,8 +26,6 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   }[] = [];
   inputManager: InputManager = new InputManager();
   inputWindowScene?: InputWindowScene;
-  // DiagramScene?: DiagramScene;
-  // public inputWindowSceneKey: string;
   private inputWindow?: InputWindow | undefined;
   constructor(
     scene: Phaser.Scene,
@@ -43,12 +41,6 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.name = name;
     this.stateInput = stateInput;
     this.isSelected = true;
-
-    // // Generate a unique key for this InputWindowScene
-    // this.inputWindowSceneKey = `InputWindowScene${this.getId}`;
-
-    // // Add a new InputWindowScene instance for this StateCircle
-    // scene.scene.add(this.inputWindowSceneKey, InputWindowScene, false); // The false flag means the scene is not started immediately
 
     // Create StateCircle Object
     this.circle = new Phaser.GameObjects.Arc(
@@ -128,6 +120,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
     if (this.inputWindow) {
       this.inputWindow.setInputWindowActive(true);
+      // TODO: DELETE TEST CODE
       console.log(
         this.getId,
         'Visible true',
@@ -142,6 +135,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
     if (this.inputWindow) {
       this.inputWindow.setInputWindowActive(false);
+      // TODO: DELETE TEST CODE
       console.log(
         this.getId,
         'Visible false',
