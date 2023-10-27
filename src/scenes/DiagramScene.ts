@@ -39,6 +39,8 @@ export default class DiagramScene extends Phaser.Scene {
 
     this.createStartStateCircle();
     this.createButtonLabel(625, 186 + 25, 'Start');
+    // TODO: DELETE TEST CODE
+    // this.testCreateEdge();
 
     // Valid area allows state circle on that
     this.validArea = this.add.rectangle(800, 215, 500 - 30, 250 - 30);
@@ -168,13 +170,13 @@ export default class DiagramScene extends Phaser.Scene {
     return buttonLabel;
   };
 
-  connectCircles = (circleA: StateCircle, circleB: StateCircle): void => {
-    const edge = this.add.graphics();
-    circleA.connectedCircles.push({ targetCircle: circleB, edge: edge });
-    circleB.connectedCircles.push({ targetCircle: circleA, edge: edge });
-    circleA.updateEdges();
-    circleB.updateEdges();
-  };
+  // connectCircles = (circleA: StateCircle, circleB: StateCircle): void => {
+  //   const edge = this.add.graphics();
+  //   circleA.connectedCircles.push({ targetCircle: circleB, edge: edge });
+  //   circleB.connectedCircles.push({ targetCircle: circleA, edge: edge });
+  //   circleA.updateEdges();
+  //   circleB.updateEdges();
+  // };
 
   // Getter for StateCircles (Array contains generated states)
   get getStateCircles(): StateCircle[] {
@@ -206,4 +208,103 @@ export default class DiagramScene extends Phaser.Scene {
       startX += gap;
     });
   };
+
+  /** Edge */
+  createEdge(circleA: StateCircle, circleB: StateCircle): void {
+    const edge = this.add.graphics();
+    edge.lineStyle(2, 0x000000).setDepth(10); // Set line style
+
+    if (circleA.id === circleB.id) {
+      // Create a self-edge
+      // Create a self-edge
+      const centerX = circleA.x;
+      const centerY = circleA.y;
+      const radius = circleA.circle.radius - 5; // Adjust as needed
+      const startAngle = -Math.PI / 4;
+      const endAngle = Math.PI / 4;
+
+      // Create a circular path for self edge
+      const path = new Phaser.Curves.Ellipse(
+        centerX,
+        centerY - radius,
+        radius,
+        radius
+      );
+      const points = path.getPoints(64); // 64 is the resolution, adjust as needed
+
+      edge.beginPath();
+      points.forEach((point, index) => {
+        if (index === 0) {
+          edge.moveTo(point.x, point.y);
+        } else {
+          edge.lineTo(point.x, point.y);
+        }
+      });
+
+      // Draw arrowhead at the end of the curve
+      const arrowHeadLength = 10; // Adjust as needed
+      const arrowHeadWidth = 5; // Adjust as needed
+      const angle = endAngle;
+      const endX = centerX + radius * Math.cos(angle);
+      const endY = centerY + radius * Math.sin(angle);
+      edge.moveTo(
+        endX - arrowHeadLength * Math.cos(angle - Math.PI / 6),
+        endY - arrowHeadLength * Math.sin(angle - Math.PI / 6)
+      );
+      edge.lineTo(endX, endY);
+      edge.lineTo(
+        endX - arrowHeadLength * Math.cos(angle + Math.PI / 6),
+        endY - arrowHeadLength * Math.sin(angle + Math.PI / 6)
+      );
+
+      edge.strokePath();
+    } else {
+      // Create an edge between different circles
+      const angle = Math.atan2(circleB.y - circleA.y, circleB.x - circleA.x);
+
+      const radius = circleA.circle.radius;
+
+      const startX = circleA.x + radius * Math.cos(angle);
+      const startY = circleA.y + radius * Math.sin(angle);
+
+      const endX = circleB.x - radius * Math.cos(angle);
+      const endY = circleB.y - radius * Math.sin(angle);
+
+      edge.moveTo(startX, startY);
+      edge.lineTo(endX, endY);
+
+      // Draw arrowhead
+      const arrowHeadLength = 10; // Adjust as needed
+      const arrowHeadWidth = 5; // Adjust as needed
+      edge.moveTo(
+        endX - arrowHeadLength * Math.cos(angle - Math.PI / 6),
+        endY - arrowHeadLength * Math.sin(angle - Math.PI / 6)
+      );
+      edge.lineTo(endX, endY);
+      edge.lineTo(
+        endX - arrowHeadLength * Math.cos(angle + Math.PI / 6),
+        endY - arrowHeadLength * Math.sin(angle + Math.PI / 6)
+      );
+
+      edge.strokePath(); // Draw the line and arrowhead
+
+      // Store the edge in both circles' edges array for updating later
+      circleA.edges.push(edge);
+      circleB.edges.push(edge);
+    }
+  }
+
+  testCreateEdge() {
+    // Create two StateCircle objects
+    const circleA = this.createStateCircle(700, 150);
+    const circleB = this.createStateCircle(800, 250);
+    circleA.setDepth(10);
+    circleB.setDepth(10);
+
+    // Call createEdge method to draw an edge between circleA and circleB
+    this.createEdge(circleA, circleB);
+
+    // For self-edge test
+    this.createEdge(circleA, circleA);
+  }
 }

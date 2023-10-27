@@ -144,11 +144,27 @@ const dummyButtonConfigurations = [
   },
 ];
 
-const inputCoordinates = [
-  { key: 'dummyButton_11', x: 586, y: 490 },
-  { key: 'dummyButton_12', x: 636, y: 490 },
-  { key: 'dummyButton_13', x: 686, y: 490 },
-  { key: 'dummyButton_14', x: 736, y: 490 },
+const conditionInputPoints = [
+  { key: 'dummyBtn_11', x: 580, y: 490 },
+  { key: 'dummyBtn_12', x: 630, y: 490 },
+  { key: 'dummyBtn_13', x: 680, y: 490 },
+  { key: 'dummyBtn_14', x: 730, y: 490 },
+  { key: 'dummyBtn_21', x: 580, y: 555 },
+  { key: 'dummyBtn_22', x: 630, y: 555 },
+  { key: 'dummyBtn_23', x: 680, y: 555 },
+  { key: 'dummyBtn_24', x: 730, y: 555 },
+  { key: 'dummyBtn_31', x: 580, y: 620 },
+  { key: 'dummyBtn_32', x: 630, y: 620 },
+  { key: 'dummyBtn_33', x: 680, y: 620 },
+  { key: 'dummyBtn_34', x: 730, y: 620 },
+  { key: 'dummyBtn_41', x: 580, y: 685 },
+  { key: 'dummyBtn_42', x: 630, y: 685 },
+  { key: 'dummyBtn_43', x: 680, y: 685 },
+  { key: 'dummyBtn_44', x: 730, y: 685 },
+  { key: 'dummyBtn_51', x: 580, y: 750 },
+  { key: 'dummyBtn_52', x: 630, y: 750 },
+  { key: 'dummyBtn_53', x: 680, y: 750 },
+  { key: 'dummyBtn_54', x: 730, y: 750 },
 ];
 
 const nextStateButtonOptions = ['Start', 'State 1', 'State 2'];
@@ -169,12 +185,13 @@ export class InputWindow extends Phaser.GameObjects.Container {
   // private inputLabels: InputLabel[] = [];
   private inputGuideline!: InputGuideline;
   private isActive: boolean = false;
-  private dummyButton_11!: Phaser.GameObjects.Image;
-  private dummyButton_12!: Phaser.GameObjects.Image;
-  private dummyButton_13!: Phaser.GameObjects.Image;
-  private dummyButton_14!: Phaser.GameObjects.Image;
-  [key: string]: any;
-
+  private dummyButtons: { [key: string]: Phaser.GameObjects.Image } = {};
+  // private dummyBtn_11!: Phaser.GameObjects.Image;
+  // private dummyBtn_12!: Phaser.GameObjects.Image;
+  // private dummyBtn_13!: Phaser.GameObjects.Image;
+  // private dummyBtn_14!: Phaser.GameObjects.Image;
+  // [key: string]: any;
+  private tempSensorInputs: SensorType[] = []; // Store selected sensor button
   private tempStateInputs: StateInput[] = Array(5).fill({
     sensorChecks: [],
     move: [],
@@ -231,17 +248,24 @@ export class InputWindow extends Phaser.GameObjects.Container {
     dividerGraphics.setDepth(1);
     // Set Divider for Input container (210, 400)
     dividerGraphics.lineBetween(559, 457, 1041, 457);
-    dividerGraphics.lineBetween(775, 408, 775, 774);
-    dividerGraphics.lineBetween(950, 408, 950, 774);
+    dividerGraphics.lineBetween(760, 408, 760, 774);
+    dividerGraphics.lineBetween(960, 408, 960, 774);
     // Set Divider for Controller container
     dividerGraphics.lineBetween(230, 700, 510, 700);
 
     // Label for Inputwindow
     const moveLabel = this.scene.add.image(862.5, 433, 'moveLabel');
-    const nextStateLabel = this.scene.add.image(995, 433, 'nextStateLabel');
+    const nextStateLabel = this.scene.add.image(1000, 433, 'nextStateLabel');
+
+    // const dummyButton_1 = this.scene.add.image(630, 490, 'yesNoButton');
+    // const dummyButton_2 = this.scene.add.image(680, 490, 'yesNoButton');
+    // const dummyButton_3 = this.scene.add.image(730, 490, 'yesNoButton');
 
     // this.dummyButton_11 = this.scene.add.image(586, 490, 'yesNoButton');
-    // const dummyButton_12 = this.scene.add.image(636, 490, 'yesNoButton');
+    // const dummyButton_12 = this.scene.add.image(785, 490, 'yesNoButton');
+    // const dummyButton_13 = this.scene.add.image(835, 490, 'yesNoButton');
+    // const dummyButton_14 = this.scene.add.image(885, 490, 'yesNoButton');
+    // const dummyButton_15 = this.scene.add.image(935, 490, 'yesNoButton');
     // this.dummyButton_11.setVisible(false);
 
     this.inputGuideline = this.addGuildeline();
@@ -252,34 +276,42 @@ export class InputWindow extends Phaser.GameObjects.Container {
     this.add(moveLabel);
     this.add(nextStateLabel);
 
-    inputCoordinates.forEach((coordinate) => {
-      this[coordinate.key] = this.scene.add.image(
-        coordinate.x,
-        coordinate.y,
+    // Input Button 자리 미리 렌더링
+    conditionInputPoints.forEach((point) => {
+      this.dummyButtons[point.key] = this.scene.add.image(
+        point.x,
+        point.y,
         'yesNoButton'
       );
 
-      this[coordinate.key].setVisible(false);
-      this.add(this[coordinate.key]);
+      this.dummyButtons[point.key].setVisible(false);
+      this.add(this.dummyButtons[point.key]);
     });
     // this.add(this.dummyButton_11);
-    // this.add(thidummyButton_12);
+    // this.add(dummyButton_12);
+    // this.add(dummyButton_13);
+    // this.add(dummyButton_14);
+    // this.add(dummyButton_15);
+
+    // this.add(dummyButton_1);
+    // this.add(dummyButton_2);
+    // this.add(dummyButton_3);
 
     scene.add.existing(this);
 
     // this.addDummyButtons();
     this.addControlButtons();
-    this.addDropdownButton(586, 432, 'dropdownButton', options);
+    this.createSensorDropdownButton(580, 432, 'dropdownButton', options);
 
     this.addNextStateButton(
-      1000,
+      1005,
       553,
       'nextStateButton2',
       'nextStateButton',
       nextStateButtonOptions
     );
     this.addNextStateButton(
-      1000,
+      1005,
       488,
       'nextStateButton2',
       'nextStateButton',
@@ -288,6 +320,26 @@ export class InputWindow extends Phaser.GameObjects.Container {
   }
 
   ///////** METHODS *//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // StateInput 입력을 위한 함수들
+
+  // Sensor update(Dropdown option 선택)
+  updateTempSensorInputs = (sensorType: SensorType): void => {
+    const index = this.currentDropdownCount;
+
+    if (index >= 0 && index < 5) {
+      this.tempSensorInputs[index] = sensorType;
+
+      console.log(
+        'index',
+        index,
+        '저장된 SesorType: ',
+        this.tempSensorInputs[index]
+      );
+    } else {
+      console.log('Index out of bounds: ', index);
+    }
+  };
 
   getInputwindowActive = (): boolean => {
     return this.isActive;
@@ -316,7 +368,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
   /** Dropdown Button */
   // Used to add dropdown button into Scene
-  addDropdownButton = (
+  createSensorDropdownButton = (
     x: number,
     y: number,
     texture: string,
@@ -342,6 +394,28 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
     return dropdownButton;
   };
+
+  // Used to create addtional dropdown button, when a option selected
+  addSensorDropdownButton(clickedDropdown: DropdownMenu) {
+    // TODO: DELETE TEST CODE
+    // console.log('handleDropdownClick function executed');
+    if (this.currentDropdownCount < 3 && this.getInputwindowActive()) {
+      let newX = clickedDropdown.getX + 50;
+      let newY = clickedDropdown.getY;
+
+      const newDropdownButton = this.createSensorDropdownButton(
+        newX,
+        newY,
+        'dropdownButton',
+        options
+      );
+
+      this.dropdownButtons.push(newDropdownButton);
+      this.currentDropdownCount++; // Increment the count here
+
+      return;
+    }
+  }
 
   addNextStateButton = (
     x: number,
@@ -372,29 +446,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
     return nextStateButton;
   };
 
-  // Used to create addtional dropdown button, when a option selected
-  handleDropdownClick(clickedDropdown: DropdownMenu) {
-    console.log('handleDropdownClick function executed');
-    if (this.currentDropdownCount < 3 && this.getInputwindowActive()) {
-      let newX = clickedDropdown.getX + 50;
-      let newY = clickedDropdown.getY;
-
-      const newDropdownButton = this.addDropdownButton(
-        newX,
-        newY,
-        'dropdownButton',
-        options
-      );
-
-      this.dropdownButtons.push(newDropdownButton);
-      console.log('New Dropdown Button:', newDropdownButton); // Log the new DropdownMenu instance
-      console.log('Dropdown Buttons Array:', this.dropdownButtons); //
-      this.currentDropdownCount++; // Increment the count here
-
-      return;
-    }
-  }
-
   /** Control Buttons */
   // Add control button which are draggable into ContorlButtonContainer
   addControlButtons = (): void => {
@@ -412,7 +463,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
         this.inputGuideline
       );
 
-      // console.log(button);
       this.scene.add.existing(button);
     });
   };
@@ -436,10 +486,9 @@ export class InputWindow extends Phaser.GameObjects.Container {
     guideline: InputGuideline
   ): void => {
     button.setInteractive();
-
     this.scene.input.setDraggable(button);
 
-    let newButton: ControlButton | null = null;
+    let newButton: ControlButton;
 
     button.on('dragstart', (pointer: Phaser.Input.Pointer) => {
       newButton = this.createControlButton(
@@ -449,7 +498,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
         button.getType
       );
       if (newButton) {
-        newButton!.setSelected = true;
+        newButton.setSelected = true;
       }
     });
 
@@ -465,62 +514,105 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
     button.on('dragend', (pointer: Phaser.Input.Pointer) => {
       if (newButton) {
-        const distance = Phaser.Math.Distance.Between(
-          newButton.x,
-          newButton.y,
-          586,
-          490
-        );
+        conditionInputPoints.forEach((point) => {
+          const distance = Phaser.Math.Distance.Between(
+            newButton.x,
+            newButton?.y,
+            point.x,
+            point.y
+          );
 
-        if (distance <= 40) {
-          console.log('40 이하');
-          newButton.setSelected = false;
-          newButton.destroy();
+          if (distance <= 30) {
+            newButton.destroy();
 
-          if (newButton.getType === ButtonType.YesButton) {
-            console.log('타임은 YES');
-            this.changeButtonImage(this.dummyButton_11, 'yesButton');
-          } else if (newButton.getType === ButtonType.NoButton) {
-            console.log('타임은 NO');
-            this.changeButtonImage(this.dummyButton_11, 'noButton');
-          } else if (newButton.getType === ButtonType.YesNoButton) {
-            console.log('타임은 YESNO');
-            this.changeButtonImage(this.dummyButton_11, 'yesNoButton');
+            const sensorIndex = this.tempSensorInputs.length;
+            const targetKeyIndex = point.key.split('_')[1][1];
+
+            if (sensorIndex !== parseInt(targetKeyIndex)) {
+              return;
+            }
+            const pointKey: string = point.key;
+            const buttonType: ButtonType = newButton.getType;
+            this.changeButtonImage(this.dummyButtons[pointKey], buttonType);
+          } else {
+            newButton.destroy();
           }
-
-          // const originButtonImage = newButton.texture.key.slice(0, -8);
-          // newButton.setTexture(`${originButtonImage}`);
-
-          // const selectedStateCircle = this.findSelectedStateCircle();
-
-          // if (selectedStateCircle) {
-          //   const inputWindow = selectedStateCircle.getInputWindow();
-          //   if (inputWindow) {
-          //     inputWindow.addControlButton(newButton, 586, 490); // Add the new button to the InputWindow of the selected StateCircle
-          //   }
-          // }
-
-          // newButton.setPosition(586, 490);
-        } else {
-          newButton.destroy();
-        }
+        });
       }
 
       guideline.setAllGuidelinesVisible(false);
     });
   };
 
-  // Button을 드래그하여 올렸을 때 버튼 이미지를 등록하는 함수
-  registerConditionBtn = (inputBtn: ControlButton) => {};
-
   // Button Image 변경하는 함수
   changeButtonImage = (
     buttonImg: Phaser.GameObjects.Image,
-    replaceImgTexture: string
+    buttonType: ButtonType
   ): void => {
-    buttonImg.setTexture(replaceImgTexture);
+    let replaceImgTexture: string;
+
+    switch (buttonType) {
+      case ButtonType.YesButton:
+        replaceImgTexture = 'yesButton';
+        buttonImg.setTexture(replaceImgTexture);
+        console.log('change to yesButton');
+        break;
+      case ButtonType.NoButton:
+        replaceImgTexture = 'noButton';
+        buttonImg.setTexture(replaceImgTexture);
+        console.log('change to noButton');
+        break;
+      case ButtonType.YesNoButton:
+        replaceImgTexture = 'yesNoButton';
+        buttonImg.setTexture(replaceImgTexture);
+        console.log('change to yesNoButton');
+        break;
+      default:
+        return;
+    }
+
     buttonImg.setVisible(true);
   };
+
+  // Condition Button 입력 - Sensor와 함께 SensorCheck: {sensor: SensorType; condition: ButtonType;} 처리
+  updateConditionButtonInputs = (
+    sensorOrder: number,
+    buttonType: ButtonType
+  ): void => {
+    switch (sensorOrder) {
+      case 1: {
+        let sensor = this.tempSensorInputs[0];
+        let sensorCheck = { sensor: sensor, condition: buttonType };
+        this.tempStateInputs[0].sensorChecks.push(sensorCheck);
+        console.log(this.tempStateInputs[0]);
+        break;
+      }
+      case 2: {
+        let sensor = this.tempSensorInputs[1];
+        let sensorCheck = { sensor: sensor, condition: buttonType };
+        this.tempStateInputs[0].sensorChecks.push(sensorCheck);
+        console.log(this.tempStateInputs[0]);
+        break;
+      }
+      case 3: {
+        let sensor = this.tempSensorInputs[2];
+        let sensorCheck = { sensor: sensor, condition: buttonType };
+        this.tempStateInputs[0].sensorChecks.push(sensorCheck);
+        console.log(this.tempStateInputs[0]);
+        break;
+      }
+      case 4: {
+        let sensor = this.tempSensorInputs[3];
+        let sensorCheck = { sensor: sensor, condition: buttonType };
+        this.tempStateInputs[0].sensorChecks.push(sensorCheck);
+        console.log(this.tempStateInputs[0]);
+        break;
+      }
+    }
+  };
+
+  // Button을 드래그하여 올렸을 때 버튼 이미지를 등록하는 함수
+  registerConditionBtn = (inputBtn: ControlButton) => {};
 
   /** Control Button */
   addControlButton(button: ControlButton, x: number, y: number): void {

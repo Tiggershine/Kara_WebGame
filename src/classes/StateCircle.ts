@@ -20,13 +20,11 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   name: string;
   isSelected: boolean = false;
   stateInput: StateInput[] = [];
-  connectedCircles: {
-    targetCircle: StateCircle;
-    edge: Phaser.GameObjects.Graphics;
-  }[] = [];
   inputManager: InputManager = new InputManager();
   inputWindowScene?: InputWindowScene;
+  edges: Phaser.GameObjects.Graphics[] = [];
   private inputWindow?: InputWindow | undefined;
+
   constructor(
     scene: Phaser.Scene,
     x: number,
@@ -47,7 +45,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
       scene,
       0,
       0,
-      25,
+      30,
       0,
       360,
       false,
@@ -202,64 +200,89 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
   /** Edge */
   updateEdges = (): void => {
-    for (const connection of this.connectedCircles) {
-      const targetCircle = connection.targetCircle;
-      const edge = connection.edge;
-
+    for (const edge of this.edges) {
       edge.clear();
-
-      const startX = this.x;
-      const startY = this.y;
-      const endX = targetCircle.x;
-      const endY = targetCircle.y;
-
-      // 컨트롤 포인트 계산 (곡선의 커브를 조절하기 위한 지점)
-      const cpX = (startX + endX) / 2;
-      const cpY = startY - 50; // -50은 곡선의 높이를 조절합니다. 필요에 따라 조절 가능
-
-      const startVec = new Phaser.Math.Vector2(startX, startY);
-      const cpVec = new Phaser.Math.Vector2(cpX, cpY);
-      const endVec = new Phaser.Math.Vector2(endX, endY);
-
-      const curve = new Phaser.Curves.QuadraticBezier(startVec, cpVec, endVec);
-      const points = curve.getPoints(64); // 64는 곡선의 해상도입니다. 필요에 따라 조절 가능
-
-      edge.lineStyle(2, 0x000000);
-      edge.beginPath();
-      edge.moveTo(points[0].x, points[0].y);
-
-      for (let i = 1; i < points.length; i++) {
-        edge.lineTo(points[i].x, points[i].y);
+      const otherCircle = this.getOtherCircleConnectedByEdge(edge);
+      if (otherCircle) {
+        const diagramScene = this.scene.scene.get(
+          'DiagramScene'
+        ) as DiagramScene;
+        diagramScene.createEdge(this, otherCircle);
       }
-
-      edge.strokePath();
-
-      // TODO: 화살표 그리기
-      const arrowSize = 10; // 화살표 크기
-      const endDirection = new Phaser.Math.Vector2(
-        endX - cpX,
-        endY - cpY
-      ).normalize();
-      const arrowPoint1 = new Phaser.Math.Vector2(
-        endX - endDirection.x * arrowSize,
-        endY - endDirection.y * arrowSize
-      );
-      const arrowPoint2 = new Phaser.Math.Vector2()
-        .setToPolar(endDirection.angle() + Math.PI / 8, arrowSize)
-        .add(endVec);
-      const arrowPoint3 = new Phaser.Math.Vector2()
-        .setToPolar(endDirection.angle() - Math.PI / 8, arrowSize)
-        .add(endVec);
-
-      edge.lineStyle(2, 0x000000);
-      edge.beginPath();
-      edge.moveTo(arrowPoint1.x, arrowPoint1.y);
-      edge.lineTo(arrowPoint2.x, arrowPoint2.y);
-      edge.lineTo(endX, endY);
-      edge.lineTo(arrowPoint3.x, arrowPoint3.y);
-      edge.lineTo(arrowPoint1.x, arrowPoint1.y);
-      edge.closePath();
-      edge.strokePath();
     }
   };
+
+  getOtherCircleConnectedByEdge(
+    edge: Phaser.GameObjects.Graphics
+  ): StateCircle | null {
+    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+    for (const circle of diagramScene.getStateCircles) {
+      if (circle !== this && circle.edges.includes(edge)) {
+        return circle;
+      }
+    }
+    return null;
+  }
+
+  // updateEdges = (): void => {
+  //   for (const connection of this.connectedCircles) {
+  //     const targetCircle = connection.targetCircle;
+  //     const edge = connection.edge;
+
+  //     edge.clear();
+
+  //     const startX = this.x;
+  //     const startY = this.y;
+  //     const endX = targetCircle.x;
+  //     const endY = targetCircle.y;
+
+  //     // 컨트롤 포인트 계산 (곡선의 커브를 조절하기 위한 지점)
+  //     const cpX = (startX + endX) / 2;
+  //     const cpY = startY - 50; // -50은 곡선의 높이를 조절합니다. 필요에 따라 조절 가능
+
+  //     const startVec = new Phaser.Math.Vector2(startX, startY);
+  //     const cpVec = new Phaser.Math.Vector2(cpX, cpY);
+  //     const endVec = new Phaser.Math.Vector2(endX, endY);
+
+  //     const curve = new Phaser.Curves.QuadraticBezier(startVec, cpVec, endVec);
+  //     const points = curve.getPoints(64); // 64는 곡선의 해상도입니다. 필요에 따라 조절 가능
+
+  //     edge.lineStyle(2, 0x000000);
+  //     edge.beginPath();
+  //     edge.moveTo(points[0].x, points[0].y);
+
+  //     for (let i = 1; i < points.length; i++) {
+  //       edge.lineTo(points[i].x, points[i].y);
+  //     }
+
+  //     edge.strokePath();
+
+  //     // TODO: 화살표 그리기
+  //     const arrowSize = 10; // 화살표 크기
+  //     const endDirection = new Phaser.Math.Vector2(
+  //       endX - cpX,
+  //       endY - cpY
+  //     ).normalize();
+  //     const arrowPoint1 = new Phaser.Math.Vector2(
+  //       endX - endDirection.x * arrowSize,
+  //       endY - endDirection.y * arrowSize
+  //     );
+  //     const arrowPoint2 = new Phaser.Math.Vector2()
+  //       .setToPolar(endDirection.angle() + Math.PI / 8, arrowSize)
+  //       .add(endVec);
+  //     const arrowPoint3 = new Phaser.Math.Vector2()
+  //       .setToPolar(endDirection.angle() - Math.PI / 8, arrowSize)
+  //       .add(endVec);
+
+  //     edge.lineStyle(2, 0x000000);
+  //     edge.beginPath();
+  //     edge.moveTo(arrowPoint1.x, arrowPoint1.y);
+  //     edge.lineTo(arrowPoint2.x, arrowPoint2.y);
+  //     edge.lineTo(endX, endY);
+  //     edge.lineTo(arrowPoint3.x, arrowPoint3.y);
+  //     edge.lineTo(arrowPoint1.x, arrowPoint1.y);
+  //     edge.closePath();
+  //     edge.strokePath();
+  //   }
+  // };
 }

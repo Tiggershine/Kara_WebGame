@@ -40,7 +40,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
 
     this.buttonContainer = this.scene.add.container(0, 0);
     const buttonRectangle = this.scene.add
-      .rectangle(0, 0, 80, 24, 0xfcf6f5)
+      .rectangle(0, 0, 70, 24, 0xfcf6f5)
       .setOrigin(0.5, 0.5)
       .setStrokeStyle(2, 1776669);
 
@@ -53,7 +53,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
     triangle.fillStyle(0x000000, 1); // Fill color of the triangle
     triangle.fillTriangle(0, 0, -7, 7, 7, 7).setAngle(180);
 
-    const buttonLabel = this.scene.add.text(-35, -7, options[0], {
+    const buttonLabel = this.scene.add.text(-25, -7, options[0], {
       fontSize: '14px',
       fontFamily: 'Roboto Flex',
       color: '#1B1C1D',
@@ -76,9 +76,9 @@ export class NextStateButton extends Phaser.GameObjects.Container {
     this.options.forEach((option: string, index) => {
       const optionContainer = this.scene.add.container(0, 0);
       const menuItemRectangle = this.scene.add
-        .rectangle(0, 0, 83, 26, 142140)
+        .rectangle(0, 0, 73, 26, 142140)
         .setOrigin(0.5, 0.5);
-      const menuItemText = this.scene.add.text(-35, -7, option, {
+      const menuItemText = this.scene.add.text(-25, -7, option, {
         fontSize: '14px',
         fontFamily: 'Roboto Flex',
         color: '#FCF6F5',

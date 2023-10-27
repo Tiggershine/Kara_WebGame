@@ -64,6 +64,9 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
           this.selectedOptionTexture = option.texture;
           this.selectedHightlight(menuItem, this.selectedOptionTexture);
           this.button.setTexture(this.selectedOptionTexture);
+          console.log('(DropdownMenu.ts) option: ', option);
+          // this.handleOptionSelection(option);
+
           this.closeMenu();
 
           // Check if the event handler has already been executed
@@ -71,10 +74,11 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
             !this.hasEventHandlerExecuted &&
             this.inputWindow?.getInputwindowActive()
           ) {
-            this.inputWindow?.handleDropdownClick(this);
-
             // Set the flag to true after executing the event handler
             this.hasEventHandlerExecuted = true;
+
+            this.inputWindow.updateTempSensorInputs(option.type);
+            this.inputWindow?.addSensorDropdownButton(this);
           }
         });
       this.menuItems.push(menuItem);
@@ -106,15 +110,15 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
           this.closeMenu();
 
           // Check if the event handler has already been executed
-          if (
-            !this.hasEventHandlerExecuted &&
-            this.inputWindow?.getInputwindowActive()
-          ) {
-            this.inputWindow?.handleDropdownClick(this);
+          // if (
+          //   !this.hasEventHandlerExecuted &&
+          //   this.inputWindow?.getInputwindowActive()
+          // ) {
+          //   this.inputWindow?.handleDropdownClick(this);
 
-            // Set the flag to true after executing the event handler
-            this.hasEventHandlerExecuted = true;
-          }
+          //   // Set the flag to true after executing the event handler
+          //   this.hasEventHandlerExecuted = true;
+          // }
         });
       this.menuItems.push(menuItem);
       this.add(menuItem);
@@ -162,6 +166,12 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
       });
     });
   };
+
+  // Dropdown의 option이 선택되면 Inputwindow의 임시 저장소에 SensorType 저장
+  private handleOptionSelection(option: DropdownOption): void {
+    this.inputWindow && this.inputWindow.updateTempSensorInputs(option.type);
+    return;
+  }
 
   /**
    * @description Close the dropdown menu, if munu is opened and user click the outside area of menu
