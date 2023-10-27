@@ -167,6 +167,29 @@ const conditionInputPoints = [
   { key: 'dummyBtn_54', x: 730, y: 750 },
 ];
 
+const moveInputPoints = [
+  { key: 'dummyBtn_15', x: 785, y: 490 },
+  { key: 'dummyBtn_16', x: 835, y: 490 },
+  { key: 'dummyBtn_17', x: 885, y: 490 },
+  { key: 'dummyBtn_18', x: 935, y: 490 },
+  { key: 'dummyBtn_25', x: 785, y: 555 },
+  { key: 'dummyBtn_26', x: 835, y: 555 },
+  { key: 'dummyBtn_27', x: 885, y: 555 },
+  { key: 'dummyBtn_28', x: 935, y: 555 },
+  { key: 'dummyBtn_35', x: 785, y: 620 },
+  { key: 'dummyBtn_36', x: 835, y: 620 },
+  { key: 'dummyBtn_37', x: 885, y: 620 },
+  { key: 'dummyBtn_38', x: 935, y: 620 },
+  { key: 'dummyBtn_45', x: 785, y: 685 },
+  { key: 'dummyBtn_46', x: 835, y: 685 },
+  { key: 'dummyBtn_47', x: 885, y: 685 },
+  { key: 'dummyBtn_48', x: 935, y: 685 },
+  { key: 'dummyBtn_55', x: 785, y: 750 },
+  { key: 'dummyBtn_56', x: 835, y: 750 },
+  { key: 'dummyBtn_57', x: 885, y: 750 },
+  { key: 'dummyBtn_58', x: 935, y: 750 },
+];
+
 const nextStateButtonOptions = ['Start', 'State 1', 'State 2'];
 
 /** InputGuideline Coordinate */
@@ -197,6 +220,11 @@ export class InputWindow extends Phaser.GameObjects.Container {
     move: [],
     nextState: 0,
   });
+  private registeredRow1: boolean = false;
+  private registeredRow2: boolean = false;
+  private registeredRow3: boolean = false;
+  private registeredRow4: boolean = false;
+  private registeredRow5: boolean = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
@@ -276,12 +304,23 @@ export class InputWindow extends Phaser.GameObjects.Container {
     this.add(moveLabel);
     this.add(nextStateLabel);
 
-    // Input Button 자리 미리 렌더링
+    // Condition button images in InputWindow (default: invisible)
     conditionInputPoints.forEach((point) => {
       this.dummyButtons[point.key] = this.scene.add.image(
         point.x,
         point.y,
         'yesNoButton'
+      );
+
+      this.dummyButtons[point.key].setVisible(false);
+      this.add(this.dummyButtons[point.key]);
+    });
+    // Move button ymages in InputWindow (default: invisible)
+    moveInputPoints.forEach((point) => {
+      this.dummyButtons[point.key] = this.scene.add.image(
+        point.x,
+        point.y,
+        'forwardButton'
       );
 
       this.dummyButtons[point.key].setVisible(false);
@@ -514,34 +553,99 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
     button.on('dragend', (pointer: Phaser.Input.Pointer) => {
       if (newButton) {
-        conditionInputPoints.forEach((point) => {
-          const distance = Phaser.Math.Distance.Between(
-            newButton.x,
-            newButton?.y,
-            point.x,
-            point.y
-          );
+        console.log(newButton.getType);
+        if (
+          newButton.getType === ButtonType.YesButton ||
+          newButton.getType === ButtonType.NoButton ||
+          newButton.getType === ButtonType.YesNoButton
+        ) {
+          conditionInputPoints.forEach((point) => {
+            const distance = Phaser.Math.Distance.Between(
+              newButton.x,
+              newButton?.y,
+              point.x,
+              point.y
+            );
 
-          if (distance <= 30) {
-            newButton.destroy();
+            if (distance <= 20) {
+              console.log('condition btn 30이내');
+              newButton.destroy();
 
-            const sensorIndex = this.tempSensorInputs.length;
-            const targetKeyIndex = point.key.split('_')[1][1];
+              const sensorIndex = this.tempSensorInputs.length;
+              const targetKeyIndex = point.key.split('_')[1][1];
+              const rowNumber = point.key.split('_')[1][0];
 
-            if (sensorIndex !== parseInt(targetKeyIndex)) {
-              return;
+              if (sensorIndex !== parseInt(targetKeyIndex)) {
+                return;
+              }
+              const pointKey: string = point.key;
+              const buttonType: ButtonType = newButton.getType;
+              this.changeButtonImage(this.dummyButtons[pointKey], buttonType);
+
+              this.registerInputRow(parseInt(rowNumber));
+            } else {
+              newButton.destroy();
             }
-            const pointKey: string = point.key;
-            const buttonType: ButtonType = newButton.getType;
-            this.changeButtonImage(this.dummyButtons[pointKey], buttonType);
-          } else {
-            newButton.destroy();
-          }
-        });
+          });
+        } else if (
+          newButton.getType === ButtonType.ForwardButton ||
+          newButton.getType === ButtonType.LeftButton ||
+          newButton.getType === ButtonType.RightButton ||
+          newButton.getType === ButtonType.PickButton ||
+          newButton.getType === ButtonType.PutButton
+        ) {
+          moveInputPoints.forEach((point) => {
+            const distance = Phaser.Math.Distance.Between(
+              newButton.x,
+              newButton?.y,
+              point.x,
+              point.y
+            );
+
+            if (distance <= 20) {
+              console.log('move btn 30이내');
+              newButton.destroy();
+
+              // const sensorIndex = this.tempSensorInputs.length;
+              // const targetKeyIndex = point.key.split('_')[1][0];
+              const rowNumber = point.key.split('_')[1][0]; // 1
+              const rowNumerBoolean = 'registeredRow' + rowNumber;
+              console.log('rowNumber: ', rowNumber);
+              console.log('this.registeredRow', this.registeredRow1);
+              if (!(this as any)[rowNumerBoolean]) {
+                return;
+              }
+              const pointKey: string = point.key;
+              const buttonType: ButtonType = newButton.getType;
+              this.changeButtonImage(this.dummyButtons[pointKey], buttonType);
+            } else {
+              newButton.destroy();
+            }
+          });
+        }
       }
 
       guideline.setAllGuidelinesVisible(false);
     });
+  };
+
+  registerInputRow = (rowNumber: number) => {
+    switch (rowNumber) {
+      case 1:
+        this.registeredRow1 = true;
+        console.log('registeredRow1 true');
+        break;
+      case 2:
+        this.registeredRow2 = true;
+      case 3:
+        this.registeredRow3 = true;
+      case 4:
+        this.registeredRow4 = true;
+      case 5:
+        this.registeredRow5 = true;
+      default:
+        return;
+    }
   };
 
   // Button Image 변경하는 함수
@@ -549,6 +653,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
     buttonImg: Phaser.GameObjects.Image,
     buttonType: ButtonType
   ): void => {
+    console.log('changeButtonImage 함수 실행');
     let replaceImgTexture: string;
 
     switch (buttonType) {
@@ -566,6 +671,31 @@ export class InputWindow extends Phaser.GameObjects.Container {
         replaceImgTexture = 'yesNoButton';
         buttonImg.setTexture(replaceImgTexture);
         console.log('change to yesNoButton');
+        break;
+      case ButtonType.ForwardButton:
+        replaceImgTexture = 'forwardButton';
+        buttonImg.setTexture(replaceImgTexture);
+        console.log('change to forwardButton');
+        break;
+      case ButtonType.LeftButton:
+        replaceImgTexture = 'leftButton';
+        buttonImg.setTexture(replaceImgTexture);
+        console.log('change to leftButton');
+        break;
+      case ButtonType.RightButton:
+        replaceImgTexture = 'rightButton';
+        buttonImg.setTexture(replaceImgTexture);
+        console.log('change to rightButton');
+        break;
+      case ButtonType.PutButton:
+        replaceImgTexture = 'putButton';
+        buttonImg.setTexture(replaceImgTexture);
+        console.log('change to putButton');
+        break;
+      case ButtonType.PickButton:
+        replaceImgTexture = 'pickButton';
+        buttonImg.setTexture(replaceImgTexture);
+        console.log('change to pickButton');
         break;
       default:
         return;
