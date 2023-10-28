@@ -203,23 +203,18 @@ const guidlinePositions = [
 
 export class InputWindow extends Phaser.GameObjects.Container {
   private dropdownButtons: DropdownMenu[] = [];
-  private currentDropdownCount: number = 0;
+  private currentDropdownCount: number = -1;
+  private tempSensorInputs: SensorType[] = []; // Store selected sensor button
   private controlButtons: ControlButton[] = [];
   // private inputLabels: InputLabel[] = [];
   private inputGuideline!: InputGuideline;
   private isActive: boolean = false;
   private dummyButtons: { [key: string]: Phaser.GameObjects.Image } = {};
-  // private dummyBtn_11!: Phaser.GameObjects.Image;
-  // private dummyBtn_12!: Phaser.GameObjects.Image;
-  // private dummyBtn_13!: Phaser.GameObjects.Image;
-  // private dummyBtn_14!: Phaser.GameObjects.Image;
-  // [key: string]: any;
-  private tempSensorInputs: SensorType[] = []; // Store selected sensor button
-  private tempStateInputs: StateInput[] = Array(5).fill({
-    sensorChecks: [],
-    move: [],
-    nextState: 0,
-  });
+  [key: string]: any;
+  private tempStateInputs: StateInput[] = Array(5)
+    .fill(null)
+    .map(() => ({ sensorChecks: [], move: [], nextState: 0 }));
+
   private registeredRow1: boolean = false;
   private registeredRow2: boolean = false;
   private registeredRow3: boolean = false;
@@ -368,7 +363,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
     if (index >= 0 && index < 5) {
       this.tempSensorInputs[index] = sensorType;
-
+      // TODO: DELETE TEST CODE
       console.log(
         'index',
         index,
@@ -455,6 +450,15 @@ export class InputWindow extends Phaser.GameObjects.Container {
       return;
     }
   }
+
+  checkRegistedSensor = (sensorType: SensorType): void => {
+    // 배열에 sensorType이 이미 존재하는지 확인
+    if (this.tempSensorInputs.includes(sensorType)) {
+      // sensorType이 이미 존재하면, 알림 팝업을 표시하고 함수를 반환합니다.
+      alert('The sensor type is already registered');
+      return;
+    }
+  };
 
   addNextStateButton = (
     x: number,
@@ -553,7 +557,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
     button.on('dragend', (pointer: Phaser.Input.Pointer) => {
       if (newButton) {
-        console.log(newButton.getType);
         if (
           newButton.getType === ButtonType.YesButton ||
           newButton.getType === ButtonType.NoButton ||
@@ -568,21 +571,33 @@ export class InputWindow extends Phaser.GameObjects.Container {
             );
 
             if (distance <= 20) {
-              console.log('condition btn 30이내');
               newButton.destroy();
 
-              const sensorIndex = this.tempSensorInputs.length;
-              const targetKeyIndex = point.key.split('_')[1][1];
-              const rowNumber = point.key.split('_')[1][0];
+              const sensorCount: number = this.tempSensorInputs.length; // 등록된 sensor 갯수
+              const targetSensorIndex: number = parseInt(
+                point.key.split('_')[1][1]
+              ); // 입력 sensor 번호
+              const rowNumber: number = parseInt(point.key.split('_')[1][0]); // 입력 줄 번호
 
-              if (sensorIndex !== parseInt(targetKeyIndex)) {
+              if (sensorCount !== targetSensorIndex) {
+                // 입력하려는 sensor번호에 sensor가 미등록이면, 취소
                 return;
               }
               const pointKey: string = point.key;
               const buttonType: ButtonType = newButton.getType;
               this.changeButtonImage(this.dummyButtons[pointKey], buttonType);
-
-              this.registerInputRow(parseInt(rowNumber));
+              this.registerInputRow(rowNumber);
+              console.log(
+                'sensor 순번: ',
+                targetSensorIndex,
+                '줄 순번: ',
+                rowNumber
+              );
+              this.updateConditionButtonInputs(
+                targetSensorIndex,
+                rowNumber,
+                buttonType
+              );
             } else {
               newButton.destroy();
             }
@@ -603,15 +618,10 @@ export class InputWindow extends Phaser.GameObjects.Container {
             );
 
             if (distance <= 20) {
-              console.log('move btn 30이내');
               newButton.destroy();
 
-              // const sensorIndex = this.tempSensorInputs.length;
-              // const targetKeyIndex = point.key.split('_')[1][0];
               const rowNumber = point.key.split('_')[1][0]; // 1
               const rowNumerBoolean = 'registeredRow' + rowNumber;
-              console.log('rowNumber: ', rowNumber);
-              console.log('this.registeredRow', this.registeredRow1);
               if (!(this as any)[rowNumerBoolean]) {
                 return;
               }
@@ -629,11 +639,11 @@ export class InputWindow extends Phaser.GameObjects.Container {
     });
   };
 
+  // Change the boolean value indicating whether the line registered or not
   registerInputRow = (rowNumber: number) => {
     switch (rowNumber) {
       case 1:
         this.registeredRow1 = true;
-        console.log('registeredRow1 true');
         break;
       case 2:
         this.registeredRow2 = true;
@@ -648,54 +658,53 @@ export class InputWindow extends Phaser.GameObjects.Container {
     }
   };
 
-  // Button Image 변경하는 함수
+  // Change the image of a button when dragged to input
   changeButtonImage = (
     buttonImg: Phaser.GameObjects.Image,
     buttonType: ButtonType
   ): void => {
-    console.log('changeButtonImage 함수 실행');
     let replaceImgTexture: string;
 
     switch (buttonType) {
       case ButtonType.YesButton:
         replaceImgTexture = 'yesButton';
         buttonImg.setTexture(replaceImgTexture);
-        console.log('change to yesButton');
+        // console.log('change to yesButton');
         break;
       case ButtonType.NoButton:
         replaceImgTexture = 'noButton';
         buttonImg.setTexture(replaceImgTexture);
-        console.log('change to noButton');
+        // console.log('change to noButton');
         break;
       case ButtonType.YesNoButton:
         replaceImgTexture = 'yesNoButton';
         buttonImg.setTexture(replaceImgTexture);
-        console.log('change to yesNoButton');
+        // console.log('change to yesNoButton');
         break;
       case ButtonType.ForwardButton:
         replaceImgTexture = 'forwardButton';
         buttonImg.setTexture(replaceImgTexture);
-        console.log('change to forwardButton');
+        // console.log('change to forwardButton');
         break;
       case ButtonType.LeftButton:
         replaceImgTexture = 'leftButton';
         buttonImg.setTexture(replaceImgTexture);
-        console.log('change to leftButton');
+        // console.log('change to leftButton');
         break;
       case ButtonType.RightButton:
         replaceImgTexture = 'rightButton';
         buttonImg.setTexture(replaceImgTexture);
-        console.log('change to rightButton');
+        // console.log('change to rightButton');
         break;
       case ButtonType.PutButton:
         replaceImgTexture = 'putButton';
         buttonImg.setTexture(replaceImgTexture);
-        console.log('change to putButton');
+        // console.log('change to putButton');
         break;
       case ButtonType.PickButton:
         replaceImgTexture = 'pickButton';
         buttonImg.setTexture(replaceImgTexture);
-        console.log('change to pickButton');
+        // console.log('change to pickButton');
         break;
       default:
         return;
@@ -706,38 +715,33 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
   // Condition Button 입력 - Sensor와 함께 SensorCheck: {sensor: SensorType; condition: ButtonType;} 처리
   updateConditionButtonInputs = (
-    sensorOrder: number,
+    sensorNumber: number, // 등록된 Sensor 순번
+    rowNumber: number, // 줄 순번
     buttonType: ButtonType
   ): void => {
-    switch (sensorOrder) {
-      case 1: {
-        let sensor = this.tempSensorInputs[0];
-        let sensorCheck = { sensor: sensor, condition: buttonType };
-        this.tempStateInputs[0].sensorChecks.push(sensorCheck);
-        console.log(this.tempStateInputs[0]);
-        break;
-      }
-      case 2: {
-        let sensor = this.tempSensorInputs[1];
-        let sensorCheck = { sensor: sensor, condition: buttonType };
-        this.tempStateInputs[0].sensorChecks.push(sensorCheck);
-        console.log(this.tempStateInputs[0]);
-        break;
-      }
-      case 3: {
-        let sensor = this.tempSensorInputs[2];
-        let sensorCheck = { sensor: sensor, condition: buttonType };
-        this.tempStateInputs[0].sensorChecks.push(sensorCheck);
-        console.log(this.tempStateInputs[0]);
-        break;
-      }
-      case 4: {
-        let sensor = this.tempSensorInputs[3];
-        let sensorCheck = { sensor: sensor, condition: buttonType };
-        this.tempStateInputs[0].sensorChecks.push(sensorCheck);
-        console.log(this.tempStateInputs[0]);
-        break;
-      }
+    const sensor = this.tempSensorInputs[sensorNumber - 1]; // Sensor 종류
+    const sensorCheck = { sensor: sensor, condition: buttonType }; // 입력할 sensorCheck
+    const stateInputOrder = rowNumber - 1; // StateInput에 들어갈 순서
+
+    const currentSensorCheckIndex = this.tempStateInputs[
+      stateInputOrder
+    ].sensorChecks.findIndex((sensorCheck) => sensorCheck.sensor === sensor); // 기존에 등록된 sensor인지 index 확인
+
+    console.log('이미 등록된 sensor인가? ', currentSensorCheckIndex);
+
+    if (currentSensorCheckIndex !== -1) {
+      // 이미 있는 거면 update
+      this.tempStateInputs[stateInputOrder].sensorChecks[
+        currentSensorCheckIndex
+      ].condition = buttonType;
+      console.log('업데이트 된 tempStateInputs: ', this.tempStateInputs);
+      return;
+    } else {
+      const targetElement = this.tempStateInputs[stateInputOrder];
+      console.log('targetElement:', targetElement);
+      targetElement.sensorChecks.push(sensorCheck);
+
+      console.log('새로 등록된 tempStateInputs: ', this.tempStateInputs);
     }
   };
 

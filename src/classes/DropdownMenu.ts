@@ -61,13 +61,14 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
           // TODO: DELETE the under test code
           // console.log(option.value + ' selected!');
 
+          // TODO: 이 코드 다시 수정할 것 (Sensor 중복 선택하면 alert하는 함수) - 일단 주석처리
+          // this.inputWindow?.checkRegistedSensor(option.type);
+
           this.selectedOptionTexture = option.texture;
           this.selectedHightlight(menuItem, this.selectedOptionTexture);
           this.button.setTexture(this.selectedOptionTexture);
-          console.log('(DropdownMenu.ts) option: ', option);
+          // console.log('(DropdownMenu.ts) option: ', option);
           // this.handleOptionSelection(option);
-
-          this.closeMenu();
 
           // Check if the event handler has already been executed
           if (
@@ -77,9 +78,11 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
             // Set the flag to true after executing the event handler
             this.hasEventHandlerExecuted = true;
 
-            this.inputWindow.updateTempSensorInputs(option.type);
-            this.inputWindow?.addSensorDropdownButton(this);
+            this.inputWindow?.addSensorDropdownButton(this); //
           }
+          this.inputWindow?.updateTempSensorInputs(option.type); //
+
+          this.closeMenu();
         });
       this.menuItems.push(menuItem);
       this.add(menuItem);
