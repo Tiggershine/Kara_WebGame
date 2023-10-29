@@ -130,16 +130,24 @@ export default class DiagramScene extends Phaser.Scene {
 
     this.stateCircles.push(newStateCircle); // stateCircles 배열에 추가
 
-    // Add corresponding InputLabel
-    // if (this.inputWindowScene) {
-    //   this.inputWindowScene.addLabels();
-    // }
     this.addLabels();
 
     // StateCirle 객체에 InputWindow 객체 추가
     const inputWindow = new InputWindow(this, 0, 0);
 
     newStateCircle.setInputWindow(inputWindow);
+
+    // Event emit -> stateCircle: { id, name } emit
+    this.events.emit(
+      'updatedStateCircles',
+      this.stateCircles.map((stateCircle) => {
+        console.log('(DiagramScene.ts) stateCircles: ', stateCircle);
+        return {
+          id: stateCircle.getId,
+          name: stateCircle.getName,
+        };
+      })
+    );
 
     return newStateCircle;
   }

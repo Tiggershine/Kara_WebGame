@@ -14,7 +14,8 @@ interface TextImageDropdownOption {
 }
 
 export class NextStateButton extends Phaser.GameObjects.Container {
-  private options: string[] = []; // string으로 바꾸고
+  private buttonId: number = -1;
+  private options: { id: number; name: string }[] = []; // string으로 바꾸고
   private buttonTexture: string = '';
   private backgroundTexture: string = '';
   private isMenuOpen: boolean = false;
@@ -27,17 +28,20 @@ export class NextStateButton extends Phaser.GameObjects.Container {
     scene: Phaser.Scene,
     x: number,
     y: number,
+    buttonId: number,
     buttonTexture: string,
     backgroundTexture: string,
-    options: string[], // string으로
+    // options: string[], // string으로
+    options: { id: number; name: string }[],
     inputWindow?: InputWindow // Adding a new parameter to store a reference to the InputWindow instance
   ) {
     super(scene, x, y);
     this.inputWindow = inputWindow; // Storing the reference to the InputWindow instance
+
+    this.buttonId = buttonId;
     this.options = options;
     this.buttonTexture = buttonTexture;
     this.backgroundTexture = backgroundTexture;
-
     this.buttonContainer = this.scene.add.container(0, 0);
     const buttonRectangle = this.scene.add
       .rectangle(0, 0, 70, 24, 0xfcf6f5)
@@ -53,7 +57,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
     triangle.fillStyle(0x000000, 1); // Fill color of the triangle
     triangle.fillTriangle(0, 0, -7, 7, 7, 7).setAngle(180);
 
-    const buttonLabel = this.scene.add.text(-25, -7, options[0], {
+    const buttonLabel = this.scene.add.text(-25, -7, options[0]?.name, {
       fontSize: '14px',
       fontFamily: 'Roboto Flex',
       color: '#1B1C1D',
@@ -73,19 +77,31 @@ export class NextStateButton extends Phaser.GameObjects.Container {
   }
 
   unfoldOptions() {
-    this.options.forEach((option: string, index) => {
+    this.options.forEach((option: { id: number; name: string }, index) => {
       const optionContainer = this.scene.add.container(0, 0);
       const menuItemRectangle = this.scene.add
         .rectangle(0, 0, 73, 26, 142140)
         .setOrigin(0.5, 0.5);
-      const menuItemText = this.scene.add.text(-25, -7, option, {
+      const menuItemText = this.scene.add.text(-20, -7, option.name, {
         fontSize: '14px',
         fontFamily: 'Roboto Flex',
         color: '#FCF6F5',
       });
       optionContainer.add(menuItemRectangle);
       optionContainer.add(menuItemText);
-      optionContainer.setInteractive().setVisible(false).setDepth(10);
+      optionContainer
+        .setInteractive(
+          new Phaser.Geom.Rectangle(-36.5, -13, 73, 26),
+          Phaser.Geom.Rectangle.Contains
+        )
+        .setVisible(false)
+        .setDepth(10)
+        .on('pointerdown', () => {
+          console.log('inputWindow', this.inputWindow);
+          this.inputWindow?.updateNextStateInput(this.buttonId, option.id);
+
+          this.closeMenu();
+        });
       this.menuItems.push(optionContainer);
       this.add(optionContainer);
     });

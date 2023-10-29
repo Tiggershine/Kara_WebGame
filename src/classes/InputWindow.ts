@@ -190,8 +190,6 @@ const moveInputPoints = [
   { key: 'dummyBtn_58', x: 935, y: 750 },
 ];
 
-const nextStateButtonOptions = ['Start', 'State 1', 'State 2'];
-
 /** InputGuideline Coordinate */
 const guidlinePositions = [
   { x: 800, y: 490 },
@@ -206,7 +204,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
   private currentDropdownCount: number = -1;
   private tempSensorInputs: SensorType[] = []; // Store selected sensor button
   private controlButtons: ControlButton[] = [];
-  // private inputLabels: InputLabel[] = [];
   private inputGuideline!: InputGuideline;
   private isActive: boolean = false;
   private dummyButtons: { [key: string]: Phaser.GameObjects.Image } = {};
@@ -214,7 +211,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
   private tempStateInputs: StateInput[] = Array(5)
     .fill(null)
     .map(() => ({ sensorChecks: [], move: [], nextState: 0 }));
-
+  private registeredStates: { id: number; name: string }[] = [];
   private registeredRow1: boolean = false;
   private registeredRow2: boolean = false;
   private registeredRow3: boolean = false;
@@ -223,6 +220,15 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
+
+    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+    diagramScene.events.on(
+      'updatedStateCircles',
+      this.updateRegisteredStates,
+      this
+    );
+
+    // this.on('updateRegisteredCircles', this.updateNextStateButton);
 
     // Continaer Graphic
     const containerStyle = {
@@ -321,36 +327,12 @@ export class InputWindow extends Phaser.GameObjects.Container {
       this.dummyButtons[point.key].setVisible(false);
       this.add(this.dummyButtons[point.key]);
     });
-    // this.add(this.dummyButton_11);
-    // this.add(dummyButton_12);
-    // this.add(dummyButton_13);
-    // this.add(dummyButton_14);
-    // this.add(dummyButton_15);
-
-    // this.add(dummyButton_1);
-    // this.add(dummyButton_2);
-    // this.add(dummyButton_3);
 
     scene.add.existing(this);
 
     // this.addDummyButtons();
     this.addControlButtons();
     this.createSensorDropdownButton(580, 432, 'dropdownButton', options);
-
-    this.addNextStateButton(
-      1005,
-      553,
-      'nextStateButton2',
-      'nextStateButton',
-      nextStateButtonOptions
-    );
-    this.addNextStateButton(
-      1005,
-      488,
-      'nextStateButton2',
-      'nextStateButton',
-      nextStateButtonOptions
-    );
   }
 
   ///////** METHODS *//////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -460,22 +442,26 @@ export class InputWindow extends Phaser.GameObjects.Container {
     }
   };
 
+  /** NextState Dropdown */
   addNextStateButton = (
     x: number,
     y: number,
+    buttonId: number,
     buttonTexture: string,
     backgroundTexture: string,
-    options: string[]
+    options: { id: number; name: string }[]
   ): NextStateButton => {
     const nextStateButton = new NextStateButton(
       this.scene,
       x,
       y,
+      buttonId,
       buttonTexture,
       backgroundTexture,
       options,
       this
     );
+    // nextStateButton.setDepth(10);
     this.add(nextStateButton);
     // this.dropdownButtons.push(dropdownButton);
     nextStateButton.on(
@@ -488,6 +474,54 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
     return nextStateButton;
   };
+
+  // RegisteredStates update { id: number; name: string }[] - DiagramScene에서 StateCircles가 update되면, 바로 실행
+  updateRegisteredStates = (
+    updatedStateCircles: { id: number; name: string }[]
+  ): void => {
+    this.registeredStates = updatedStateCircles;
+
+    console.log('updateRegisteredStates 함수 실행됨');
+    console.log('등록된 stateCircles', this.registeredStates);
+
+    this.updateNextStateButton(this.registeredStates);
+  };
+
+  updateNextStateButton(
+    updatedStateCircles: { id: number; name: string }[]
+  ): void {
+    // const options = updatedStateCircles.map((stateCircle) => {
+    //   return stateCircle.name;
+    // });
+    const options = updatedStateCircles;
+
+    console.log('(InputWindow.ts) updatedStateCircles', options);
+
+    this.addNextStateButton(
+      1005,
+      553,
+      2,
+      'nextStateButton2',
+      'nextStateButton',
+      options
+    );
+    this.addNextStateButton(
+      1005,
+      488,
+      1,
+      'nextStateButton2',
+      'nextStateButton',
+      options
+    );
+  }
+
+  updateNextStateInput(buttonId: number, nextStateId: number) {
+    const stateInputIndex = buttonId - 1;
+
+    this.tempStateInputs[stateInputIndex].nextState = nextStateId;
+
+    console.log('update nextState', this.tempStateInputs);
+  }
 
   /** Control Buttons */
   // Add control button which are draggable into ContorlButtonContainer
@@ -593,7 +627,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
                 '줄 순번: ',
                 rowNumber
               );
-              this.updateConditionButtonInputs(
+              this.updateConditionButtonInput(
                 targetSensorIndex,
                 rowNumber,
                 buttonType
@@ -620,7 +654,8 @@ export class InputWindow extends Phaser.GameObjects.Container {
             if (distance <= 20) {
               newButton.destroy();
 
-              const rowNumber = point.key.split('_')[1][0]; // 1
+              const moveInputIndex = parseInt(point.key.split('_')[1][1]);
+              const rowNumber = parseInt(point.key.split('_')[1][0]); // 1
               const rowNumerBoolean = 'registeredRow' + rowNumber;
               if (!(this as any)[rowNumerBoolean]) {
                 return;
@@ -628,6 +663,11 @@ export class InputWindow extends Phaser.GameObjects.Container {
               const pointKey: string = point.key;
               const buttonType: ButtonType = newButton.getType;
               this.changeButtonImage(this.dummyButtons[pointKey], buttonType);
+              this.updateMoveButtonInput(
+                moveInputIndex,
+                rowNumber,
+                newButton.getType
+              );
             } else {
               newButton.destroy();
             }
@@ -714,7 +754,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
   };
 
   // Condition Button 입력 - Sensor와 함께 SensorCheck: {sensor: SensorType; condition: ButtonType;} 처리
-  updateConditionButtonInputs = (
+  updateConditionButtonInput = (
     sensorNumber: number, // 등록된 Sensor 순번
     rowNumber: number, // 줄 순번
     buttonType: ButtonType
@@ -743,6 +783,37 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
       console.log('새로 등록된 tempStateInputs: ', this.tempStateInputs);
     }
+  };
+
+  updateMoveButtonInput = (
+    moveButtonIndex: number,
+    rowNumber: number,
+    buttonType: ButtonType
+  ) => {
+    console.log(
+      'rowNumber: ',
+      rowNumber,
+      'buttonType: ',
+      buttonType,
+      'moveButtonIndex: ',
+      moveButtonIndex - 5
+    );
+    const stateInputOrder = rowNumber - 1;
+    const moveInputIndex = moveButtonIndex - 5;
+
+    console.log(
+      '업데이트 전 move 배열: ',
+      this.tempStateInputs[stateInputOrder]
+    );
+    const targetElement = this.tempStateInputs[stateInputOrder];
+    targetElement.move[moveInputIndex] = buttonType;
+
+    // this.tempStateInputs[stateInputOrder].move[moveInputIndex] = buttonType;
+
+    console.log(
+      'move Input 업데이트 된 tempStateInputs: ',
+      this.tempStateInputs
+    );
   };
 
   // Button을 드래그하여 올렸을 때 버튼 이미지를 등록하는 함수
