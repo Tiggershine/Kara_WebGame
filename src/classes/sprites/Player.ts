@@ -6,9 +6,12 @@ import Monster from './Monster';
 export default class Player extends BaseSprite {
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player');
+
+    this.setDepth(5);
   }
 
-  moveForward = (wall: Wall) => {
+  /** Methods for Moves */
+  moveForward = () => {
     const angle = this.angle % 360;
 
     switch (angle) {
@@ -32,6 +35,38 @@ export default class Player extends BaseSprite {
     }
   };
 
+  turnLeft = () => {
+    this.angle -= 90;
+    console.log('angle: ', this.angle);
+  };
+
+  turnRight = () => {
+    this.angle += 90;
+    console.log('angle: ', this.angle);
+  };
+
+  putStar = () => {
+    setTimeout(() => {
+      const star = new Star(this.scene, this.x, this.y);
+      this.scene.add.existing(star);
+      star.depth = this.depth - 1;
+    }, 3000);
+  };
+
+  pickStar = () => {
+    const star = this.scene.children.list.find(
+      (child) =>
+        child instanceof Star && child.x === this.x && child.y === this.y
+    ) as Star | undefined;
+
+    if (star) {
+      star.destroy();
+      console.log('Star picked');
+    } else {
+      console.log('No star to pick');
+    }
+  };
+
   moveRight = () => {
     this.x += 50;
     console.log('moveRight');
@@ -45,39 +80,6 @@ export default class Player extends BaseSprite {
     this.wallFrontCheck();
     // this.starBottomcheck();
   };
-
-  turnLeft = () => {
-    this.angle -= 90;
-    console.log('angle: ', this.angle);
-  };
-  turnRight = () => {
-    this.angle += 90;
-    console.log('angle: ', this.angle);
-  };
-
-  /** Methods for Checking Sensor */
-  // wallFrontCheck1 = (wall: Wall): boolean => {
-  //   const angle = this.angle % 360;
-  //   const dx = wall.x - this.x;
-  //   const dy = wall.y - this.y;
-
-  //   if (angle === 0 && dx === 50 && dy === 0) {
-  //     console.log('true');
-  //     return true;
-  //   } else if (angle === -90 && dx === 0 && dy === -50) {
-  //     console.log('true');
-  //     return true;
-  //   } else if (angle === -180 && dx === -50 && dy === 0) {
-  //     console.log('true');
-  //     return true;
-  //   } else if (angle === 90 && dx === 0 && dy === 50) {
-  //     console.log('true');
-  //     return true;
-  //   } else {
-  //     console.log('false');
-  //     return false;
-  //   }
-  // };
 
   wallFrontCheck = (): boolean => {
     const angle = this.angle;
@@ -118,29 +120,6 @@ export default class Player extends BaseSprite {
     }
   };
 
-  // wallLeftCheck1 = (wall: Wall): boolean => {
-  //   const angle = this.angle % 360;
-  //   const dx = wall.x - this.x;
-  //   const dy = wall.y - this.y;
-
-  //   if (angle === 0 && dx === 0 && dy === -50) {
-  //     console.log('true');
-  //     return true;
-  //   } else if (angle === -90 && dx === -50 && dy === 0) {
-  //     console.log('true');
-  //     return true;
-  //   } else if (angle === -180 && dx === 0 && dy === 50) {
-  //     console.log('true');
-  //     return true;
-  //   } else if (angle === 90 && dx === 50 && dy === 0) {
-  //     console.log('true');
-  //     return true;
-  //   } else {
-  //     console.log('false');
-  //     return false;
-  //   }
-  // };
-
   wallLeftCheck = (): boolean => {
     const angle = this.angle;
     let dx: number = 0;
@@ -172,29 +151,6 @@ export default class Player extends BaseSprite {
     );
 
     if (wall) {
-      console.log('true');
-      return true;
-    } else {
-      console.log('false');
-      return false;
-    }
-  };
-
-  wallRightCheck1 = (wall: Wall): boolean => {
-    const angle = this.angle % 360;
-    const dx = wall.x - this.x;
-    const dy = wall.y - this.y;
-
-    if (angle === 0 && dx === 0 && dy === 50) {
-      console.log('true');
-      return true;
-    } else if (angle === -90 && dx === 50 && dy === 0) {
-      console.log('true');
-      return true;
-    } else if (angle === -180 && dx === 0 && dy === -50) {
-      console.log('true');
-      return true;
-    } else if (angle === 90 && dx === -50 && dy === 0) {
       console.log('true');
       return true;
     } else {
@@ -242,29 +198,8 @@ export default class Player extends BaseSprite {
     }
   };
 
-  // monsterFrontcheck = (monster: Monster): boolean => {
-  //   const angle = this.angle % 360;
-  //   const dx = monster.x - this.x;
-  //   const dy = monster.x - this.y;
-
-  //   if (angle === 0 && dx === 50 && dy === 0) {
-  //     console.log('true');
-  //     return true;
-  //   } else if (angle === -90 && dx === 0 && dy === -50) {
-  //     console.log('true');
-  //     return true;
-  //   } else if (angle === -180 && dx === -50 && dy === 0) {
-  //     console.log('true');
-  //     return true;
-  //   } else if (angle === 90 && dx === 0 && dy === 50) {
-  //     console.log('true');
-  //     return true;
-  //   } else {
-  //     console.log('false');
-  //     return false;
-  //   }
   // };
-  wallMonsterCheck = (): boolean => {
+  monsterFrontCheck = (): boolean => {
     const angle = this.angle;
     let dx: number = 0;
     let dy: number = 0;
@@ -312,10 +247,10 @@ export default class Player extends BaseSprite {
     );
 
     if (star) {
-      console.log('true');
+      // console.log('true');
       return true;
     } else {
-      console.log('false');
+      // console.log('false');
       return false;
     }
   };
