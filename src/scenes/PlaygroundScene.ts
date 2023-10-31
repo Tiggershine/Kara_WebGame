@@ -1,9 +1,20 @@
 import Phaser from 'phaser';
+import Player from '../classes/sprites/Player';
+import Wall from '../classes/sprites/Wall';
+import Star from '../classes/sprites/Star';
+import Stars from '../tasks/Stars';
 
 export default class PlaygroundScene extends Phaser.Scene {
   constructor() {
     super('PlaygroundScene');
   }
+
+  private taskStars!: Phaser.GameObjects.Container;
+  private player!: Player;
+  private wall!: Wall;
+  private star!: Star;
+  private star2!: Star;
+  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
 
   // Values for Style
   private containerStyle = {
@@ -55,6 +66,34 @@ export default class PlaygroundScene extends Phaser.Scene {
         this.containerStyle.size,
         i * this.tileStyle.size
       ); // Horizontal line
+    }
+
+    // this.taskStars = new Stars(this, 0, 0);
+
+    this.player = new Player(this, 125, 225);
+    this.wall = new Wall(this, 375, 225);
+    this.star = new Star(this, 175, 225);
+    this.star2 = new Star(this, 275, 225);
+
+    this.add.existing(this.player);
+    this.add.existing(this.wall);
+    this.add.existing(this.star);
+    this.add.existing(this.star2);
+
+    // this.star.checkStarObjectAt(175, 225);
+
+    // 키보드 입력을 받기 위한 CursorKeys 객체를 생성합니다.
+    this.cursors = this.input.keyboard.createCursorKeys();
+  }
+
+  update() {
+    // const angle = this.player.angle % 360;
+    // this.star.checkStarObjectAt(175, 225);
+    // this.star2.checkStarObjectAt(275, 225);
+    if (Phaser.Input.Keyboard.JustUp(this.cursors.right)) {
+      this.player.moveRight();
+    } else if (Phaser.Input.Keyboard.JustUp(this.cursors.left)) {
+      this.player.moveLeft();
     }
   }
 }

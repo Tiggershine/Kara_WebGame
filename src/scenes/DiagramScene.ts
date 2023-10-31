@@ -38,7 +38,7 @@ export default class DiagramScene extends Phaser.Scene {
     this.createButtonLabel(575, 55, 'New');
 
     this.createStartStateCircle();
-    this.createButtonLabel(625, 186 + 25, 'Start');
+    this.createEndStateCircle();
     // TODO: DELETE TEST CODE
     // this.testCreateEdge();
 
@@ -108,8 +108,8 @@ export default class DiagramScene extends Phaser.Scene {
 
   // StateCircle 객체 관련 함수
   createStateCircle(x: number, y: number): StateCircle {
-    const stateId = this.stateCircles.length + 1;
-    const stateName = 'State ' + Number(this.stateCircles.length + 1);
+    const stateId = this.stateCircles.length;
+    const stateName = 'State ' + Number(this.stateCircles.length);
     const newStateInput: StateInput[] = [];
 
     const newStateCircle = new StateCircle(
@@ -153,13 +153,33 @@ export default class DiagramScene extends Phaser.Scene {
   }
 
   createStartStateCircle(): void {
-    const startButton = this.add
-      .circle(625, 186 + 25, 25, 0xfcf6f5)
-      .setInteractive();
-    startButton.setStrokeStyle(3, 1776669);
-    this.input.setDraggable(startButton);
+    const newStateInput: StateInput[] = [];
+    const startButton = new StateCircle(
+      this,
+      625,
+      211,
+      0,
+      'Start',
+      newStateInput
+    );
 
-    startButton.setDepth(1);
+    startButton.deselect();
+    startButton.setDepth(5);
+    this.stateCircles.push(startButton);
+    this.add.existing(startButton);
+  }
+
+  createEndStateCircle(): void {
+    const newStateInput: StateInput[] = [];
+
+    const endButton = new StateCircle(this, 1000, 211, 0, 'End', newStateInput);
+
+    endButton.deselect();
+    endButton.setDepth(5);
+
+    // this.stateCircles[100] = endButton;
+
+    this.add.existing(endButton);
   }
 
   // Add label on addButton 575, 55, New\nState
@@ -202,7 +222,13 @@ export default class DiagramScene extends Phaser.Scene {
     // Update 시, 기존의 Array 초기화
     this.inputLabels = [];
 
-    this.getStateCircles.forEach((state) => {
+    const excludingStartEnd = this.getStateCircles.filter(
+      (stateCircle, index) => {
+        return index !== 0 && index !== 100;
+      }
+    );
+
+    excludingStartEnd.forEach((state) => {
       const label = new InputLabel(
         this,
         state.id,
@@ -215,6 +241,20 @@ export default class DiagramScene extends Phaser.Scene {
       this.add.existing(label);
       startX += gap;
     });
+
+    // this.getStateCircles.forEach((state) => {
+    //   const label = new InputLabel(
+    //     this,
+    //     state.id,
+    //     startX,
+    //     y,
+    //     state.name,
+    //     state.isSelected
+    //   );
+    //   this.inputLabels.push(label);
+    //   this.add.existing(label);
+    //   startX += gap;
+    // });
   };
 
   /** Edge */

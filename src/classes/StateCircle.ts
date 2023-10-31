@@ -55,7 +55,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.circle.setDepth(10);
 
     // Create Text on Circle
-    this.label = new Phaser.GameObjects.Text(scene, 0, 0, name, {
+    this.label = new Phaser.GameObjects.Text(scene, 0, 0, this.name, {
       fontSize: '14px',
       fontFamily: 'Roboto Flex',
       color: '#1B1C1D',
@@ -112,6 +112,17 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   addStateInput = (input: StateInput): void => {
     this.stateInput.push(input);
   };
+
+  setLabelText(text: string): string {
+    const maxLength = 10; // Maximum number of characters
+    const ellipsis = '...';
+    const finalText =
+      text.length > maxLength
+        ? text.substring(0, maxLength - ellipsis.length) + ellipsis
+        : text;
+    // this.label.setText(finalText);
+    return finalText;
+  }
 
   select = (): void => {
     this.setIsSelected(true);

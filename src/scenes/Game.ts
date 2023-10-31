@@ -7,6 +7,10 @@ export default class Game extends Phaser.Scene {
 
   preload() {
     const imageSources = {
+      // Images for Sprites
+      player: 'assets/Player.png',
+      star: 'assets/Star.png',
+      wall: 'assets/Wall.png',
       // Images for ControlButtons
       yesButton: 'assets/YesButton.png',
       noButton: 'assets/NoButton.png',
@@ -60,9 +64,9 @@ export default class Game extends Phaser.Scene {
     this.scene.launch('InputWindowScene');
 
     // Set up a pointer move event listener
-    // this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
-    //   console.log('X: ', pointer.x, 'Y: ', pointer.y);
-    // });
+    this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
+      console.log('X: ', pointer.x, 'Y: ', pointer.y);
+    });
   }
 
   update() {}
