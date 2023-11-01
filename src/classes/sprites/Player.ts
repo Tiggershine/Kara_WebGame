@@ -4,30 +4,48 @@ import Star from './Star';
 import Monster from './Monster';
 
 export default class Player extends BaseSprite {
+  stars: Star[] = [];
+
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player');
 
     this.setDepth(5);
   }
 
+  delay = (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
+
+  moveForwardTest = async () => {
+    console.log('1번 도입');
+    await this.delay(2000);
+    console.log('2번 도입');
+    this.x += 50;
+  };
+
   /** Methods for Moves */
-  moveForward = () => {
+  moveForward = async () => {
+    console.log('moveForward 함수 실행');
     const angle = this.angle % 360;
 
     switch (angle) {
       case 0:
+        await this.delay(2000);
         this.x += 50;
         break;
       case 90:
       case -270:
+        await this.delay(2000);
         this.y += 50;
         break;
       case 180:
       case -180:
+        await this.delay(2000);
         this.x -= 50;
         break;
       case 270:
       case -90:
+        await this.delay(2000);
         this.y -= 50;
         break;
       default:
@@ -35,37 +53,142 @@ export default class Player extends BaseSprite {
     }
   };
 
-  turnLeft = () => {
+  turnLeft = async () => {
+    await this.delay(2000);
     this.angle -= 90;
     console.log('angle: ', this.angle);
   };
 
-  turnRight = () => {
+  turnRight = async () => {
+    await this.delay(2000);
     this.angle += 90;
     console.log('angle: ', this.angle);
   };
 
-  putStar = () => {
-    setTimeout(() => {
-      const star = new Star(this.scene, this.x, this.y);
-      this.scene.add.existing(star);
-      star.depth = this.depth - 1;
-    }, 3000);
+  putStar = async () => {
+    await this.delay(2000);
+    console.log('putStar triggered');
+    const star = new Star(this.scene, this.x, this.y);
+    this.scene.add.existing(star);
+    star.depth = this.depth - 1;
   };
 
-  pickStar = () => {
+  pickStar = async () => {
+    await this.delay(2000);
+    console.log('pickStar triggered');
     const star = this.scene.children.list.find(
       (child) =>
         child instanceof Star && child.x === this.x && child.y === this.y
     ) as Star | undefined;
 
     if (star) {
+      console.log('destroy');
       star.destroy();
       console.log('Star picked');
     } else {
       console.log('No star to pick');
     }
   };
+
+  // moveForward = (): Promise<void> => {
+  //   const angle = this.angle % 360;
+  //   let targetX = this.x;
+  //   let targetY = this.y;
+
+  //   switch (angle) {
+  //     case 0:
+  //       targetX += 50;
+  //       break;
+  //     case 90:
+  //     case -270:
+  //       targetY += 50;
+  //       break;
+  //     case 180:
+  //     case -180:
+  //       targetX -= 50;
+  //       break;
+  //     case 270:
+  //     case -90:
+  //       targetY -= 50;
+  //       break;
+  //     default:
+  //       console.log('Invalid angle');
+  //       return Promise.reject('Invalid angle');
+  //   }
+
+  //   return new Promise((resolve) => {
+  //     this.scene.tweens.add({
+  //       targets: this,
+  //       x: targetX,
+  //       y: targetY,
+  //       duration: 500,
+  //       ease: 'Linear',
+  //       onComplete: () => {
+  //         resolve();
+  //       },
+  //     });
+  //   });
+  // };
+
+  // turnLeft = (): Promise<void> => {
+  //   return new Promise((resolve) => {
+  //     this.angle -= 90;
+  //     console.log('angle: ', this.angle);
+  //     resolve();
+  //   });
+  // };
+
+  // turnRight = (): Promise<void> => {
+  //   return new Promise((resolve) => {
+  //     this.angle += 90;
+  //     console.log('angle: ', this.angle);
+  //     resolve();
+  //   });
+  // };
+
+  // putStar = (): Promise<void> => {
+  //   return new Promise((resolve) => {
+  //     console.log('putStar triggered');
+  //     const star = new Star(this.scene, this.x, this.y);
+  //     this.scene.add.existing(star);
+  //     star.depth = this.depth - 1;
+  //     resolve();
+  //   });
+  // };
+  // putStar = (x: number, y: number): Promise<void> => {
+  //   console.log('putStar 함수 실행');
+  //   return new Promise((resolve) => {
+  //     setTimeout(() => {
+  //       console.log('putStar triggered');
+  //       const star = new Star(this.scene, x, y);
+  //       this.scene.add.existing(star);
+  //       star.depth = this.depth - 1;
+  //       resolve();
+  //     }, 3000);
+  //   });
+  // };
+
+  // pickStar = (): Promise<void> => {
+  //   console.log('pickStar 함수 실행');
+  //   return new Promise((resolve) => {
+  //     setTimeout(() => {
+  //       console.log('pickStar triggered');
+  //       const star = this.scene.children.list.find(
+  //         (child) =>
+  //           child instanceof Star && child.x === this.x && child.y === this.y
+  //       ) as Star | undefined;
+
+  //       if (star) {
+  //         console.log('destroy');
+  //         star.destroy();
+  //         console.log('Star picked');
+  //       } else {
+  //         console.log('No star to pick');
+  //       }
+  //       resolve();
+  //     }, 3000);
+  //   });
+  // };
 
   moveRight = () => {
     this.x += 50;
@@ -112,10 +235,10 @@ export default class Player extends BaseSprite {
     );
 
     if (wall) {
-      console.log('true');
+      console.log('wallFrontCheck: true');
       return true;
     } else {
-      console.log('false');
+      console.log('wallFrontCheck: false');
       return false;
     }
   };
@@ -151,10 +274,10 @@ export default class Player extends BaseSprite {
     );
 
     if (wall) {
-      console.log('true');
+      console.log('wallLeftCheck: true');
       return true;
     } else {
-      console.log('false');
+      console.log('wallLeftCheck: false');
       return false;
     }
   };
@@ -190,10 +313,10 @@ export default class Player extends BaseSprite {
     );
 
     if (wall) {
-      console.log('true');
+      console.log('wallRightCheck: true');
       return true;
     } else {
-      console.log('false');
+      console.log('wallRightCheck: false');
       return false;
     }
   };
@@ -230,10 +353,10 @@ export default class Player extends BaseSprite {
     );
 
     if (monster) {
-      console.log('true');
+      console.log('monsterFrontCheck: true');
       return true;
     } else {
-      console.log('false');
+      console.log('monsterFrontCheck: false');
       return false;
     }
   };
@@ -247,10 +370,10 @@ export default class Player extends BaseSprite {
     );
 
     if (star) {
-      // console.log('true');
+      // console.log('starBottomcheck: true');
       return true;
     } else {
-      // console.log('false');
+      // console.log('starBottomcheck: false');
       return false;
     }
   };

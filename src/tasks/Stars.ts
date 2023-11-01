@@ -3,30 +3,7 @@ import Player from '../classes/sprites/Player';
 import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
 import StateCircle from '../classes/StateCircle';
-// import { SensorCheck, StateInput } from '../classes/InputManager';
 
-// const startState = {
-//   id: 0,
-//   stateInputs: [{ sensorChecks: [], move: [], nextState: 1 }],
-// };
-// const bottomStar = {
-//   id: 1,
-//   stateInputs: [
-//     { sensorChecks: [{ sensor: 4, condition: 0 }], move: [7], nextState: 2 },
-//     { sensorChecks: [{ sensor: 4, condition: 1 }], move: [6], nextState: 2 },
-//   ],
-// };
-// const frontWall = {
-//   id: 2,
-//   stateInputs: [
-//     { sensorChecks: [{ sensor: 0, condition: 1 }], move: [3], nextState: 1 },
-//     { sensorChecks: [{ sensor: 0, condition: 0 }], move: [3], nextState: 3 },
-//   ],
-// };
-// const endState = {
-//   id: 4,
-//   stateInputs: [{ sensorChecks: [], move: [], nextState: 100 }],
-// };
 type SensorCheck = {
   sensor: number;
   condition: number;
@@ -49,38 +26,38 @@ const stateInputData = [
     stateInputs: [{ sensorChecks: [], moves: [], nextStateId: 1 }],
   },
   {
-    id: 1,
+    id: 1, // bottomStar
     stateInputs: [
       {
-        sensorChecks: [{ sensor: 4, condition: 0 }],
-        moves: [7],
+        sensorChecks: [{ sensor: 4, condition: 0 }], // 아래에 별 있으면
+        moves: [7], // pickStar
         nextStateId: 2,
       },
       {
-        sensorChecks: [{ sensor: 4, condition: 1 }],
-        moves: [6],
+        sensorChecks: [{ sensor: 4, condition: 1 }], // 아래에 별 없으면
+        moves: [6], // putStar
         nextStateId: 2,
       },
     ],
   },
   {
-    id: 2,
+    id: 2, // frontWall
     stateInputs: [
       {
-        sensorChecks: [{ sensor: 0, condition: 1 }],
-        moves: [3],
+        sensorChecks: [{ sensor: 0, condition: 1 }], // 벽 앞 X
+        moves: [3], // forward
         nextStateId: 1,
       },
       {
-        sensorChecks: [{ sensor: 0, condition: 0 }],
-        moves: [3],
-        nextStateId: 3,
+        sensorChecks: [{ sensor: 0, condition: 0 }], // 벽 앞 O
+        moves: [],
+        nextStateId: 100, // stop
       },
     ],
   },
   {
-    id: 3,
-    stateInputs: [{ sensorChecks: [], moves: [], nextStateId: 5 }],
+    id: 100,
+    stateInputs: [{ sensorChecks: [], moves: [], nextStateId: 101 }],
   },
 ];
 export default class Stars extends Phaser.GameObjects.Container {
@@ -107,141 +84,68 @@ export default class Stars extends Phaser.GameObjects.Container {
     this.stateInputData = stateInputData;
   }
 
-  processStateInputData() {
+  processStateInputData = async () => {
     if (!this.inputDataChecked) {
       const startState = this.stateInputData.find(
         (state: State) => state.id === 0
       );
 
-      let currentStateId = startState.stateInputs[0].nextStateId; // Start 다음 State로 init (1번 State)
+      let currentStateId = startState.stateInputs[0].nextStateId; // Start 다음 State로 Init (1번 State)
       console.log('currentStateId', currentStateId);
 
-      // while (currentStateId !== 5) {
-      const currentState = this.stateInputData.find(
-        (state: State) => state.id === currentStateId
-      );
-
-      if (!currentState) {
-        console.error('Invalid state id:', currentStateId);
-        // break;
-      }
-
-      let nextStateId = null;
-      let sensorCheckPassed: boolean = false;
-
-      for (const stateInput of currentState.stateInputs) {
-        stateInput.sensorChecks.some((sensorCheck: SensorCheck) => {
-          const sensorValue = this.sensorCheck(sensorCheck.sensor);
-
-          console.log(
-            'sensorValue',
-            sensorValue,
-            'sensorCheck.condition:',
-            sensorCheck.condition
-          );
-
-          if (sensorCheck.condition === 0) {
-            console.log('(true)Condition: ', sensorCheck.condition);
-            console.log(
-              'sensorValue check(sensorValue is true): ',
-              sensorCheck.condition === 0 && sensorValue
-            );
-            sensorCheckPassed = sensorCheck.condition === 0 && sensorValue;
-          } else if (sensorCheck.condition === 1) {
-            console.log('(false)Condition: ', sensorCheck.condition);
-            console.log(
-              'sensorValue check (sensSorValue is false): ',
-              sensorCheck.condition === 1 && sensorValue
-            );
-            sensorCheckPassed = sensorCheck.condition === 1 && !sensorValue;
-          }
-
-          // if (sensorValue === true) {
-          //   console.log('(true)Condition: ', sensorCheck.condition);
-          //   console.log(
-          //     'sensorValue check(sensorValue is true): ',
-          //     (sensorCheck.condition === 0) === sensorValue
-          //   );
-          //   return (sensorCheck.condition === 0) === sensorValue;
-          // } else {
-          //   console.log('(false)Condition: ', sensorCheck.condition);
-          //   console.log(
-          //     'sensorValue check (sensSorValue is false): ',
-          //     (sensorCheck.condition === 1) === sensorValue
-          //   );
-          //   return (sensorCheck.condition === 1) === sensorValue;
-          // }
-        });
-        console.log('sensorCheckPassed: ', sensorCheckPassed);
-
-        if (sensorCheckPassed) {
-          nextStateId = stateInput.nextStateId;
-          console.log('nextStateId: ', nextStateId);
-
-          stateInput.moves.forEach((move: number) => {
-            console.log('move: ', move);
-            this.executeMove(move);
-          });
+      while (currentStateId !== 100) {
+        const currentState = this.stateInputData.find(
+          (state: State) => state.id === currentStateId
+        );
+        if (!currentState) {
+          console.error('Invalid state id:', currentStateId);
           break;
         }
-      }
-      // }
+        let nextStateId = null;
+        let sensorCheckPassed: boolean = false;
 
+        for (const stateInput of currentState.stateInputs) {
+          sensorCheckPassed = stateInput.sensorChecks.some(
+            (sensorCheck: SensorCheck) => {
+              const sensorValue = this.sensorCheck(sensorCheck.sensor);
+              if (sensorCheck.condition === 0) {
+                return sensorCheck.condition === 0 && sensorValue;
+              } else if (sensorCheck.condition === 1) {
+                return sensorCheck.condition === 1 && !sensorValue;
+              }
+            }
+          );
+
+          if (sensorCheckPassed) {
+            for (const move of stateInput.moves) {
+              console.log('move: ', move);
+              await this.executeMove(move);
+            }
+            // nextStateId = stateInput.nextStateId;
+            currentStateId = stateInput.nextStateId;
+            console.log('새로운 currentStateId: ', currentStateId);
+
+            break;
+          }
+        }
+
+        // if (nextStateId !== null) {
+        //   currentStateId = nextStateId;
+
+        // } else {
+        //   console.error(
+        //     'No valid nextStateId found for state id:',
+        //     currentStateId
+        //   );
+        //   break;
+        // }
+      }
+
+      console.log('완료');
       this.inputDataChecked = true;
       return;
     }
-
-    // while (currentStateId !== 100) {
-    //   const currentState = this.stateInputData.find(
-    //     (state: any) => state.id === currentStateId
-    //   );
-
-    //   if (!currentState) {
-    //     console.error('Invalid state id:', currentStateId);
-    //     break;
-    //   }
-
-    //   let nextStateId = null;
-
-    //   for (const stateInput of currentState.stateInputs) {
-    //     const sensorChecksPassed = stateInput.sensorChecks.every(
-    //       (sensorCheck: any) => {
-    //         const sensorValue = this.sensorCheck(
-    //           this.player,
-    //           sensorCheck.sensor
-    //         );
-
-    //         if (sensorValue === true) {
-    //           return (sensorCheck.condition === 0) === sensorValue;
-    //         } else {
-    //           return (sensorCheck.condition === 1) === sensorValue;
-    //         }
-    //       }
-    //     );
-
-    //     if (sensorChecksPassed) {
-    //       nextStateId = stateInput.nextState;
-
-    //       stateInput.moves.forEach((move: number) => {
-    //         this.executeMove(move);
-    //       });
-
-    //       // this.executeMoves(stateInput.move);
-    //       // break;
-    //     }
-    //   }
-
-    //   if (nextStateId !== null) {
-    //     currentStateId = nextStateId;
-    //   } else {
-    //     console.error(
-    //       'No valid nextStateId found for state id:',
-    //       currentStateId
-    //     );
-    //     break;
-    //   }
-    // }
-  }
+  };
 
   // executeMoves(moveIds: number[]) {
   //   // TODO: Implement move execution logic based on moveIds
@@ -286,22 +190,79 @@ export default class Stars extends Phaser.GameObjects.Container {
     }
   }
 
-  executeMove = (moveId: number): void => {
+  // testCode = () => {
+  //   for (let i = 0; i < 3; i++) {
+  //     setTimeout(() => {
+  //       this.player.moveForwardTest();
+  //     });
+  //   }
+  // };
+  testCode = async () => {
+    for (let i = 0; i < 3; i++) {
+      await this.player.moveForwardTest();
+    }
+  };
+
+  // testCode = () => {
+  //   this.executeMove(6);
+  //   this.executeMove(3);
+  //   this.executeMove(7);
+  //   this.executeMove(3);
+  //   this.executeMove(6);
+  //   this.executeMove(3);
+  //   this.executeMove(7);
+  //   this.executeMove(3);
+  //   this.executeMove(7);
+  // };
+
+  // executeMove = (moveId: number): void => {
+  //   switch (moveId) {
+  //     case 3:
+  //       this.player.moveForward();
+  //       console.log('moveForward');
+  //       break;
+  //     case 4:
+  //       this.player.turnLeft();
+  //       console.log('turnLeft');
+  //       break;
+  //     case 5:
+  //       this.player.turnRight();
+  //       console.log('turnRight');
+  //       break;
+  //     case 6:
+  //       this.player.putStar();
+  //       console.log('putStar');
+  //       break;
+  //     case 7:
+  //       this.player.pickStar();
+  //       console.log('pickStar');
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // };
+
+  executeMove = async (moveId: number): Promise<void> => {
     switch (moveId) {
       case 3:
-        this.player.moveForward();
+        await this.player.moveForward();
+        console.log('moveForward');
         break;
       case 4:
-        this.player.turnLeft();
+        await this.player.turnLeft();
+        console.log('turnLeft');
         break;
       case 5:
-        this.player.turnRight();
+        await this.player.turnRight();
+        console.log('turnRight');
         break;
       case 6:
-        this.player.putStar();
+        await this.player.putStar();
+        console.log('putStar');
         break;
       case 7:
-        this.player.pickStar();
+        await this.player.pickStar();
+        console.log('pickStar');
         break;
       default:
         break;

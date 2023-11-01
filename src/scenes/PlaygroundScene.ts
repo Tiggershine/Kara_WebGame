@@ -84,6 +84,9 @@ export default class PlaygroundScene extends Phaser.Scene {
 
     // 키보드 입력을 받기 위한 CursorKeys 객체를 생성합니다.
     this.cursors = this.input.keyboard.createCursorKeys();
+
+    this.taskStars.processStateInputData();
+    // this.taskStars.testCode();
   }
 
   update() {
@@ -95,7 +98,5 @@ export default class PlaygroundScene extends Phaser.Scene {
     // } else if (Phaser.Input.Keyboard.JustUp(this.cursors.left)) {
     //   this.player.moveLeft();
     // }
-
-    this.taskStars.processStateInputData();
   }
 }
