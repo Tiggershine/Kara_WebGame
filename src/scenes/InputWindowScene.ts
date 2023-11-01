@@ -121,8 +121,6 @@ export default class InputWindowScene extends Phaser.Scene {
     super('InputWindowScene');
   }
 
-  // 210, 400
-
   // Values for Style
   private inputContainerStyle = {
     x: 550,
@@ -156,19 +154,19 @@ export default class InputWindowScene extends Phaser.Scene {
     });
 
     /** InputGuideline */
-    const guidlinePositions = [
-      { x: 800, y: 490 },
-      { x: 800, y: 555 },
-      { x: 800, y: 620 },
-      { x: 800, y: 685 },
-      { x: 800, y: 750 },
-    ];
-    const inputGutideline = new InputGuideline(
-      this,
-      guidlinePositions,
-      'inputGuideline'
-    );
-    this.add.existing(inputGutideline);
+    // const guidlinePositions = [
+    //   { x: 800, y: 490 },
+    //   { x: 800, y: 555 },
+    //   { x: 800, y: 620 },
+    //   { x: 800, y: 685 },
+    //   { x: 800, y: 750 },
+    // ];
+    // const inputGutideline = new InputGuideline(
+    //   this,
+    //   guidlinePositions,
+    //   'inputGuideline'
+    // );
+    // this.add.existing(inputGutideline);
   }
 
   // Function returns a RoundRectGraphics object

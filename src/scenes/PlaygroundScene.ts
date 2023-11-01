@@ -3,6 +3,7 @@ import Player from '../classes/sprites/Player';
 import Wall from '../classes/sprites/Wall';
 import Star from '../classes/sprites/Star';
 import Stars from '../tasks/Stars';
+import TunnelFinder from '../tasks/TunnelFinder';
 
 export default class PlaygroundScene extends Phaser.Scene {
   constructor() {
@@ -10,6 +11,7 @@ export default class PlaygroundScene extends Phaser.Scene {
   }
 
   private taskStars!: Stars;
+  private tunnelFinder!: TunnelFinder;
   private player!: Player;
   private wall!: Wall;
   private star!: Star;
@@ -69,6 +71,10 @@ export default class PlaygroundScene extends Phaser.Scene {
     }
 
     this.taskStars = new Stars(this, 0, 0);
+    // this.taskStars.processStateInputData();
+
+    // this.tunnelFinder = new TunnelFinder(this, 0, 0);
+    // this.tunnelFinder.processStateInputData();
 
     // this.player = new Player(this, 125, 225);
     // this.wall = new Wall(this, 375, 225);
@@ -84,9 +90,6 @@ export default class PlaygroundScene extends Phaser.Scene {
 
     // 키보드 입력을 받기 위한 CursorKeys 객체를 생성합니다.
     this.cursors = this.input.keyboard.createCursorKeys();
-
-    this.taskStars.processStateInputData();
-    // this.taskStars.testCode();
   }
 
   update() {

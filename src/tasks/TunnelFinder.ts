@@ -2,7 +2,6 @@ import Phaser from 'phaser';
 import Player from '../classes/sprites/Player';
 import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
-import StateCircle from '../classes/StateCircle';
 
 type SensorCheck = {
   sensor: number;
@@ -26,16 +25,38 @@ const stateInputData = [
     stateInputs: [{ sensorChecks: [], moves: [], nextStateId: 1 }],
   },
   {
-    id: 1, // bottomStar
+    id: 1, // Entrance
     stateInputs: [
       {
-        sensorChecks: [{ sensor: 4, condition: 0 }], // 아래에 별 있으면
-        moves: [7], // pickStar
-        nextStateId: 2,
+        sensorChecks: [
+          { sensor: 1, condition: 1 },
+          { sensor: 2, condition: 1 },
+        ],
+        moves: [3],
+        nextStateId: 1,
       },
       {
-        sensorChecks: [{ sensor: 4, condition: 1 }], // 아래에 별 없으면
-        moves: [6], // putStar
+        sensorChecks: [
+          { sensor: 1, condition: 1 },
+          { sensor: 2, condition: 0 },
+        ],
+        moves: [3],
+        nextStateId: 1,
+      },
+      {
+        sensorChecks: [
+          { sensor: 1, condition: 0 },
+          { sensor: 2, condition: 1 },
+        ],
+        moves: [3],
+        nextStateId: 1,
+      },
+      {
+        sensorChecks: [
+          { sensor: 1, condition: 0 },
+          { sensor: 2, condition: 0 },
+        ],
+        moves: [],
         nextStateId: 2,
       },
     ],
@@ -44,14 +65,36 @@ const stateInputData = [
     id: 2, // frontWall
     stateInputs: [
       {
-        sensorChecks: [{ sensor: 0, condition: 1 }], // 벽 앞 X
-        moves: [3], // forward
-        nextStateId: 1,
+        sensorChecks: [
+          { sensor: 1, condition: 1 },
+          { sensor: 2, condition: 1 },
+        ],
+        moves: [],
+        nextStateId: 100,
       },
       {
-        sensorChecks: [{ sensor: 0, condition: 0 }], // 벽 앞 O
+        sensorChecks: [
+          { sensor: 1, condition: 1 },
+          { sensor: 2, condition: 0 },
+        ],
         moves: [],
-        nextStateId: 100, // stop
+        nextStateId: 100,
+      },
+      {
+        sensorChecks: [
+          { sensor: 1, condition: 0 },
+          { sensor: 2, condition: 1 },
+        ],
+        moves: [],
+        nextStateId: 100,
+      },
+      {
+        sensorChecks: [
+          { sensor: 1, condition: 0 },
+          { sensor: 2, condition: 0 },
+        ],
+        moves: [3],
+        nextStateId: 2,
       },
     ],
   },
@@ -60,30 +103,58 @@ const stateInputData = [
     stateInputs: [{ sensorChecks: [], moves: [], nextStateId: 101 }],
   },
 ];
-export default class Stars extends Phaser.GameObjects.Container {
+
+export default class TunnelFinder extends Phaser.GameObjects.Container {
   private player!: Player;
-  private star1!: Star;
-  private star2!: Star;
-  private wall!: Wall;
+  private wall1!: Wall;
+  private wall2!: Wall;
+  private wall3!: Wall;
+  private wall4!: Wall;
+  private wall5!: Wall;
+  private wall6!: Wall;
+  private wall7!: Wall;
+  private wall8!: Wall;
+  private wall9!: Wall;
+  private wall10!: Wall;
+  private wall11!: Wall;
+  private wall12!: Wall;
+
   private stateInputData: any;
   private inputDataChecked: boolean = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
 
-    this.player = new Player(this.scene, 125, 225);
-    this.star1 = new Star(this.scene, 175, 225);
-    this.star2 = new Star(this.scene, 275, 225);
-    this.wall = new Wall(this.scene, 375, 225);
+    this.player = new Player(this.scene, 25, 225);
+    this.wall1 = new Wall(this.scene, 75, 175);
+    this.wall2 = new Wall(this.scene, 125, 175);
+    this.wall3 = new Wall(this.scene, 175, 175);
+    this.wall4 = new Wall(this.scene, 225, 175);
+    this.wall5 = new Wall(this.scene, 275, 175);
+    this.wall6 = new Wall(this.scene, 3255, 175);
+    this.wall7 = new Wall(this.scene, 175, 275);
+    this.wall8 = new Wall(this.scene, 225, 275);
+    this.wall9 = new Wall(this.scene, 275, 275);
+    this.wall10 = new Wall(this.scene, 325, 275);
+    this.wall11 = new Wall(this.scene, 375, 275);
+    this.wall12 = new Wall(this.scene, 425, 275);
 
     scene.add.existing(this.player);
-    scene.add.existing(this.star1);
-    scene.add.existing(this.star2);
-    scene.add.existing(this.wall);
+    scene.add.existing(this.wall1);
+    scene.add.existing(this.wall2);
+    scene.add.existing(this.wall3);
+    scene.add.existing(this.wall4);
+    scene.add.existing(this.wall5);
+    scene.add.existing(this.wall6);
+    scene.add.existing(this.wall7);
+    scene.add.existing(this.wall8);
+    scene.add.existing(this.wall9);
+    scene.add.existing(this.wall10);
+    scene.add.existing(this.wall11);
+    scene.add.existing(this.wall12);
 
     this.stateInputData = stateInputData;
   }
-
   processStateInputData = async () => {
     if (!this.inputDataChecked) {
       const startState = this.stateInputData.find(
@@ -136,6 +207,11 @@ export default class Stars extends Phaser.GameObjects.Container {
       return;
     }
   };
+
+  // executeMoves(moveIds: number[]) {
+  //   // TODO: Implement move execution logic based on moveIds
+  //   // For example, you can move the player, change the player's state, etc.
+  // }
 
   // Sensor Check (0 - 4)
   sensorCheck(sensorId: number): boolean {

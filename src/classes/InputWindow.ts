@@ -144,7 +144,7 @@ const dummyButtonConfigurations = [
   },
 ];
 
-const conditionInputPoints = [
+export const conditionInputPoints = [
   { key: 'dummyBtn_11', x: 580, y: 490 },
   { key: 'dummyBtn_12', x: 630, y: 490 },
   { key: 'dummyBtn_13', x: 680, y: 490 },
@@ -191,18 +191,19 @@ const moveInputPoints = [
 ];
 
 /** InputGuideline Coordinate */
-const guidlinePositions = [
-  { x: 800, y: 490 },
-  { x: 800, y: 555 },
-  { x: 800, y: 620 },
-  { x: 800, y: 685 },
-  { x: 800, y: 750 },
+const guidelinePositions = [
+  { x: 800, y: 486 },
+  { x: 800, y: 551 },
+  { x: 800, y: 616 },
+  { x: 800, y: 681 },
+  { x: 800, y: 746 },
 ];
 
 export class InputWindow extends Phaser.GameObjects.Container {
   private dropdownButtons: DropdownMenu[] = [];
   private currentDropdownCount: number = -1;
   private tempSensorInputs: SensorType[] = []; // Store selected sensor button
+  private inputRowCount: number = 1; // 줄 순서대로 입력을 강제하기 위한 인수
   private controlButtons: ControlButton[] = [];
   private inputGuideline!: InputGuideline;
   private isActive: boolean = false;
@@ -286,19 +287,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
     const moveLabel = this.scene.add.image(862.5, 433, 'moveLabel');
     const nextStateLabel = this.scene.add.image(1000, 433, 'nextStateLabel');
 
-    // const dummyButton_1 = this.scene.add.image(630, 490, 'yesNoButton');
-    // const dummyButton_2 = this.scene.add.image(680, 490, 'yesNoButton');
-    // const dummyButton_3 = this.scene.add.image(730, 490, 'yesNoButton');
-
-    // this.dummyButton_11 = this.scene.add.image(586, 490, 'yesNoButton');
-    // const dummyButton_12 = this.scene.add.image(785, 490, 'yesNoButton');
-    // const dummyButton_13 = this.scene.add.image(835, 490, 'yesNoButton');
-    // const dummyButton_14 = this.scene.add.image(885, 490, 'yesNoButton');
-    // const dummyButton_15 = this.scene.add.image(935, 490, 'yesNoButton');
-    // this.dummyButton_11.setVisible(false);
-
-    this.inputGuideline = this.addGuildeline();
-
     // Add objects into Scene
     this.add(containerGraphic);
     this.add(controlContainerGraphic);
@@ -330,8 +318,11 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
     scene.add.existing(this);
 
-    // this.addDummyButtons();
+    // Guideline
+    this.inputGuideline = this.addGuildeline();
+    // Control Buttons (Condition buttons, Move buttons)
     this.addControlButtons();
+    // Dropddown buttons (Sensors)
     this.createSensorDropdownButton(580, 432, 'dropdownButton', options);
   }
 
@@ -346,6 +337,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
     if (index >= 0 && index < 5) {
       this.tempSensorInputs[index] = sensorType;
       // TODO: DELETE TEST CODE
+      console.log('tempSensorInputs: ', this.tempSensorInputs);
       console.log(
         'index',
         index,
@@ -596,7 +588,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
           newButton.getType === ButtonType.NoButton ||
           newButton.getType === ButtonType.YesNoButton
         ) {
-          conditionInputPoints.forEach((point) => {
+          for (const point of conditionInputPoints) {
             const distance = Phaser.Math.Distance.Between(
               newButton.x,
               newButton?.y,
@@ -613,9 +605,16 @@ export class InputWindow extends Phaser.GameObjects.Container {
               ); // 입력 sensor 번호
               const rowNumber: number = parseInt(point.key.split('_')[1][0]); // 입력 줄 번호
 
-              if (sensorCount !== targetSensorIndex) {
+              if (
+                sensorCount < targetSensorIndex ||
+                rowNumber > this.inputRowCount
+              ) {
+                console.log('등록된 sensorInputs: ', this.tempSensorInputs);
+                console.log('sensorCount: ', sensorCount);
+                console.log('targetSensorIndex: ', targetSensorIndex);
                 // 입력하려는 sensor번호에 sensor가 미등록이면, 취소
-                return;
+                console.log('sensor 미등록으로 취소');
+                return; // 함수 종료
               }
               const pointKey: string = point.key;
               const buttonType: ButtonType = newButton.getType;
@@ -635,7 +634,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
             } else {
               newButton.destroy();
             }
-          });
+          }
         } else if (
           newButton.getType === ButtonType.ForwardButton ||
           newButton.getType === ButtonType.LeftButton ||
@@ -781,6 +780,9 @@ export class InputWindow extends Phaser.GameObjects.Container {
       console.log('targetElement:', targetElement);
       targetElement.sensorChecks.push(sensorCheck);
 
+      this.inputRowCount++;
+      console.log('inputRowCount: ', this.inputRowCount);
+
       console.log('새로 등록된 tempStateInputs: ', this.tempStateInputs);
     }
   };
@@ -836,9 +838,10 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
   /** Guideline */
   addGuildeline = (): InputGuideline => {
+    console.log('가이드라인 추가');
     const inputGutideline = new InputGuideline(
       this.scene,
-      guidlinePositions,
+      guidelinePositions,
       'inputGuideline'
     );
 
