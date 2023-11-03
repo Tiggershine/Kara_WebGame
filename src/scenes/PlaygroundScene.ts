@@ -5,19 +5,26 @@ import Star from '../classes/sprites/Star';
 import Stars from '../tasks/Stars';
 import TunnelFinder from '../tasks/TunnelFinder';
 import SimulationHighlight from '../classes/SimulationHighlight';
+import DiagramScene from './DiagramScene';
+import { StateInput } from '../classes/InputManager';
+import StateCircle from '../classes/StateCircle';
 
 export default class PlaygroundScene extends Phaser.Scene {
+  private stateCircles: StateCircle[] = [];
+  private stateInputData: { id: number; stateInputs: StateInput[] }[] = [];
+  private taskStars!: Stars;
+  private tunnelFinder!: TunnelFinder;
+  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
+  private playButton!: Phaser.GameObjects.Sprite;
+  private isSimulationPlaying: boolean = false;
+  // private player!: Player;
+  // private wall!: Wall;
+  // private star!: Star;
+  // private star2!: Star;
+
   constructor() {
     super('PlaygroundScene');
   }
-
-  private taskStars!: Stars;
-  private tunnelFinder!: TunnelFinder;
-  private player!: Player;
-  private wall!: Wall;
-  private star!: Star;
-  private star2!: Star;
-  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
 
   // Values for Style
   private containerStyle = {
@@ -33,9 +40,21 @@ export default class PlaygroundScene extends Phaser.Scene {
   };
 
   create() {
+    this.events.on(
+      'stateInputDataUpdated',
+      this.handleStateCirclesUpdated,
+      this
+    );
+
+    // const diagramScene = this.scene.get('DiagramScene') as DiagramScene;
+    // diagramScene.events.on(
+    //   'updatedStateCircles',
+    //   this.handleStateInputDataUpdated,
+    //   this
+    // );
     // Set position of the Scene
     // this.cameras.main.setViewport(30, 90, 500, 500);
-    // this.cameras.main.setViewport(30, 90, 1050, 1050);
+    // this.cameras.main.setViewport(0, 0, 1050, 1050);
 
     // Container Object
     const containerGraphics = this.add.graphics({
@@ -72,28 +91,40 @@ export default class PlaygroundScene extends Phaser.Scene {
       ); // Horizontal line
     }
 
+    // Task 생성
     this.taskStars = new Stars(this, 30, 90);
+
+    // Play Button
+    this.playButton = this.add.sprite(65, 615, 'playButton').setInteractive();
+    this.load.image('playButton', 'playButton');
+    this.load.image('pauseButton', 'pauseButton');
+
+    // Input event listener for the play button
+    this.playButton.on('pointerdown', () => {
+      if (this.isSimulationPlaying) {
+        // Pause the simulation
+        this.isSimulationPlaying = false;
+        this.playButton.setTexture('playButton');
+        // Code to pause processStateInputData
+      } else {
+        // Start the simulation
+        this.isSimulationPlaying = true;
+        this.playButton.setTexture('pauseButton');
+
+        const stateInputData = this.stateInputData;
+        this.taskStars.processStateInputData(stateInputData);
+        // Code to start or resume processStateInputData
+      }
+    });
+
     // this.taskStars.processStateInputData();
 
     // this.tunnelFinder = new TunnelFinder(this, 0, 0);
     // this.tunnelFinder.processStateInputData();
 
-    const simulationHighlight = new SimulationHighlight(this, 'inputHighlight');
-    simulationHighlight.setDepth(10);
+    // const simulationHighlight = new SimulationHighlight(this, 'inputHighlight');
+    // simulationHighlight.setDepth(10);
     // simulationHighlight.processStateInputData();
-
-    // this.add.image(550, 395, 'inputHighlight');
-    // this.add.image(580, 490, 'inputHighlight');
-
-    // this.player = new Player(this, 125, 225);
-    // this.wall = new Wall(this, 375, 225);
-    // this.star = new Star(this, 175, 225);
-    // this.star2 = new Star(this, 275, 225);
-
-    // this.add.existing(this.player);
-    // this.add.existing(this.wall);
-    // this.add.existing(this.star);
-    // this.add.existing(this.star2);
 
     // this.star.checkStarObjectAt(175, 225);
 
@@ -101,6 +132,9 @@ export default class PlaygroundScene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
 
     this.scene.moveAbove('DiagramScene', 'PlaygroundScene');
+    // this.scene.moveAbove('PlaygroundScene', 'DiagramScene');
+    // this.scene.moveAbove('PlaygroundScene', 'InputWindowScene');
+
     this.scene.moveAbove('InputWindowScene', 'PlaygroundScene');
   }
 
@@ -113,5 +147,24 @@ export default class PlaygroundScene extends Phaser.Scene {
     // } else if (Phaser.Input.Keyboard.JustUp(this.cursors.left)) {
     //   this.player.moveLeft();
     // }
+  }
+  private handleStateCirclesUpdated(stateCircles: StateCircle[]) {
+    this.stateCircles = stateCircles;
+
+    this.stateInputData = stateCircles.map((stateCircle) => ({
+      id: stateCircle.id,
+      stateInputs: stateCircle.stateInputs,
+    }));
+
+    for (const inputData of this.stateInputData) {
+      console.log(
+        '(PlaygroundScene.ts)',
+        'stateId: ',
+        inputData.id,
+        'stateInputs: ',
+        inputData.stateInputs
+      );
+    }
+    // You can now use id and newInputs to perform further actions in this scene
   }
 }

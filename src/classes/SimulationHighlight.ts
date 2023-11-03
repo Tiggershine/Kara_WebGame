@@ -101,6 +101,7 @@ class SimulationHighlight extends Phaser.GameObjects.Image {
     super(scene, 0, 0, 'inputHighlight');
     scene.add.existing(this);
     this.setVisible(false);
+    this.setDepth(10);
   }
 
   async processStateInputData() {

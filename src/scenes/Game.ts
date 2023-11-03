@@ -51,6 +51,9 @@ export default class Game extends Phaser.Scene {
       // Images for Simulation Highlight
       playerHighlight: 'assets/PlayerHighlight.png',
       inputHighlight: 'assets/InputHighlight.png',
+      // Images for Simulation Buttons
+      playButton: 'assets/PlayButton.png',
+      pauseButton: 'assets/PauseButton.png',
     };
 
     for (let key in imageSources) {
@@ -64,7 +67,7 @@ export default class Game extends Phaser.Scene {
     this.scene.launch('BackgroundScene');
     this.scene.launch('PlaygroundScene');
     this.scene.launch('DiagramScene');
-    // this.scene.launch('InputWindowScene');
+    this.scene.launch('InputWindowScene');
 
     // Set up a pointer move event listener
     // this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {

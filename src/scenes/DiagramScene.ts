@@ -11,7 +11,7 @@ export default class DiagramScene extends Phaser.Scene {
   validArea!: Phaser.GameObjects.Rectangle;
   inputManager: InputManager = new InputManager();
   private inputWindowScene?: InputWindowScene;
-  private stateCircles: StateCircle[] = []; // 등록된 StateCircle 모음 Array
+  stateCircles: StateCircle[] = []; // 등록된 StateCircle 모음 Array
   private inputLabels: InputLabel[] = [];
   private startStateCircle!: StateCircle;
 
@@ -57,7 +57,31 @@ export default class DiagramScene extends Phaser.Scene {
       this.container.borderRadius
     );
 
+    // StateCircle 객체의 StateInputs가 update 되었을 때 EVENT EMMITER
+    // StateCircles 배열의 Update
+    this.events.on('stateInputsChanged', this.updateStateCircleInputs, this);
+
     this.scene.moveAbove('InputWindowScene', 'DiagramScene');
+    this.scene.moveAbove('DiagramScene', 'PlaygroundScene');
+  }
+
+  updateStateCircleInputs(id: number, newInputs: StateInput[]) {
+    const stateCircle = this.stateCircles.find((circle) => circle.id === id);
+    if (stateCircle) {
+      stateCircle.stateInputs = newInputs;
+      console.log('(DiagramScene.ts) stateCircles: ', this.stateCircles);
+      // Emit an event with the updated state inputs
+      this.scene
+        .get('PlaygroundScene')
+        .events.emit('stateInputDataUpdated', this.stateCircles);
+    }
+  }
+
+  extractIdAndNameFromStateCircles(): { id: number; name: string }[] {
+    return this.stateCircles.map((stateCircle) => ({
+      id: stateCircle.id,
+      name: stateCircle.name,
+    }));
   }
 
   createAddButton() {
@@ -110,6 +134,9 @@ export default class DiagramScene extends Phaser.Scene {
 
   // StateCircle 객체 관련 함수
   createStateCircle(x: number, y: number): StateCircle {
+    // Before creating a new state, remove the endStateCircle from the array
+    const endStateCircle = this.stateCircles.pop();
+
     const stateId = this.stateCircles.length;
     const stateName = 'State ' + Number(this.stateCircles.length);
     const newStateInput: StateInput[] = [];
@@ -132,12 +159,17 @@ export default class DiagramScene extends Phaser.Scene {
 
     this.stateCircles.push(newStateCircle); // stateCircles 배열에 추가
 
+    // Re-add the endStateCircle to the end of the array
+    if (endStateCircle) {
+      this.stateCircles.push(endStateCircle);
+    }
+
     this.addLabels();
 
     // StateCirle 객체에 InputWindow 객체 추가
-    const inputWindow = new InputWindow(this, 0, 0);
+    // const inputWindow = new InputWindow(this, 0, 0, stateId);
 
-    newStateCircle.setInputWindow(inputWindow);
+    // newStateCircle.setInputWindow(inputWindow);
 
     // Event emit -> stateCircle: { id, name } emit
     this.events.emit(
@@ -155,33 +187,82 @@ export default class DiagramScene extends Phaser.Scene {
   }
 
   createStartStateCircle(): void {
+    // const newStateInput: StateInput[] = [];
+    // const startButton = new StateCircle(
+    //   this,
+    //   625,
+    //   211,
+    //   0,
+    //   'Start',
+    //   newStateInput
+    // );
+
+    // startButton.deselect();
+    // startButton.setDepth(1);
+    // this.stateCircles.push(startButton);
+    // this.add.existing(startButton);
+    const stateId = 0;
+    const stateName = 'Start';
     const newStateInput: StateInput[] = [];
-    const startButton = new StateCircle(
+
+    const startStateCircle = new StateCircle(
       this,
       625,
       211,
-      0,
-      'Start',
+      stateId,
+      stateName,
       newStateInput
     );
 
-    startButton.deselect();
-    startButton.setDepth(1);
-    this.stateCircles.push(startButton);
-    this.add.existing(startButton);
+    startStateCircle.setDepth(1);
+    this.stateCircles.push(startStateCircle); // stateCircles 배열에 추가
+
+    this.addLabels();
+
+    // Event emit -> stateCircle: { id, name } emit
+    this.events.emit(
+      'updatedStateCircles',
+      this.stateCircles.map((stateCircle) => {
+        console.log('(DiagramScene.ts) stateCircles: ', stateCircle);
+        return {
+          id: stateCircle.getId,
+          name: stateCircle.getName,
+        };
+      })
+    );
   }
 
+  // createEndStateCircle(): void {
+  //   const newStateInput: StateInput[] = [];
+
+  //   const endButton = new StateCircle(this, 1000, 211, 0, 'End', newStateInput);
+
+  //   endButton.deselect();
+  //   endButton.setDepth(1);
+
+  //   // this.stateCircles[100] = endButton;
+
+  //   this.add.existing(endButton);
+  // }
   createEndStateCircle(): void {
+    const stateId = 100;
+    const stateName = 'End';
     const newStateInput: StateInput[] = [];
 
-    const endButton = new StateCircle(this, 1000, 211, 0, 'End', newStateInput);
+    const endStateCircle = new StateCircle(
+      this,
+      1000,
+      211,
+      stateId,
+      stateName,
+      newStateInput
+    );
 
-    endButton.deselect();
-    endButton.setDepth(1);
+    endStateCircle.deselect();
+    endStateCircle.setDepth(1);
 
-    // this.stateCircles[100] = endButton;
-
-    this.add.existing(endButton);
+    // Add the endStateCircle to the stateCircles array
+    this.stateCircles.push(endStateCircle);
   }
 
   // Add label on addButton 575, 55, New\nState
@@ -200,18 +281,14 @@ export default class DiagramScene extends Phaser.Scene {
     return buttonLabel;
   };
 
-  // connectCircles = (circleA: StateCircle, circleB: StateCircle): void => {
-  //   const edge = this.add.graphics();
-  //   circleA.connectedCircles.push({ targetCircle: circleB, edge: edge });
-  //   circleB.connectedCircles.push({ targetCircle: circleA, edge: edge });
-  //   circleA.updateEdges();
-  //   circleB.updateEdges();
-  // };
-
   // Getter for StateCircles (Array contains generated states)
   get getStateCircles(): StateCircle[] {
     return this.stateCircles;
   }
+
+  getStateCircleById = (id: number): StateCircle | undefined => {
+    return this.stateCircles.find((circle) => circle.id === id);
+  };
 
   /** InputWindow Label */
   // InputLabel 그래픽 추가
@@ -226,7 +303,8 @@ export default class DiagramScene extends Phaser.Scene {
 
     const excludingStartEnd = this.getStateCircles.filter(
       (stateCircle, index) => {
-        return index !== 0 && index !== 100;
+        // return index !== 0 && index !== 100;
+        return stateCircle.getId !== 100;
       }
     );
 
@@ -344,18 +422,4 @@ export default class DiagramScene extends Phaser.Scene {
       circleB.edges.push(edge);
     }
   }
-
-  // testCreateEdge() {
-  //   // Create two StateCircle objects
-  //   const circleA = this.createStateCircle(700, 150);
-  //   const circleB = this.createStateCircle(800, 250);
-  //   circleA.setDepth(10);
-  //   circleB.setDepth(10);
-
-  //   // Call createEdge method to draw an edge between circleA and circleB
-  //   this.createEdge(circleA, circleB);
-
-  //   // For self-edge test
-  //   this.createEdge(circleA, circleA);
-  // }
 }

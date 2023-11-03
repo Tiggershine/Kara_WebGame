@@ -7,11 +7,11 @@ import DiagramScene from '../scenes/DiagramScene';
 //   buttonLabel: Phaser.GameObjects.Text;
 // }
 
-interface TextImageDropdownOption {
-  // 여기 삭제
-  texture: string;
-  text: string;
-}
+// interface TextImageDropdownOption {
+//   // 여기 삭제
+//   texture: string;
+//   text: string;
+// }
 
 export class NextStateButton extends Phaser.GameObjects.Container {
   private buttonId: number = -1;
@@ -65,10 +65,12 @@ export class NextStateButton extends Phaser.GameObjects.Container {
     this.buttonContainer.add(buttonRectangle);
     this.buttonContainer.add(triangle);
     this.buttonContainer.add(buttonLabel);
-    this.buttonContainer.setInteractive(
-      new Phaser.Geom.Rectangle(-40, -12, 80, 24),
-      Phaser.Geom.Rectangle.Contains
-    );
+    this.buttonContainer
+      .setInteractive(
+        new Phaser.Geom.Rectangle(-40, -12, 80, 24),
+        Phaser.Geom.Rectangle.Contains
+      )
+      .setDepth(1);
     this.buttonContainer.on('pointerdown', this.toggleMenu, this);
     this.add(this.buttonContainer);
     this.unfoldOptions();

@@ -10,7 +10,7 @@ interface StateCircleType {
   x: number;
   y: number;
   isSelected: boolean;
-  stateInput: StateInput[];
+  stateInputs: StateInput[];
 }
 
 export default class StateCircle extends Phaser.GameObjects.Container {
@@ -19,7 +19,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   id: number;
   name: string;
   isSelected: boolean = false;
-  stateInput: StateInput[] = [];
+  stateInputs: StateInput[] = [];
   inputManager: InputManager = new InputManager();
   inputWindowScene?: InputWindowScene;
   edges: Phaser.GameObjects.Graphics[] = [];
@@ -31,15 +31,13 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     y: number,
     id: number,
     name: string,
-    stateInput: StateInput[]
+    stateInputs: StateInput[]
   ) {
     super(scene, x, y);
 
-    // this.inputWindow = new InputWindow(this.scene, )
-
     this.id = id;
     this.name = name;
-    this.stateInput = stateInput;
+    this.stateInputs = stateInputs;
     this.isSelected = true;
 
     // Create StateCircle Object
@@ -109,10 +107,30 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.add(this.label);
 
     scene.add.existing(this);
+
+    this.inputWindow = new InputWindow(this.scene, 0, 0, id);
+    // this.inputWindow.setVisible(false);
   }
 
-  addStateInput = (input: StateInput): void => {
-    this.stateInput.push(input);
+  addStateInputs = (newStateInputs: StateInput[]): void => {
+    // Filter out the elements based on the given conditions
+    const filteredStateInputs = newStateInputs.filter((input) => {
+      const hasSensorChecks = input.sensorChecks.length > 0;
+      const hasMoveInputs = input.move.length > 0;
+      const hasNextState = input.nextState !== 0;
+      return hasSensorChecks || hasMoveInputs || hasNextState;
+    });
+
+    this.stateInputs = filteredStateInputs;
+    console.log(
+      '(StateCircle.ts) id: ',
+      this.id,
+      '업데이트 된 StateInputs',
+      this.stateInputs
+    );
+
+    // DiagramScene에 StateInputs 상태 변경을 알리기 위한 이벤트 발생
+    this.scene.events.emit('stateInputsChanged', this.id, this.stateInputs);
   };
 
   setLabelText(text: string): string {
@@ -135,6 +153,9 @@ export default class StateCircle extends Phaser.GameObjects.Container {
       console.log(this.getId, 'Visible true');
       console.log(this.inputWindow.getInputwindowActive());
       // this.inputWindow.setVisible(true); // Show the InputWindow
+      // setTimeout(() => {
+      //   console.log(this.inputWindow?.getInputwindowActive());
+      // }, 1000);
     }
   };
 
@@ -183,8 +204,8 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     return this.isSelected;
   }
 
-  get getStateInput(): StateInput[] {
-    return this.stateInput;
+  get getStateInputs(): StateInput[] {
+    return this.stateInputs;
   }
 
   set setId(id: number) {
@@ -197,9 +218,9 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   };
 
   /** InputWindow */
-  setInputWindow(inputWindow: InputWindow): void {
-    this.inputWindow = inputWindow;
-  }
+  // setInputWindow(inputWindow: InputWindow): void {
+  //   this.inputWindow = inputWindow;
+  // }
 
   getInputWindow(): InputWindow | undefined {
     return this.inputWindow;

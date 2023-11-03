@@ -4,6 +4,7 @@ import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
 import StateCircle from '../classes/StateCircle';
 import SimulationHighlight from '../classes/SimulationHighlight';
+import DiagramScene from '../scenes/DiagramScene';
 
 type SensorCheck = {
   sensor: number;
@@ -12,8 +13,8 @@ type SensorCheck = {
 
 type StateInput = {
   sensorChecks: SensorCheck[];
-  moves: number[];
-  nextStateId: number;
+  move: number[];
+  nextState: number;
 };
 
 type State = {
@@ -73,6 +74,8 @@ export default class Stars extends Phaser.GameObjects.Container {
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
 
+    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+
     this.player = new Player(this.scene, 155, 315); // (125+30, 225+90)
     this.star1 = new Star(this.scene, 205, 315);
     this.star2 = new Star(this.scene, 305, 315);
@@ -83,26 +86,76 @@ export default class Stars extends Phaser.GameObjects.Container {
     scene.add.existing(this.star2);
     scene.add.existing(this.wall);
 
-    this.stateInputData = stateInputData;
+    // this.stateInputData = stateInputData;
+    this.stateInputData = diagramScene.getSelectedCircle();
+    // this.stateInputData.push({
+    //   id: 100,
+    //   stateInputs: [{ sensorChecks: [], moves: [], nextStateId: 101 }],
+    // });
+
     this.simulationHighlight = new SimulationHighlight(
       this.scene,
       'inputHighlight'
     );
+    this.simulationHighlight.setDepth(1000);
+
+    this.scene.events.on('updatedStateCircles', this.testConsole, this);
+
+    // this.scene.events.on(
+    //   'stateInputDataUpdated',
+    //   this.handleStateInputDataUpdated,
+    //   this
+    // );
   }
 
-  processStateInputData = async () => {
-    if (!this.inputDataChecked) {
-      const startState = this.stateInputData.find(
-        (state: State) => state.id === 0
-      );
+  // Add this method to the Stars class to find a StateCircle by id
+  private findStateCircleById(id: number) {
+    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+    const stateCircles = diagramScene.getStateCircles; // Assuming this is an array of StateCircle
 
-      let currentStateId = startState.stateInputs[0].nextStateId; // Start 다음 State로 Init (1번 State)
+    // Deselect all StateCircles first
+    stateCircles.forEach((stateCircle) => {
+      stateCircle.deselect();
+    });
+
+    // Now find the StateCircle with the matching id and select it
+    const currentState = stateCircles.find((circle) => circle.id === id);
+    if (currentState) {
+      currentState.select();
+    }
+  }
+
+  testConsole = () => {
+    console.log('SSSTTTTAAAAARRR');
+  };
+
+  // Handler for the 'stateInputDataUpdated' event
+  handleStateInputDataUpdated = (id: number, newInputs: StateInput[]) => {
+    // Find the state with the matching id and update its inputs
+    const stateIndex = this.stateInputData.findIndex(
+      (state: State) => state.id === id
+    );
+    if (stateIndex !== -1) {
+      this.stateInputData[stateIndex].stateInputs = newInputs;
+      console.log('(Stars.ts) stateInputData: ', this.stateInputData);
+    }
+    console.log('(Stars.ts) stateInputData: ', this.stateInputData);
+  };
+
+  processStateInputData = async (stateInputData: any) => {
+    if (!this.inputDataChecked) {
+      const startState = stateInputData.find((state: State) => state.id === 0);
+
+      let currentStateId = startState.stateInputs[0].nextState; // Start 다음 State로 Init (1번 State)
       console.log('currentStateId', currentStateId);
 
       while (currentStateId !== 100) {
-        const currentState = this.stateInputData.find(
+        const currentState = stateInputData.find(
           (state: State) => state.id === currentStateId
         );
+
+        this.findStateCircleById(currentStateId);
+
         if (!currentState) {
           console.error('Invalid state id:', currentStateId);
           break;
@@ -155,8 +208,8 @@ export default class Stars extends Phaser.GameObjects.Container {
           console.log('sensorCheckPassed: ', sensorCheckPassed);
 
           if (sensorCheckPassed) {
-            for (let j = 0; j < stateInput.moves.length; j++) {
-              const move = stateInput.moves[j];
+            for (let j = 0; j < stateInput.move.length; j++) {
+              const move = stateInput.move[j];
               console.log('move: ', move);
 
               const simulationKey = simulationPrefix + (j + 5).toString();
@@ -185,7 +238,7 @@ export default class Stars extends Phaser.GameObjects.Container {
             }
 
             // nextStateId = stateInput.nextStateId;
-            currentStateId = stateInput.nextStateId;
+            currentStateId = stateInput.nextState;
             console.log('새로운 currentStateId: ', currentStateId);
 
             break;
