@@ -5,11 +5,19 @@ import Monster from './Monster';
 
 export default class Player extends BaseSprite {
   stars: Star[] = [];
+  private playerHighlight!: Phaser.GameObjects.Image;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player');
 
     this.setDepth(5);
+
+    this.playerHighlight = this.scene.add.image(
+      this.x,
+      this.y,
+      'playerHighlight'
+    );
+    this.playerHighlight.setVisible(false).setDepth(10);
   }
 
   delay = (ms: number) => {
@@ -26,27 +34,33 @@ export default class Player extends BaseSprite {
   /** Methods for Moves */
   moveForward = async () => {
     console.log('moveForward 함수 실행');
+    this.playerHighlight.setVisible(true);
+    this.scene.add.existing(this.playerHighlight);
     const angle = this.angle % 360;
 
     switch (angle) {
       case 0:
         await this.delay(2000);
         this.x += 50;
+        this.playerHighlight.x = this.x;
         break;
       case 90:
       case -270:
         await this.delay(2000);
         this.y += 50;
+        this.playerHighlight.y = this.y;
         break;
       case 180:
       case -180:
         await this.delay(2000);
         this.x -= 50;
+        this.playerHighlight.x = this.x;
         break;
       case 270:
       case -90:
         await this.delay(2000);
         this.y -= 50;
+        this.playerHighlight.y = this.y;
         break;
       default:
         console.log('Invalid angle');

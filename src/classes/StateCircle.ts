@@ -52,7 +52,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
       this.isSelected ? 0xef3d38 : 0xfcf6f5
     );
     this.circle.setStrokeStyle(3, 1776669);
-    this.circle.setDepth(10);
+    // this.circle.setDepth(1);
 
     // Create Text on Circle
     this.label = new Phaser.GameObjects.Text(scene, 0, 0, this.name, {

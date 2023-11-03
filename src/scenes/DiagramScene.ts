@@ -56,6 +56,8 @@ export default class DiagramScene extends Phaser.Scene {
       this.container.height,
       this.container.borderRadius
     );
+
+    this.scene.moveAbove('InputWindowScene', 'DiagramScene');
   }
 
   createAddButton() {
@@ -164,7 +166,7 @@ export default class DiagramScene extends Phaser.Scene {
     );
 
     startButton.deselect();
-    startButton.setDepth(5);
+    startButton.setDepth(1);
     this.stateCircles.push(startButton);
     this.add.existing(startButton);
   }
@@ -175,7 +177,7 @@ export default class DiagramScene extends Phaser.Scene {
     const endButton = new StateCircle(this, 1000, 211, 0, 'End', newStateInput);
 
     endButton.deselect();
-    endButton.setDepth(5);
+    endButton.setDepth(1);
 
     // this.stateCircles[100] = endButton;
 
@@ -228,6 +230,7 @@ export default class DiagramScene extends Phaser.Scene {
       }
     );
 
+    // Start, End가 제외된 StateCircles 배열에 대한 Label 생성
     excludingStartEnd.forEach((state) => {
       const label = new InputLabel(
         this,
@@ -260,7 +263,7 @@ export default class DiagramScene extends Phaser.Scene {
   /** Edge */
   createEdge(circleA: StateCircle, circleB: StateCircle): void {
     const edge = this.add.graphics();
-    edge.lineStyle(2, 0x000000).setDepth(10); // Set line style
+    edge.lineStyle(2, 0x000000).setDepth(1); // Set line style
 
     if (circleA.id === circleB.id) {
       // Create a self-edge
@@ -342,17 +345,17 @@ export default class DiagramScene extends Phaser.Scene {
     }
   }
 
-  testCreateEdge() {
-    // Create two StateCircle objects
-    const circleA = this.createStateCircle(700, 150);
-    const circleB = this.createStateCircle(800, 250);
-    circleA.setDepth(10);
-    circleB.setDepth(10);
+  // testCreateEdge() {
+  //   // Create two StateCircle objects
+  //   const circleA = this.createStateCircle(700, 150);
+  //   const circleB = this.createStateCircle(800, 250);
+  //   circleA.setDepth(10);
+  //   circleB.setDepth(10);
 
-    // Call createEdge method to draw an edge between circleA and circleB
-    this.createEdge(circleA, circleB);
+  //   // Call createEdge method to draw an edge between circleA and circleB
+  //   this.createEdge(circleA, circleB);
 
-    // For self-edge test
-    this.createEdge(circleA, circleA);
-  }
+  //   // For self-edge test
+  //   this.createEdge(circleA, circleA);
+  // }
 }

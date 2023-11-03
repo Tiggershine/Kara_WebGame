@@ -4,6 +4,7 @@ import Wall from '../classes/sprites/Wall';
 import Star from '../classes/sprites/Star';
 import Stars from '../tasks/Stars';
 import TunnelFinder from '../tasks/TunnelFinder';
+import SimulationHighlight from '../classes/SimulationHighlight';
 
 export default class PlaygroundScene extends Phaser.Scene {
   constructor() {
@@ -33,15 +34,16 @@ export default class PlaygroundScene extends Phaser.Scene {
 
   create() {
     // Set position of the Scene
-    this.cameras.main.setViewport(30, 90, 500, 500);
+    // this.cameras.main.setViewport(30, 90, 500, 500);
+    // this.cameras.main.setViewport(30, 90, 1050, 1050);
 
     // Container Object
     const containerGraphics = this.add.graphics({
       fillStyle: { color: this.containerStyle.backgroundColor },
     });
     containerGraphics.fillRoundedRect(
-      0,
-      0,
+      30,
+      90,
       this.containerStyle.size,
       this.containerStyle.size,
       this.containerStyle.borderRadius
@@ -57,24 +59,31 @@ export default class PlaygroundScene extends Phaser.Scene {
     });
     for (let i = 1; i < 10; i++) {
       tileGraphics.lineBetween(
-        i * this.tileStyle.size,
-        0,
-        i * this.tileStyle.size,
-        this.containerStyle.size
+        i * this.tileStyle.size + 30,
+        90,
+        i * this.tileStyle.size + 30,
+        this.containerStyle.size + 90
       ); // Vertical line
       tileGraphics.lineBetween(
-        0,
-        i * this.tileStyle.size,
-        this.containerStyle.size,
-        i * this.tileStyle.size
+        30,
+        i * this.tileStyle.size + 90,
+        this.containerStyle.size + 30,
+        i * this.tileStyle.size + 90
       ); // Horizontal line
     }
 
-    this.taskStars = new Stars(this, 0, 0);
+    this.taskStars = new Stars(this, 30, 90);
     // this.taskStars.processStateInputData();
 
     // this.tunnelFinder = new TunnelFinder(this, 0, 0);
     // this.tunnelFinder.processStateInputData();
+
+    const simulationHighlight = new SimulationHighlight(this, 'inputHighlight');
+    simulationHighlight.setDepth(10);
+    // simulationHighlight.processStateInputData();
+
+    // this.add.image(550, 395, 'inputHighlight');
+    // this.add.image(580, 490, 'inputHighlight');
 
     // this.player = new Player(this, 125, 225);
     // this.wall = new Wall(this, 375, 225);
@@ -90,6 +99,9 @@ export default class PlaygroundScene extends Phaser.Scene {
 
     // 키보드 입력을 받기 위한 CursorKeys 객체를 생성합니다.
     this.cursors = this.input.keyboard.createCursorKeys();
+
+    this.scene.moveAbove('DiagramScene', 'PlaygroundScene');
+    this.scene.moveAbove('InputWindowScene', 'PlaygroundScene');
   }
 
   update() {

@@ -39,7 +39,7 @@ export class InputGuideline extends Phaser.GameObjects.Container {
     for (let i = 0; i < this.validArea.length; i++) {
       if (this.validArea[i].contains(dragX, dragY)) {
         this.setAllGuidelinesVisible(false); // 모든 guideline을 먼저 숨깁니다.
-        this.setGuidelineVisible(true, i); // 해당 guideline만 보이게 합니다.
+        // this.setGuidelineVisible(true, i); // 해당 guideline만 보이게 합니다.
         return true;
       }
     }

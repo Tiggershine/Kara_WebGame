@@ -77,6 +77,13 @@ export class NextStateButton extends Phaser.GameObjects.Container {
   }
 
   unfoldOptions() {
+    // 기존에 생성된 메뉴 아이템들을 삭제
+    this.menuItems.forEach((item) => {
+      item.destroy();
+    });
+    this.menuItems = [];
+
+    // 새로운 options에 대해 요소를 생성
     this.options.forEach((option: { id: number; name: string }, index) => {
       const optionContainer = this.scene.add.container(0, 0);
       const menuItemRectangle = this.scene.add
@@ -151,5 +158,10 @@ export class NextStateButton extends Phaser.GameObjects.Container {
         this.closeMenu();
       }
     }
+  }
+
+  set setOptions(newOptions: { id: number; name: string }[]) {
+    this.options = newOptions;
+    this.unfoldOptions();
   }
 }

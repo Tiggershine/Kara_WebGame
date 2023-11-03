@@ -167,7 +167,7 @@ export const conditionInputPoints = [
   { key: 'dummyBtn_54', x: 730, y: 750 },
 ];
 
-const moveInputPoints = [
+export const moveInputPoints = [
   { key: 'dummyBtn_15', x: 785, y: 490 },
   { key: 'dummyBtn_16', x: 835, y: 490 },
   { key: 'dummyBtn_17', x: 885, y: 490 },
@@ -190,6 +190,14 @@ const moveInputPoints = [
   { key: 'dummyBtn_58', x: 935, y: 750 },
 ];
 
+export const nextStatePoints = [
+  { key: '19', x: 1005, y: 488 },
+  { key: '29', x: 1005, y: 553 },
+  { key: '39', x: 1005, y: 618 },
+  { key: '49', x: 1005, y: 683 },
+  { key: '59', x: 1005, y: 748 },
+];
+
 /** InputGuideline Coordinate */
 const guidelinePositions = [
   { x: 800, y: 486 },
@@ -201,6 +209,7 @@ const guidelinePositions = [
 
 export class InputWindow extends Phaser.GameObjects.Container {
   private dropdownButtons: DropdownMenu[] = [];
+  private nextStateButtons: NextStateButton[] = [];
   private currentDropdownCount: number = -1;
   private tempSensorInputs: SensorType[] = []; // Store selected sensor button
   private inputRowCount: number = 1; // 줄 순서대로 입력을 강제하기 위한 인수
@@ -218,6 +227,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
   private registeredRow3: boolean = false;
   private registeredRow4: boolean = false;
   private registeredRow5: boolean = false;
+  private containerGraphic!: Phaser.GameObjects.Graphics;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
@@ -239,16 +249,17 @@ export class InputWindow extends Phaser.GameObjects.Container {
       backgroundColor: 0xfcf6f5,
     };
 
-    const containerGraphic = this.scene.add.graphics({
+    this.containerGraphic = this.scene.add.graphics({
       fillStyle: { color: containerStyle.backgroundColor },
     });
-    containerGraphic.fillRoundedRect(
+    this.containerGraphic.fillRoundedRect(
       550,
       400,
       containerStyle.width,
       containerStyle.height,
       containerStyle.borderRadius
     );
+    this.containerGraphic.setDepth(1);
 
     const controllerContainerStyle = {
       width: 320,
@@ -256,9 +267,11 @@ export class InputWindow extends Phaser.GameObjects.Container {
       borderRadius: 10,
       backgroundColor: 0xfcf6f5,
     };
-    const controlContainerGraphic = this.scene.add.graphics({
-      fillStyle: { color: controllerContainerStyle.backgroundColor },
-    });
+    const controlContainerGraphic = this.scene.add
+      .graphics({
+        fillStyle: { color: controllerContainerStyle.backgroundColor },
+      })
+      .setDepth(1);
     controlContainerGraphic.fillRoundedRect(
       210,
       620,
@@ -268,27 +281,15 @@ export class InputWindow extends Phaser.GameObjects.Container {
     );
     // controlContainerGraphic.setDepth(1);
 
-    // Divider graphics
-    const dividerGraphics = this.scene.add.graphics({
-      lineStyle: {
-        width: 1,
-        color: 14277081, // #D9D9D9
-      },
-    });
-    dividerGraphics.setDepth(1);
-    // Set Divider for Input container (210, 400)
-    dividerGraphics.lineBetween(559, 457, 1041, 457);
-    dividerGraphics.lineBetween(760, 408, 760, 774);
-    dividerGraphics.lineBetween(960, 408, 960, 774);
-    // Set Divider for Controller container
-    dividerGraphics.lineBetween(230, 700, 510, 700);
-
     // Label for Inputwindow
     const moveLabel = this.scene.add.image(862.5, 433, 'moveLabel');
     const nextStateLabel = this.scene.add.image(1000, 433, 'nextStateLabel');
 
+    // containerGraphic.setDepth(10);
+    // controlContainerGraphic.setDepth(10);
+
     // Add objects into Scene
-    this.add(containerGraphic);
+    this.add(this.containerGraphic);
     this.add(controlContainerGraphic);
     this.add(moveLabel);
     this.add(nextStateLabel);
@@ -301,6 +302,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
         'yesNoButton'
       );
 
+      // this.dummyButtons[point.key].setDepth(10).setVisible(false);
       this.dummyButtons[point.key].setVisible(false);
       this.add(this.dummyButtons[point.key]);
     });
@@ -324,6 +326,22 @@ export class InputWindow extends Phaser.GameObjects.Container {
     this.addControlButtons();
     // Dropddown buttons (Sensors)
     this.createSensorDropdownButton(580, 432, 'dropdownButton', options);
+
+    // Divider graphics
+    const dividerGraphics = this.scene.add
+      .graphics({
+        lineStyle: {
+          width: 1,
+          color: 14277081, // #D9D9D9
+        },
+      })
+      .setDepth(1);
+    // Set Divider for Input container (210, 400)
+    dividerGraphics.lineBetween(559, 457, 1041, 457);
+    dividerGraphics.lineBetween(760, 408, 760, 774);
+    dividerGraphics.lineBetween(960, 408, 960, 774);
+    // Set Divider for Controller container
+    dividerGraphics.lineBetween(230, 700, 510, 700);
   }
 
   ///////** METHODS *//////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -355,6 +373,8 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
   setInputWindowActive = (isActive: boolean): void => {
     this.isActive = isActive;
+    // this.setDepth(isActive ? 2 : 1);
+    // this.containerGraphic.setDepth(isActive ? 10 : 1); // active 상태에 따라 깊이 값 변경
   };
 
   // Creating Container Graphic
@@ -486,25 +506,30 @@ export class InputWindow extends Phaser.GameObjects.Container {
     //   return stateCircle.name;
     // });
     const options = updatedStateCircles;
+    for (const nextStateButton of this.nextStateButtons) {
+      // nextStateButton.setOptions = [];
+      nextStateButton.setOptions = options;
+      // nextStateButton.unfoldOptions();
+    }
 
     console.log('(InputWindow.ts) updatedStateCircles', options);
 
-    this.addNextStateButton(
-      1005,
-      553,
-      2,
-      'nextStateButton2',
-      'nextStateButton',
-      options
-    );
-    this.addNextStateButton(
-      1005,
-      488,
-      1,
-      'nextStateButton2',
-      'nextStateButton',
-      options
-    );
+    // this.addNextStateButton(
+    //   1005,
+    //   553,
+    //   2,
+    //   'nextStateButton2',
+    //   'nextStateButton',
+    //   options
+    // );
+    // this.addNextStateButton(
+    //   1005,
+    //   488,
+    //   1,
+    //   'nextStateButton2',
+    //   'nextStateButton',
+    //   options
+    // );
   }
 
   updateNextStateInput(buttonId: number, nextStateId: number) {
@@ -526,6 +551,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
         config.type
       );
       button.name = config.name;
+      button.setDepth(2);
       this.setButtonDraggable(
         button,
         config.selectedTexture,
@@ -554,6 +580,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
     selectedButtonImage: string,
     guideline: InputGuideline
   ): void => {
+    // button.setDepth(11);
     button.setInteractive();
     this.scene.input.setDraggable(button);
 
@@ -576,7 +603,14 @@ export class InputWindow extends Phaser.GameObjects.Container {
       (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
         if (newButton) {
           newButton.setPosition(dragX, dragY);
-          guideline.isInsideValidArea(newButton, dragX, dragY);
+
+          // TODO: Guideline 관련 다시 수정할 것
+          // guideline.isInsideValidArea(newButton, dragX, dragY);
+
+          // console.log('setGuidelineVisible(true, 0)');
+          // for (let i = 0; i < this.inputRowCount; i++) {
+          //   guideline.setGuidelineVisible(true, i);
+          // }
         }
       }
     );
@@ -606,7 +640,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
               const rowNumber: number = parseInt(point.key.split('_')[1][0]); // 입력 줄 번호
 
               if (
-                sensorCount < targetSensorIndex ||
+                sensorCount + 1 < targetSensorIndex ||
                 rowNumber > this.inputRowCount
               ) {
                 console.log('등록된 sensorInputs: ', this.tempSensorInputs);
@@ -618,6 +652,8 @@ export class InputWindow extends Phaser.GameObjects.Container {
               }
               const pointKey: string = point.key;
               const buttonType: ButtonType = newButton.getType;
+              console.log('buttonImg:', this.dummyButtons[pointKey]);
+              console.log('buttonType:', buttonType);
               this.changeButtonImage(this.dummyButtons[pointKey], buttonType);
               this.registerInputRow(rowNumber);
               console.log(
@@ -631,6 +667,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
                 rowNumber,
                 buttonType
               );
+              // break;
             } else {
               newButton.destroy();
             }
@@ -642,7 +679,8 @@ export class InputWindow extends Phaser.GameObjects.Container {
           newButton.getType === ButtonType.PickButton ||
           newButton.getType === ButtonType.PutButton
         ) {
-          moveInputPoints.forEach((point) => {
+          // moveInputPoints.forEach((point) => {
+          for (const point of moveInputPoints) {
             const distance = Phaser.Math.Distance.Between(
               newButton.x,
               newButton?.y,
@@ -667,14 +705,15 @@ export class InputWindow extends Phaser.GameObjects.Container {
                 rowNumber,
                 newButton.getType
               );
+              // break;
             } else {
               newButton.destroy();
             }
-          });
+          }
         }
       }
 
-      guideline.setAllGuidelinesVisible(false);
+      // guideline.setAllGuidelinesVisible(false);
     });
   };
 
@@ -683,15 +722,85 @@ export class InputWindow extends Phaser.GameObjects.Container {
     switch (rowNumber) {
       case 1:
         this.registeredRow1 = true;
+        this.inputRowCount++;
+        const nextStateButton1 = this.addNextStateButton(
+          nextStatePoints[0].x,
+          nextStatePoints[0].y,
+          1,
+          'nextStateButton2',
+          'nextStateButton',
+          this.registeredStates
+        );
+        this.nextStateButtons.push(nextStateButton1);
+        // for (let i = 0; i < this.inputRowCount; i++) {
+        //   console.log('setGuidelineVisible(true, 1);');
+        //   this.inputGuideline.setGuidelineVisible(true, 1);
+        // }
         break;
       case 2:
         this.registeredRow2 = true;
+        this.inputRowCount++;
+        const nextStateButton2 = this.addNextStateButton(
+          nextStatePoints[1].x,
+          nextStatePoints[1].y,
+          2,
+          'nextStateButton2',
+          'nextStateButton',
+          this.registeredStates
+        );
+        this.nextStateButtons.push(nextStateButton2);
+        // for (let i = 0; i < this.inputRowCount; i++) {
+        // this.inputGuideline.setGuidelineVisible(true, 2);
+        // }
+        break;
       case 3:
         this.registeredRow3 = true;
+        this.inputRowCount++;
+        const nextStateButton3 = this.addNextStateButton(
+          nextStatePoints[2].x,
+          nextStatePoints[2].y,
+          1,
+          'nextStateButton2',
+          'nextStateButton',
+          this.registeredStates
+        );
+        this.nextStateButtons.push(nextStateButton3);
+        // for (let i = 0; i < this.inputRowCount; i++) {
+        // this.inputGuideline.setGuidelineVisible(true, 3);
+        // }
+        break;
       case 4:
         this.registeredRow4 = true;
+        this.inputRowCount++;
+        const nextStateButton4 = this.addNextStateButton(
+          nextStatePoints[3].x,
+          nextStatePoints[3].y,
+          1,
+          'nextStateButton2',
+          'nextStateButton',
+          this.registeredStates
+        );
+        this.nextStateButtons.push(nextStateButton4);
+        // for (let i = 0; i < this.inputRowCount; i++) {
+        // this.inputGuideline.setGuidelineVisible(true, 4);
+        // }
+        break;
       case 5:
         this.registeredRow5 = true;
+        this.inputRowCount++;
+        const nextStateButton5 = this.addNextStateButton(
+          nextStatePoints[4].x,
+          nextStatePoints[4].y,
+          1,
+          'nextStateButton2',
+          'nextStateButton',
+          this.registeredStates
+        );
+        this.nextStateButtons.push(nextStateButton5);
+        // for (let i = 0; i < this.inputRowCount; i++) {
+        // this.inputGuideline.setGuidelineVisible(true, i);
+        // }
+        break;
       default:
         return;
     }
@@ -708,42 +817,51 @@ export class InputWindow extends Phaser.GameObjects.Container {
       case ButtonType.YesButton:
         replaceImgTexture = 'yesButton';
         buttonImg.setTexture(replaceImgTexture);
-        // console.log('change to yesButton');
+        buttonImg.setVisible(true);
+        console.log('buttonImg texture after setTexture:', buttonImg.texture);
+        console.log('change to yesButton');
         break;
       case ButtonType.NoButton:
         replaceImgTexture = 'noButton';
         buttonImg.setTexture(replaceImgTexture);
-        // console.log('change to noButton');
+        buttonImg.setVisible(true);
+        console.log('change to noButton');
         break;
       case ButtonType.YesNoButton:
         replaceImgTexture = 'yesNoButton';
         buttonImg.setTexture(replaceImgTexture);
-        // console.log('change to yesNoButton');
+        buttonImg.setVisible(true);
+        console.log('change to yesNoButton');
         break;
       case ButtonType.ForwardButton:
         replaceImgTexture = 'forwardButton';
         buttonImg.setTexture(replaceImgTexture);
-        // console.log('change to forwardButton');
+        buttonImg.setVisible(true);
+        console.log('change to forwardButton');
         break;
       case ButtonType.LeftButton:
         replaceImgTexture = 'leftButton';
         buttonImg.setTexture(replaceImgTexture);
-        // console.log('change to leftButton');
+        buttonImg.setVisible(true);
+        console.log('change to leftButton');
         break;
       case ButtonType.RightButton:
         replaceImgTexture = 'rightButton';
         buttonImg.setTexture(replaceImgTexture);
-        // console.log('change to rightButton');
+        buttonImg.setVisible(true);
+        console.log('change to rightButton');
         break;
       case ButtonType.PutButton:
         replaceImgTexture = 'putButton';
         buttonImg.setTexture(replaceImgTexture);
-        // console.log('change to putButton');
+        buttonImg.setVisible(true);
+        console.log('change to putButton');
         break;
       case ButtonType.PickButton:
         replaceImgTexture = 'pickButton';
         buttonImg.setTexture(replaceImgTexture);
-        // console.log('change to pickButton');
+        buttonImg.setVisible(true);
+        console.log('change to pickButton');
         break;
       default:
         return;
@@ -780,7 +898,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
       console.log('targetElement:', targetElement);
       targetElement.sensorChecks.push(sensorCheck);
 
-      this.inputRowCount++;
       console.log('inputRowCount: ', this.inputRowCount);
 
       console.log('새로 등록된 tempStateInputs: ', this.tempStateInputs);
