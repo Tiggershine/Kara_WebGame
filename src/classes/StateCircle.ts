@@ -35,6 +35,8 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   ) {
     super(scene, x, y);
 
+    // this.inputWindow = new InputWindow(this.scene, )
+
     this.id = id;
     this.name = name;
     this.stateInput = stateInput;
@@ -130,12 +132,9 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     if (this.inputWindow) {
       this.inputWindow.setInputWindowActive(true);
       // TODO: DELETE TEST CODE
-      console.log(
-        this.getId,
-        'Visible true',
-        this.inputWindow.getInputwindowActive()
-      );
-      this.inputWindow.setVisible(true); // Show the InputWindow
+      console.log(this.getId, 'Visible true');
+      console.log(this.inputWindow.getInputwindowActive());
+      // this.inputWindow.setVisible(true); // Show the InputWindow
     }
   };
 
@@ -145,12 +144,9 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     if (this.inputWindow) {
       this.inputWindow.setInputWindowActive(false);
       // TODO: DELETE TEST CODE
-      console.log(
-        this.getId,
-        'Visible false',
-        this.inputWindow.getInputwindowActive()
-      );
-      this.inputWindow.setVisible(false); // Hide the InputWindow
+      console.log(this.getId, 'Visible false');
+      console.log(this.inputWindow.getInputwindowActive());
+      // this.inputWindow.setVisible(false); // Hide the InputWindow
     }
   };
 

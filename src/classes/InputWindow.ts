@@ -208,12 +208,12 @@ const guidelinePositions = [
 ];
 
 export class InputWindow extends Phaser.GameObjects.Container {
+  private controlButtons: ControlButton[] = [];
   private dropdownButtons: DropdownMenu[] = [];
+  private currentDropdownCount: number = 0;
   private nextStateButtons: NextStateButton[] = [];
-  private currentDropdownCount: number = -1;
   private tempSensorInputs: SensorType[] = []; // Store selected sensor button
   private inputRowCount: number = 1; // 줄 순서대로 입력을 강제하기 위한 인수
-  private controlButtons: ControlButton[] = [];
   private inputGuideline!: InputGuideline;
   private isActive: boolean = false;
   private dummyButtons: { [key: string]: Phaser.GameObjects.Image } = {};
@@ -228,6 +228,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
   private registeredRow4: boolean = false;
   private registeredRow5: boolean = false;
   private containerGraphic!: Phaser.GameObjects.Graphics;
+  // Add a new property to keep track of ControlButton objects
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
@@ -259,7 +260,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
       containerStyle.height,
       containerStyle.borderRadius
     );
-    this.containerGraphic.setDepth(1);
 
     const controllerContainerStyle = {
       width: 320,
@@ -267,11 +267,9 @@ export class InputWindow extends Phaser.GameObjects.Container {
       borderRadius: 10,
       backgroundColor: 0xfcf6f5,
     };
-    const controlContainerGraphic = this.scene.add
-      .graphics({
-        fillStyle: { color: controllerContainerStyle.backgroundColor },
-      })
-      .setDepth(1);
+    const controlContainerGraphic = this.scene.add.graphics({
+      fillStyle: { color: controllerContainerStyle.backgroundColor },
+    });
     controlContainerGraphic.fillRoundedRect(
       210,
       620,
@@ -279,14 +277,10 @@ export class InputWindow extends Phaser.GameObjects.Container {
       controllerContainerStyle.height,
       controllerContainerStyle.borderRadius
     );
-    // controlContainerGraphic.setDepth(1);
 
     // Label for Inputwindow
     const moveLabel = this.scene.add.image(862.5, 433, 'moveLabel');
     const nextStateLabel = this.scene.add.image(1000, 433, 'nextStateLabel');
-
-    // containerGraphic.setDepth(10);
-    // controlContainerGraphic.setDepth(10);
 
     // Add objects into Scene
     this.add(this.containerGraphic);
@@ -302,7 +296,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
         'yesNoButton'
       );
 
-      // this.dummyButtons[point.key].setDepth(10).setVisible(false);
       this.dummyButtons[point.key].setVisible(false);
       this.add(this.dummyButtons[point.key]);
     });
@@ -328,14 +321,13 @@ export class InputWindow extends Phaser.GameObjects.Container {
     this.createSensorDropdownButton(580, 432, 'dropdownButton', options);
 
     // Divider graphics
-    const dividerGraphics = this.scene.add
-      .graphics({
-        lineStyle: {
-          width: 1,
-          color: 14277081, // #D9D9D9
-        },
-      })
-      .setDepth(1);
+    const dividerGraphics = this.scene.add.graphics({
+      lineStyle: {
+        width: 1,
+        color: 14277081, // #D9D9D9
+      },
+    });
+
     // Set Divider for Input container (210, 400)
     dividerGraphics.lineBetween(559, 457, 1041, 457);
     dividerGraphics.lineBetween(760, 408, 760, 774);
@@ -351,6 +343,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
   // Sensor update(Dropdown option 선택)
   updateTempSensorInputs = (sensorType: SensorType): void => {
     const index = this.currentDropdownCount;
+    console.log('currentDropdownCount: ', this.currentDropdownCount);
 
     if (index >= 0 && index < 5) {
       this.tempSensorInputs[index] = sensorType;
@@ -367,14 +360,16 @@ export class InputWindow extends Phaser.GameObjects.Container {
     }
   };
 
+  // InputWindow의 활성 상태를 설정하는 메서드
+  setInputWindowActive(active: boolean): void {
+    this.active = active; // InputWindow의 활성 상태 업데이트
+    this.setVisible(active); // InputWindow의 가시성도 업데이트
+    this.updateControlButtonsActiveState(active); // ControlButton 객체들의 활성 상태도 업데이트
+    this.updateDropdownButtonsActiveState(active);
+  }
+
   getInputwindowActive = (): boolean => {
     return this.isActive;
-  };
-
-  setInputWindowActive = (isActive: boolean): void => {
-    this.isActive = isActive;
-    // this.setDepth(isActive ? 2 : 1);
-    // this.containerGraphic.setDepth(isActive ? 10 : 1); // active 상태에 따라 깊이 값 변경
   };
 
   // Creating Container Graphic
@@ -412,6 +407,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
     );
     this.add(dropdownButton);
     this.dropdownButtons.push(dropdownButton);
+    dropdownButton.setActive(this.active);
     dropdownButton.on(
       'pointerdown',
       () => {
@@ -473,7 +469,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
       options,
       this
     );
-    // nextStateButton.setDepth(10);
+
     this.add(nextStateButton);
     // this.dropdownButtons.push(dropdownButton);
     nextStateButton.on(
@@ -551,16 +547,32 @@ export class InputWindow extends Phaser.GameObjects.Container {
         config.type
       );
       button.name = config.name;
-      button.setDepth(2);
       this.setButtonDraggable(
         button,
         config.selectedTexture,
         this.inputGuideline
       );
 
+      this.controlButtons.push(button);
+      button.setActive(this.active);
+
       this.scene.add.existing(button);
     });
   };
+
+  // ControlButton 객체들의 활성 상태를 업데이트하는 메서드
+  updateControlButtonsActiveState(active: boolean): void {
+    this.controlButtons.forEach((button) => {
+      button.setActive(active); // Phaser의 내장 메서드를 사용하여 활성 상태 설정
+      button.setVisible(active); // 버튼의 가시성도 업데이트
+    });
+  }
+  updateDropdownButtonsActiveState(active: boolean): void {
+    this.dropdownButtons.forEach((dropdown) => {
+      dropdown.setActive(active); // Phaser의 내장 메서드를 사용하여 활성 상태 설정
+      dropdown.setVisible(active); // 버튼의 가시성도 업데이트
+    });
+  }
 
   // Add control button object
   createControlButton = (
@@ -580,7 +592,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
     selectedButtonImage: string,
     guideline: InputGuideline
   ): void => {
-    // button.setDepth(11);
     button.setInteractive();
     this.scene.input.setDraggable(button);
 
@@ -944,7 +955,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
     this.add(button);
 
     button.setPosition(x, y);
-    // button.setDepth(1);
   }
 
   findSelectedStateCircle(): StateCircle | undefined {
@@ -967,16 +977,16 @@ export class InputWindow extends Phaser.GameObjects.Container {
     return inputGutideline;
   };
 
-  renderControlButton = () => {
-    this.controlButtons.forEach((button) => {
-      this.add(button);
-    });
-  };
+  // renderControlButton = () => {
+  //   this.controlButtons.forEach((button) => {
+  //     this.add(button);
+  //   });
+  // };
 
-  destroy(fromScene?: boolean) {
-    this.dropdownButtons.forEach((dropdownButton) => {
-      dropdownButton.destroy();
-    });
-    super.destroy(fromScene);
-  }
+  // destroy(fromScene?: boolean) {
+  //   this.dropdownButtons.forEach((dropdownButton) => {
+  //     dropdownButton.destroy();
+  //   });
+  //   super.destroy(fromScene);
+  // }
 }
