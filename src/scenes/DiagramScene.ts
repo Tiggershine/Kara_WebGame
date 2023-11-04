@@ -203,7 +203,6 @@ export default class DiagramScene extends Phaser.Scene {
 
     // StateCirle 객체에 InputWindow 객체 추가
     // const inputWindow = new InputWindow(this, 0, 0, stateId);
-
     // newStateCircle.setInputWindow(inputWindow);
 
     // Event emit -> stateCircle: { id, name } emit

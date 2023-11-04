@@ -185,14 +185,13 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.setIsSelected(true);
 
     if (this.inputWindow) {
-      this.inputWindow.setInputWindowActive(true);
       // TODO: DELETE TEST CODE
-      console.log(this.getId, 'Visible true');
+      console.log(this.getId, 'select() triggered');
+      this.inputWindow.setInputWindowActive(true);
+
+      // TODO: DELETE TEST CODE
       console.log(this.inputWindow.getInputwindowActive());
-      // this.inputWindow.setVisible(true); // Show the InputWindow
-      // setTimeout(() => {
-      //   console.log(this.inputWindow?.getInputwindowActive());
-      // }, 1000);
+      this.inputWindow.setVisible(true); // Show the InputWindow
     }
   };
 
@@ -200,9 +199,11 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.setIsSelected(false);
 
     if (this.inputWindow) {
-      this.inputWindow.setInputWindowActive(false);
       // TODO: DELETE TEST CODE
-      console.log(this.getId, 'Visible false');
+      console.log(this.getId, 'deselect() treiggered');
+      this.inputWindow.setInputWindowActive(false);
+
+      // TODO: DELETE TEST CODE
       console.log(this.inputWindow.getInputwindowActive());
       // this.inputWindow.setVisible(false); // Hide the InputWindow
     }
@@ -255,9 +256,9 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   };
 
   /** InputWindow */
-  // setInputWindow(inputWindow: InputWindow): void {
-  //   this.inputWindow = inputWindow;
-  // }
+  setInputWindow(inputWindow: InputWindow): void {
+    this.inputWindow = inputWindow;
+  }
 
   getInputWindow(): InputWindow | undefined {
     return this.inputWindow;

@@ -221,7 +221,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
   [key: string]: any;
   private tempStateInputs: StateInput[] = Array(5)
     .fill(null)
-    .map(() => ({ sensorChecks: [], move: [], nextState: 0 }));
+    .map(() => ({ sensorChecks: [], move: [], nextState: -1 }));
   private registeredStates: { id: number; name: string }[] = [];
   private registeredRow1: boolean = false;
   private registeredRow2: boolean = false;
@@ -329,16 +329,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
     // Dropddown buttons (Sensors)
     this.createSensorDropdownButton(580, 432, 'dropdownButton', options);
 
-    const nextStateButton1 = this.addNextStateButton(
-      nextStatePoints[0].x,
-      nextStatePoints[0].y,
-      1,
-      'nextStateButton2',
-      'nextStateButton',
-      // this.registeredStates
-      diagramScene.extractIdAndNameFromStateCircles()
-    );
-    this.nextStateButtons.push(nextStateButton1);
+    this.registerInputRow(0);
 
     // Divider graphics
     const dividerGraphics = this.scene.add.graphics({
@@ -358,6 +349,12 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
   ///////** METHODS *//////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  // InputWindow의 활성 상태 반환
+  getInputwindowActive = (): boolean => {
+    console.log('getInputwindowActive: ', this.isActive);
+    return this.isActive;
+  };
+
   // InputWindow의 활성 상태를 설정
   setInputWindowActive(active: boolean): void {
     this.active = active; // InputWindow의 활성 상태 업데이트
@@ -365,12 +362,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
     this.updateControlButtonsActiveState(active); // ControlButton 객체들의 활성 상태도 업데이트
     // this.updateDropdownButtonsActiveState(active);
   }
-
-  // InputWindow의 활성 상태 반환
-  getInputwindowActive = (): boolean => {
-    console.log('getInputwindowActive: ', this.isActive);
-    return this.isActive;
-  };
 
   // 이 InputWindow 객체가 소속된 StateCircle 객체 반환
   getStateCircleById(): StateCircle | undefined {
@@ -818,6 +809,16 @@ export class InputWindow extends Phaser.GameObjects.Container {
   // Change the boolean value indicating whether the line registered or not
   registerInputRow = (rowNumber: number) => {
     switch (rowNumber) {
+      case 0:
+        const nextStateButton1 = this.addNextStateButton(
+          nextStatePoints[0].x,
+          nextStatePoints[0].y,
+          1,
+          'nextStateButton2',
+          'nextStateButton',
+          this.registeredStates
+        );
+        this.nextStateButtons.push(nextStateButton1);
       case 1:
         this.registeredRow1 = true;
         this.inputRowCount++;

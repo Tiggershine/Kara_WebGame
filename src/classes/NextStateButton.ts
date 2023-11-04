@@ -2,17 +2,6 @@ import Phaser from 'phaser';
 import { InputWindow } from './InputWindow';
 import DiagramScene from '../scenes/DiagramScene';
 
-// interface NextStateButtonType {
-//   buttonImage: Phaser.GameObjects.Image;
-//   buttonLabel: Phaser.GameObjects.Text;
-// }
-
-// interface TextImageDropdownOption {
-//   // 여기 삭제
-//   texture: string;
-//   text: string;
-// }
-
 export class NextStateButton extends Phaser.GameObjects.Container {
   private buttonId: number = -1;
   private options: { id: number; name: string }[] = []; // string으로 바꾸고
@@ -20,6 +9,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
   private backgroundTexture: string = '';
   private isMenuOpen: boolean = false;
   private buttonContainer: Phaser.GameObjects.Container;
+  private buttonLabel: Phaser.GameObjects.Text;
   // private label: Phaser.GameObjects.Text;
   private menuItems: Phaser.GameObjects.Container[] = [];
   private inputWindow?: InputWindow;
@@ -57,14 +47,14 @@ export class NextStateButton extends Phaser.GameObjects.Container {
     triangle.fillStyle(0x000000, 1); // Fill color of the triangle
     triangle.fillTriangle(0, 0, -7, 7, 7, 7).setAngle(180);
 
-    const buttonLabel = this.scene.add.text(-25, -7, options[0]?.name, {
+    this.buttonLabel = this.scene.add.text(-30, -7, 'SELECT', {
       fontSize: '14px',
       fontFamily: 'Roboto Flex',
       color: '#1B1C1D',
     });
     this.buttonContainer.add(buttonRectangle);
     this.buttonContainer.add(triangle);
-    this.buttonContainer.add(buttonLabel);
+    this.buttonContainer.add(this.buttonLabel);
     this.buttonContainer
       .setInteractive(
         new Phaser.Geom.Rectangle(-40, -12, 80, 24),
@@ -104,10 +94,14 @@ export class NextStateButton extends Phaser.GameObjects.Container {
           Phaser.Geom.Rectangle.Contains
         )
         .setVisible(false)
-        .setDepth(10)
-        .on('pointerdown', () => {
-          console.log('inputWindow', this.inputWindow);
+        // .setDepth(10)
+        .on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+          pointer.event.stopPropagation();
           this.inputWindow?.updateNextStateInput(this.buttonId, option.id);
+          console.log('(MextStateButton.ts) option.id: ', option.id);
+
+          // 선택한 옵션의 이름으로 buttonLabel의 텍스트를 업데이트
+          this.buttonLabel.setText(option.name);
 
           this.closeMenu();
         });
