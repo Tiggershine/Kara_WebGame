@@ -358,18 +358,40 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
   ///////** METHODS *//////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // StateInput update를 위한 함수들
+  // InputWindow의 활성 상태를 설정
+  setInputWindowActive(active: boolean): void {
+    this.active = active; // InputWindow의 활성 상태 업데이트
+    this.setVisible(active); // InputWindow의 가시성도 업데이트
+    this.updateControlButtonsActiveState(active); // ControlButton 객체들의 활성 상태도 업데이트
+    // this.updateDropdownButtonsActiveState(active);
+  }
 
+  // InputWindow의 활성 상태 반환
+  getInputwindowActive = (): boolean => {
+    console.log('getInputwindowActive: ', this.isActive);
+    return this.isActive;
+  };
+
+  // 이 InputWindow 객체가 소속된 StateCircle 객체 반환
+  getStateCircleById(): StateCircle | undefined {
+    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+
+    return diagramScene.getStateCircleById(this.stateCircleId);
+  }
+
+  /** USER INPUT DATA UPDATE FUNCTIONS */
+
+  // StateCircle의 StateInputs 업데이트 (POST to StateCircle)
   updateStateCircleData = () => {
-    // StateCircle의 StateInputs 업데이트
     const stateCircle = this.getStateCircleById();
+
     if (stateCircle) {
       const tempStateInputs = this.tempStateInputs;
       stateCircle.addStateInputs(tempStateInputs);
     }
   };
 
-  // Sensor update(Dropdown option 선택)
+  // Sensor(input) update ( When select Dropdown option )
   updateTempSensorInputs = (sensorType: SensorType): void => {
     const index = this.currentDropdownCount - 1;
     console.log('currentDropdownCount: ', this.currentDropdownCount);
@@ -389,7 +411,8 @@ export class InputWindow extends Phaser.GameObjects.Container {
     }
   };
 
-  // Condition Button 입력 - Sensor와 함께 SensorCheck: {sensor: SensorType; condition: ButtonType;} 처리
+  // Condition Button(input) update
+  // SensorCheck: {sensor: SensorType, condition: ButtonType}
   updateConditionButtonInput = (
     sensorNumber: number, // 등록된 Sensor 순번
     rowNumber: number, // 줄 순번
@@ -447,35 +470,13 @@ export class InputWindow extends Phaser.GameObjects.Container {
     // StateCircle의 StateInputs 업데이트
     this.updateStateCircleData();
 
-    // this.tempStateInputs[stateInputOrder].move[moveInputIndex] = buttonType;
-
     console.log(
       'move Input 업데이트 된 tempStateInputs: ',
       this.tempStateInputs
     );
   };
 
-  // RegisteredStates update { id: number; name: string }[] - DiagramScene에서 StateCircles가 update되면, 바로 실행
-  updateRegisteredStates = (
-    updatedStateCircles: { id: number; name: string }[]
-  ): void => {
-    this.registeredStates = updatedStateCircles;
-
-    console.log('updateRegisteredStates 함수 실행됨');
-    console.log('등록된 stateCircles', this.registeredStates);
-
-    this.updateNextStateButton(this.registeredStates);
-  };
-
-  updateNextStateButton(
-    updatedStateCircles: { id: number; name: string }[]
-  ): void {
-    const options = updatedStateCircles;
-    for (const nextStateButton of this.nextStateButtons) {
-      nextStateButton.setOptions = options;
-    }
-  }
-
+  // NextState (input) update
   updateNextStateInput(buttonId: number, nextStateId: number) {
     const stateInputIndex = buttonId - 1;
 
@@ -487,18 +488,29 @@ export class InputWindow extends Phaser.GameObjects.Container {
     console.log('update nextState', this.tempStateInputs);
   }
 
-  // InputWindow의 활성 상태를 설정하는 메서드
-  setInputWindowActive(active: boolean): void {
-    this.active = active; // InputWindow의 활성 상태 업데이트
-    this.setVisible(active); // InputWindow의 가시성도 업데이트
-    this.updateControlButtonsActiveState(active); // ControlButton 객체들의 활성 상태도 업데이트
-    // this.updateDropdownButtonsActiveState(active);
+  // RegisteredStates update { id: number; name: string }[] - DiagramScene에서 StateCircles가 update되면, 바로 실행
+  updateRegisteredStates = (
+    updatedStateCircles: { id: number; name: string }[]
+  ): void => {
+    this.registeredStates = updatedStateCircles;
+
+    console.log('updateRegisteredStates 함수 실행됨');
+    console.log('등록된 stateCircles', this.registeredStates);
+
+    // Update options of the NextState Buttons
+    this.updateNextStateButton(this.registeredStates);
+  };
+  // Update options of the NextState Buttons
+  updateNextStateButton(
+    updatedStateCircles: { id: number; name: string }[]
+  ): void {
+    const options = updatedStateCircles;
+    for (const nextStateButton of this.nextStateButtons) {
+      nextStateButton.setOptions = options;
+    }
   }
 
-  getInputwindowActive = (): boolean => {
-    console.log('getInputwindowActive: ', this.isActive);
-    return this.isActive;
-  };
+  /** Related to Graphic  */
 
   // Creating Container Graphic
   createRoundRectGraphics = (
@@ -968,12 +980,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
     button.setPosition(x, y);
   }
 
-  getStateCircleById(): StateCircle | undefined {
-    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
-
-    return diagramScene.getStateCircleById(this.stateCircleId);
-  }
-
   /** Guideline */
   addGuildeline = (): InputGuideline => {
     console.log('가이드라인 추가');
@@ -987,17 +993,4 @@ export class InputWindow extends Phaser.GameObjects.Container {
     this.scene.add.existing(inputGutideline);
     return inputGutideline;
   };
-
-  // renderControlButton = () => {
-  //   this.controlButtons.forEach((button) => {
-  //     this.add(button);
-  //   });
-  // };
-
-  // destroy(fromScene?: boolean) {
-  //   this.dropdownButtons.forEach((dropdownButton) => {
-  //     dropdownButton.destroy();
-  //   });
-  //   super.destroy(fromScene);
-  // }
 }

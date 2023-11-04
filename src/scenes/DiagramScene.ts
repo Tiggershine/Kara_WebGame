@@ -57,6 +57,8 @@ export default class DiagramScene extends Phaser.Scene {
       this.container.borderRadius
     );
 
+    this.createEdgesForStateCircles();
+
     // StateCircle 객체의 StateInputs가 update 되었을 때 EVENT EMMITER
     // StateCircles 배열의 Update
     this.events.on('stateInputsChanged', this.updateStateCircleInputs, this);
@@ -70,11 +72,44 @@ export default class DiagramScene extends Phaser.Scene {
     if (stateCircle) {
       stateCircle.stateInputs = newInputs;
       console.log('(DiagramScene.ts) stateCircles: ', this.stateCircles);
+
+      this.createEdgesForStateCircles();
+
       // Emit an event with the updated state inputs
       this.scene
         .get('PlaygroundScene')
         .events.emit('stateInputDataUpdated', this.stateCircles);
     }
+  }
+
+  // StateCircles 배열을 순회하면서 각 StateCircle과 그 다음 StateCircle 간에 edge를 만듭니다.
+  createEdgesForStateCircles() {
+    // 먼저 모든 기존 엣지를 제거합니다.
+    this.stateCircles.forEach((circle) => {
+      circle.edges.forEach((edge) => edge.destroy());
+      circle.edges = [];
+    });
+
+    // nextState가 있는 StateCircle 간에만 엣지를 생성합니다.
+    this.stateCircles.forEach((circle) => {
+      circle.stateInputs.forEach((input) => {
+        if (input.nextState !== undefined) {
+          const nextStateCircle = this.stateCircles.find(
+            (c) => c.id === input.nextState
+          );
+          if (nextStateCircle) {
+            // 이미 edge가 존재하지 않는 경우에만 새로운 edge를 생성합니다.
+            if (
+              !circle.edges.some(
+                (edge) => edge.data.get('endCircle') === nextStateCircle
+              )
+            ) {
+              this.createEdge(circle, nextStateCircle);
+            }
+          }
+        }
+      });
+    });
   }
 
   extractIdAndNameFromStateCircles(): { id: number; name: string }[] {
@@ -187,20 +222,6 @@ export default class DiagramScene extends Phaser.Scene {
   }
 
   createStartStateCircle(): void {
-    // const newStateInput: StateInput[] = [];
-    // const startButton = new StateCircle(
-    //   this,
-    //   625,
-    //   211,
-    //   0,
-    //   'Start',
-    //   newStateInput
-    // );
-
-    // startButton.deselect();
-    // startButton.setDepth(1);
-    // this.stateCircles.push(startButton);
-    // this.add.existing(startButton);
     const stateId = 0;
     const stateName = 'Start';
     const newStateInput: StateInput[] = [];
@@ -232,18 +253,6 @@ export default class DiagramScene extends Phaser.Scene {
     );
   }
 
-  // createEndStateCircle(): void {
-  //   const newStateInput: StateInput[] = [];
-
-  //   const endButton = new StateCircle(this, 1000, 211, 0, 'End', newStateInput);
-
-  //   endButton.deselect();
-  //   endButton.setDepth(1);
-
-  //   // this.stateCircles[100] = endButton;
-
-  //   this.add.existing(endButton);
-  // }
   createEndStateCircle(): void {
     const stateId = 100;
     const stateName = 'End';
@@ -322,104 +331,86 @@ export default class DiagramScene extends Phaser.Scene {
       this.add.existing(label);
       startX += gap;
     });
-
-    // this.getStateCircles.forEach((state) => {
-    //   const label = new InputLabel(
-    //     this,
-    //     state.id,
-    //     startX,
-    //     y,
-    //     state.name,
-    //     state.isSelected
-    //   );
-    //   this.inputLabels.push(label);
-    //   this.add.existing(label);
-    //   startX += gap;
-    // });
   };
 
-  /** Edge */
-  createEdge(circleA: StateCircle, circleB: StateCircle): void {
+  createEdge(
+    circleA: StateCircle,
+    circleB: StateCircle,
+    baseYOffset: number = 15
+  ): Phaser.GameObjects.Graphics {
     const edge = this.add.graphics();
     edge.lineStyle(2, 0x000000).setDepth(1); // Set line style
 
-    if (circleA.id === circleB.id) {
-      // Create a self-edge
-      // Create a self-edge
-      const centerX = circleA.x;
-      const centerY = circleA.y;
-      const radius = circleA.circle.radius - 5; // Adjust as needed
-      const startAngle = -Math.PI / 4;
-      const endAngle = Math.PI / 4;
+    // Calculate the angle between the two circles
+    const angle = Math.atan2(circleB.y - circleA.y, circleB.x - circleA.x);
 
-      // Create a circular path for self edge
-      const path = new Phaser.Curves.Ellipse(
-        centerX,
-        centerY - radius,
-        radius,
-        radius
-      );
-      const points = path.getPoints(64); // 64 is the resolution, adjust as needed
+    const radius = circleA.circle.radius;
 
-      edge.beginPath();
-      points.forEach((point, index) => {
-        if (index === 0) {
-          edge.moveTo(point.x, point.y);
-        } else {
-          edge.lineTo(point.x, point.y);
-        }
-      });
+    // Calculate the offset from the center of circleA to the edge point
+    const offsetX_A = radius * Math.cos(angle);
+    const offsetY_A = radius * Math.sin(angle);
 
-      // Draw arrowhead at the end of the curve
-      const arrowHeadLength = 10; // Adjust as needed
-      const arrowHeadWidth = 5; // Adjust as needed
-      const angle = endAngle;
-      const endX = centerX + radius * Math.cos(angle);
-      const endY = centerY + radius * Math.sin(angle);
-      edge.moveTo(
-        endX - arrowHeadLength * Math.cos(angle - Math.PI / 6),
-        endY - arrowHeadLength * Math.sin(angle - Math.PI / 6)
-      );
-      edge.lineTo(endX, endY);
-      edge.lineTo(
-        endX - arrowHeadLength * Math.cos(angle + Math.PI / 6),
-        endY - arrowHeadLength * Math.sin(angle + Math.PI / 6)
-      );
+    // Calculate the offset from the center of circleB to the edge point
+    const offsetX_B = radius * Math.cos(angle + Math.PI); // Add PI to reverse direction
+    const offsetY_B = radius * Math.sin(angle + Math.PI);
 
-      edge.strokePath();
-    } else {
-      // Create an edge between different circles
-      const angle = Math.atan2(circleB.y - circleA.y, circleB.x - circleA.x);
+    // Calculate startX and startY for circleA
+    const startX = circleA.x + offsetX_A + (3 / 4) * radius * Math.sin(angle);
+    const startY = circleA.y + offsetY_A - (3 / 4) * radius * Math.cos(angle);
 
-      const radius = circleA.circle.radius;
+    // Calculate endX and endY for circleB
+    const endX = circleB.x + offsetX_B + (3 / 4) * radius * Math.sin(angle);
+    const endY = circleB.y + offsetY_B - (3 / 4) * radius * Math.cos(angle);
 
-      const startX = circleA.x + radius * Math.cos(angle);
-      const startY = circleA.y + radius * Math.sin(angle);
+    edge.moveTo(startX, startY);
+    edge.lineTo(endX, endY);
 
-      const endX = circleB.x - radius * Math.cos(angle);
-      const endY = circleB.y - radius * Math.sin(angle);
+    // Draw arrowhead (화살표 꼭지 그리기)
+    const arrowHeadLength = 10; // Adjust arrowhead size if necessary
+    const arrowAngle = Math.PI / 8; // Adjust arrowhead angle for a wider arrow
 
-      edge.moveTo(startX, startY);
-      edge.lineTo(endX, endY);
+    edge.moveTo(
+      endX - arrowHeadLength * Math.cos(angle - arrowAngle),
+      endY - arrowHeadLength * Math.sin(angle - arrowAngle)
+    );
+    edge.lineTo(endX, endY);
+    edge.lineTo(
+      endX - arrowHeadLength * Math.cos(angle + arrowAngle),
+      endY - arrowHeadLength * Math.sin(angle + arrowAngle)
+    );
 
-      // Draw arrowhead
-      const arrowHeadLength = 10; // Adjust as needed
-      const arrowHeadWidth = 5; // Adjust as needed
-      edge.moveTo(
-        endX - arrowHeadLength * Math.cos(angle - Math.PI / 6),
-        endY - arrowHeadLength * Math.sin(angle - Math.PI / 6)
-      );
-      edge.lineTo(endX, endY);
-      edge.lineTo(
-        endX - arrowHeadLength * Math.cos(angle + Math.PI / 6),
-        endY - arrowHeadLength * Math.sin(angle + Math.PI / 6)
-      );
+    edge.strokePath(); // Draw the line and arrowhead
 
-      edge.strokePath(); // Draw the line and arrowhead
+    // Initialize the data manager for the edge if it doesn't exist
+    edge.setDataEnabled();
 
-      // Store the edge in both circles' edges array for updating later
-      circleA.edges.push(edge);
-      circleB.edges.push(edge);
-    }
+    // Store references to the connected circles in the edge's data
+    edge.data.set('startCircle', circleA);
+    edge.data.set('endCircle', circleB);
+
+    // Store the edge in both circles' edges array for updating later
+    circleA.edges.push(edge);
+    circleB.edges.push(edge);
+
+    return edge; // Return the edge so it can be stored
+  }
+
+  // TODO: DELETE TEST CODE
+  testCreateEdge() {
+    // Create two StateCircles for testing
+    const stateCircle1 = this.createStateCircle(700, 200); // Position (700, 200)
+    const stateCircle2 = this.createStateCircle(900, 300); // Position (900, 300)
+    // const stateCircle3 = this.createStateCircle(900, 200);
+
+    stateCircle1.setDepth(20);
+    stateCircle2.setDepth(20);
+    // stateCircle3.setDepth(20);
+
+    // Define an offset for the y-coordinate to avoid overlapping
+    const yOffset = 15; // This value can be adjusted as needed
+
+    this.createEdge(stateCircle1, stateCircle2, yOffset);
+    this.createEdge(stateCircle2, stateCircle1, yOffset);
+    // this.createEdge(stateCircle1, stateCircle3, yOffset);
   }
 }
