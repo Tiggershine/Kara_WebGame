@@ -219,6 +219,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
   private isActive: boolean = true;
   private dummyButtons: { [key: string]: Phaser.GameObjects.Image } = {};
   [key: string]: any;
+  // private dummynextStateButtons: { [key: string]: NextStateButton} = {}
   private tempStateInputs: StateInput[] = Array(5)
     .fill(null)
     .map(() => ({ sensorChecks: [], move: [], nextState: -1 }));
@@ -297,6 +298,29 @@ export class InputWindow extends Phaser.GameObjects.Container {
     this.add(moveLabel);
     this.add(nextStateLabel);
 
+    // NextState Button (initial) - setVisible(false)
+    for (let i = nextStatePoints.length - 1; i >= 0; i--) {
+      const point = nextStatePoints[i];
+      const buttonId = i + 1;
+      const buttonTexture = 'nextStateButton2';
+      const backgroundTexture = 'nextStateButton';
+      const options = this.registeredStates;
+
+      const nextStateButton: NextStateButton = this.addNextStateButton(
+        point.x,
+        point.y,
+        buttonId,
+        buttonTexture,
+        backgroundTexture,
+        options
+      );
+      nextStateButton.setVisible(false);
+
+      this.nextStateButtons.unshift(nextStateButton);
+    }
+    // Default: set 1st.NextState Button visible
+    this.nextStateButtons[0].setVisible(true);
+
     // Condition button images in InputWindow (default: invisible)
     conditionInputPoints.forEach((point) => {
       this.dummyButtons[point.key] = this.scene.add.image(
@@ -371,7 +395,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
   }
 
   /** USER INPUT DATA UPDATE FUNCTIONS */
-
   // StateCircle의 StateInputs 업데이트 (POST to StateCircle)
   updateStateCircleData = () => {
     const stateCircle = this.getStateCircleById();
@@ -809,46 +832,14 @@ export class InputWindow extends Phaser.GameObjects.Container {
   // Change the boolean value indicating whether the line registered or not
   registerInputRow = (rowNumber: number) => {
     switch (rowNumber) {
-      case 0:
-        const nextStateButton1 = this.addNextStateButton(
-          nextStatePoints[0].x,
-          nextStatePoints[0].y,
-          1,
-          'nextStateButton2',
-          'nextStateButton',
-          this.registeredStates
-        );
-        this.nextStateButtons.push(nextStateButton1);
       case 1:
         this.registeredRow1 = true;
         this.inputRowCount++;
-        // const nextStateButton1 = this.addNextStateButton(
-        //   nextStatePoints[0].x,
-        //   nextStatePoints[0].y,
-        //   1,
-        //   'nextStateButton2',
-        //   'nextStateButton',
-        //   this.registeredStates
-        // );
-        // this.nextStateButtons.push(nextStateButton1);
-
-        // for (let i = 0; i < this.inputRowCount; i++) {
-        //   console.log('setGuidelineVisible(true, 1);');
-        //   this.inputGuideline.setGuidelineVisible(true, 1);
-        // }
         break;
       case 2:
         this.registeredRow2 = true;
         this.inputRowCount++;
-        const nextStateButton2 = this.addNextStateButton(
-          nextStatePoints[1].x,
-          nextStatePoints[1].y,
-          2,
-          'nextStateButton2',
-          'nextStateButton',
-          this.registeredStates
-        );
-        this.nextStateButtons.push(nextStateButton2);
+        this.nextStateButtons[1].setVisible(true);
         // for (let i = 0; i < this.inputRowCount; i++) {
         // this.inputGuideline.setGuidelineVisible(true, 2);
         // }
@@ -856,50 +847,17 @@ export class InputWindow extends Phaser.GameObjects.Container {
       case 3:
         this.registeredRow3 = true;
         this.inputRowCount++;
-        const nextStateButton3 = this.addNextStateButton(
-          nextStatePoints[2].x,
-          nextStatePoints[2].y,
-          1,
-          'nextStateButton2',
-          'nextStateButton',
-          this.registeredStates
-        );
-        this.nextStateButtons.push(nextStateButton3);
-        // for (let i = 0; i < this.inputRowCount; i++) {
-        // this.inputGuideline.setGuidelineVisible(true, 3);
-        // }
+        this.nextStateButtons[2].setVisible(true);
         break;
       case 4:
         this.registeredRow4 = true;
         this.inputRowCount++;
-        const nextStateButton4 = this.addNextStateButton(
-          nextStatePoints[3].x,
-          nextStatePoints[3].y,
-          1,
-          'nextStateButton2',
-          'nextStateButton',
-          this.registeredStates
-        );
-        this.nextStateButtons.push(nextStateButton4);
-        // for (let i = 0; i < this.inputRowCount; i++) {
-        // this.inputGuideline.setGuidelineVisible(true, 4);
-        // }
+        this.nextStateButtons[3].setVisible(true);
         break;
       case 5:
         this.registeredRow5 = true;
         this.inputRowCount++;
-        const nextStateButton5 = this.addNextStateButton(
-          nextStatePoints[4].x,
-          nextStatePoints[4].y,
-          1,
-          'nextStateButton2',
-          'nextStateButton',
-          this.registeredStates
-        );
-        this.nextStateButtons.push(nextStateButton5);
-        // for (let i = 0; i < this.inputRowCount; i++) {
-        // this.inputGuideline.setGuidelineVisible(true, i);
-        // }
+        this.nextStateButtons[4].setVisible(true);
         break;
       default:
         return;

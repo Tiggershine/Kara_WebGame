@@ -97,6 +97,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
         // .setDepth(10)
         .on('pointerdown', (pointer: Phaser.Input.Pointer) => {
           pointer.event.stopPropagation();
+          this.selectedHighlight(menuItemRectangle);
           this.inputWindow?.updateNextStateInput(this.buttonId, option.id);
           console.log('(MextStateButton.ts) option.id: ', option.id);
 
@@ -155,6 +156,21 @@ export class NextStateButton extends Phaser.GameObjects.Container {
       }
     }
   }
+
+  /**
+   * @description Highlight the selected option by changing its texture for a short duration.
+   * @param menuItem The menu item to highlight.
+   * @param originalTexture The original texture of the menu item.
+   */
+  private selectedHighlight = (
+    menuItemRectangle: Phaser.GameObjects.Rectangle
+  ): void => {
+    menuItemRectangle.setFillStyle(0xf9a02d);
+
+    this.scene.time.delayedCall(500, () => {
+      menuItemRectangle.setFillStyle(0x142140);
+    });
+  };
 
   set setOptions(newOptions: { id: number; name: string }[]) {
     this.options = newOptions;
