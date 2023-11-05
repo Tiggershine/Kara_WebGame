@@ -39,6 +39,7 @@ export class InputLabel extends Phaser.GameObjects.Container {
         fontSize: '14px',
         fontFamily: 'RobotoFlex',
         color: textColor,
+        align: 'center',
       })
       .setOrigin(0.5)
       .setPosition(80 / 2, 43 / 2);
@@ -96,33 +97,129 @@ export class InputLabel extends Phaser.GameObjects.Container {
     scene.add.existing(this);
   }
 
+  // private handleLongPress = (): void => {
+  //   console.log(this.getX, this.getY);
+  //   const inputField = document.createElement('input');
+  //   inputField.type = 'text';
+  //   inputField.value = this.label.text;
+  //   inputField.style.position = 'absolute';
+
+  //   // Get the Phaser Canvas element and its bounding box
+  //   // const canvas = this.scene.game.canvas;
+  //   // const boundingBox = canvas.getBoundingClientRect();
+
+  //   // inputField.style.left = `${this.getX + boundingBox.left - 35}px`;
+  //   // inputField.style.top = `${
+  //   //   this.getY + boundingBox.top - inputField.clientHeight / 2 - 15
+  //   // }px`;
+  //   inputField.style.left = `${this.getX}px`;
+  //   inputField.style.top = `${this.getY}px`;
+
+  //   // Set width and height
+  //   inputField.style.width = '70px'; // Set the width to 100 pixels
+  //   inputField.style.height = '20px'; // Set the height to 30 pixels
+
+  //   // Add keyup event listener
+  //   inputField.addEventListener('keyup', this.handleKeyUp);
+
+  //   document.body.appendChild(inputField);
+  //   inputField.focus();
+  // };
+
   private handleLongPress = (): void => {
-    console.log(this.getX, this.getY);
-    const inputField = document.createElement('input');
-    inputField.type = 'text';
-    inputField.value = this.label.text;
-    inputField.style.position = 'absolute';
+    console.log('LongPress event');
 
-    // Get the Phaser Canvas element and its bounding box
-    // const canvas = this.scene.game.canvas;
-    // const boundingBox = canvas.getBoundingClientRect();
+    // Store the original text in case no new text is entered
+    const originalText = this.label.text;
 
-    // inputField.style.left = `${this.getX + boundingBox.left - 35}px`;
-    // inputField.style.top = `${
-    //   this.getY + boundingBox.top - inputField.clientHeight / 2 - 15
-    // }px`;
-    inputField.style.left = `${this.getX}px`;
-    inputField.style.top = `${this.getY}px`;
+    // Initialize new text input
+    let newText = '';
 
-    // Set width and height
-    inputField.style.width = '70px'; // Set the width to 100 pixels
-    inputField.style.height = '20px'; // Set the height to 30 pixels
+    // Change the label's color to indicate editing
+    this.label.setColor('#F9A02D');
 
-    // Add keyup event listener
-    inputField.addEventListener('keyup', this.handleKeyUp);
+    // Create a blinking cursor effect
+    const cursorBlink = this.scene.time.addEvent({
+      delay: 530,
+      callback: () => {
+        this.label.text =
+          this.formatText(newText) + (this.label.text.endsWith('|') ? '' : '|');
+      },
+      loop: true,
+    });
 
-    document.body.appendChild(inputField);
-    inputField.focus();
+    // Remove any existing keyboard listeners to prevent duplicates
+    this.scene.input.keyboard.off('keydown');
+
+    // Create a keyboard listener for mobile key inputs
+    this.scene.input.keyboard.on('keydown', (event: KeyboardEvent) => {
+      if (event.keyCode === 8 && newText.length > 0) {
+        // Backspace
+        newText = newText.slice(0, -1);
+      } else if (event.key.length === 1 && newText.length < 10) {
+        // Other characters
+        newText += event.key;
+      }
+      this.label.text = this.formatText(newText) + '|';
+      this.label.setOrigin(0.5, 0.5);
+    });
+
+    // Remove any existing pointerdown listeners to prevent duplicates
+    this.scene.input.off('pointerdown');
+
+    // Listen for pointerdown events outside this object
+    this.scene.input.on(
+      'pointerdown',
+      (pointer: Phaser.Input.Pointer) => {
+        if (!this.getBounds().contains(pointer.x, pointer.y)) {
+          this.finishEditing(cursorBlink, newText, originalText);
+        }
+      },
+      this
+    );
+  };
+
+  private formatText = (text: string): string => {
+    // If the text is longer than 10 characters, truncate and add ellipsis
+    if (text.length > 8) {
+      return text.substring(0, 7) + '..';
+    }
+    // If the text is longer than 6 characters, insert a newline
+    // if (text.length > 6) {
+    //   return text.substring(0, 6) + '\n' + text.substring(6);
+    // }
+    return text;
+  };
+
+  private finishEditing = (
+    cursorBlink: Phaser.Time.TimerEvent,
+    newText: string,
+    originalText: string
+  ): void => {
+    // Stop the cursor blinking effect
+    cursorBlink.remove();
+
+    // Remove the cursor from the label
+    this.label.text = this.formatText(newText) || originalText;
+    this.label.setOrigin(0.5, 0.5);
+
+    // Change the label's color back to its original color
+    this.label.setColor('#666666');
+
+    // Remove the keyboard listener
+    this.scene.input.keyboard.off('keydown');
+
+    // Remove the pointerdown listener
+    this.scene.input.off('pointerdown');
+
+    // Update the corresponding StateCircle object
+    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+    const correspondingStateCircle = diagramScene.getStateCircles.find(
+      (stateCircle) => stateCircle.getId === this.getId
+    );
+    if (correspondingStateCircle) {
+      correspondingStateCircle.updateName(this.formatText(newText));
+    }
   };
 
   private handleKeyUp = (event: KeyboardEvent): void => {
