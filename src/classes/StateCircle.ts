@@ -115,6 +115,40 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   }
 
   // Update Edge btw. this StateCircle and Next StateCircle
+  // updateEdges = (): void => {
+  //   // Get a reference to the DiagramScene
+  //   const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+
+  //   // Create a temporary array to hold the new edges
+  //   const newEdges: Phaser.GameObjects.Graphics[] = [];
+
+  //   this.edges.forEach((edge) => {
+  //     // Check if the data property is enabled before accessing it
+  //     if (edge.data) {
+  //       const startCircle: StateCircle = edge.data.get('startCircle');
+  //       const endCircle: StateCircle = edge.data.get('endCircle');
+  //       const otherCircle = startCircle === this ? endCircle : startCircle;
+
+  //       // First, destroy the old edge
+  //       edge.destroy();
+
+  //       // Then, create a new edge and add it to the temporary array
+  //       const newEdge = diagramScene.createEdge(startCircle, endCircle);
+  //       newEdges.push(newEdge);
+
+  //       // Update the edges array for the other circle as well
+  //       const otherCircleEdges = otherCircle.edges;
+  //       const otherEdgeIndex = otherCircleEdges.indexOf(edge);
+  //       if (otherEdgeIndex !== -1) {
+  //         otherCircleEdges[otherEdgeIndex] = newEdge;
+  //       }
+  //     }
+  //   });
+
+  //   // Replace the old edges array with the new array
+  //   this.edges = newEdges;
+  // };
+
   updateEdges = (): void => {
     // Get a reference to the DiagramScene
     const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
@@ -127,20 +161,32 @@ export default class StateCircle extends Phaser.GameObjects.Container {
       if (edge.data) {
         const startCircle: StateCircle = edge.data.get('startCircle');
         const endCircle: StateCircle = edge.data.get('endCircle');
-        const otherCircle = startCircle === this ? endCircle : startCircle;
 
-        // First, destroy the old edge
-        edge.destroy();
+        // Check if this is a self-edge
+        if (startCircle === this && endCircle === this) {
+          // Handle the self-edge update
+          edge.destroy(); // Destroy the old self-edge
 
-        // Then, create a new edge and add it to the temporary array
-        const newEdge = diagramScene.createEdge(startCircle, endCircle);
-        newEdges.push(newEdge);
+          // Create a new self-edge and add it to the temporary array
+          const newSelfEdge = diagramScene.createSelfEdge(this); // Assuming you have a method to create self-edges
+          newEdges.push(newSelfEdge);
+        } else {
+          // Handle the regular edge update
+          const otherCircle = startCircle === this ? endCircle : startCircle;
 
-        // Update the edges array for the other circle as well
-        const otherCircleEdges = otherCircle.edges;
-        const otherEdgeIndex = otherCircleEdges.indexOf(edge);
-        if (otherEdgeIndex !== -1) {
-          otherCircleEdges[otherEdgeIndex] = newEdge;
+          // Destroy the old edge
+          edge.destroy();
+
+          // Create a new edge and add it to the temporary array
+          const newEdge = diagramScene.createEdge(startCircle, otherCircle);
+          newEdges.push(newEdge);
+
+          // Update the edges array for the other circle as well
+          const otherCircleEdges = otherCircle.edges;
+          const otherEdgeIndex = otherCircleEdges.indexOf(edge);
+          if (otherEdgeIndex !== -1) {
+            otherCircleEdges[otherEdgeIndex] = newEdge;
+          }
         }
       }
     });
@@ -289,103 +335,4 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     }
     return null;
   }
-
-  // updateEdges() {
-  //   this.edges.forEach((edge) => {
-  //     // edge.data에 저장된 두 StateCircle의 참조를 가져옵니다.
-  //     const { startCircle, endCircle } = edge.data.values;
-
-  //     // 에지를 다시 그리기 전에 이전 그래픽을 지웁니다.
-  //     edge.clear();
-  //     edge.lineStyle(2, 0x000000); // 에지 스타일 설정
-
-  //     // 에지의 새로운 시작점과 끝점을 계산합니다.
-  //     const startX = startCircle.x + startCircle.width / 2;
-  //     const startY = startCircle.y + startCircle.height / 2;
-  //     const endX = endCircle.x + endCircle.width / 2;
-  //     const endY = endCircle.y + endCircle.height / 2;
-
-  //     // 에지를 다시 그립니다.
-  //     edge.moveTo(startX, startY);
-  //     edge.lineTo(endX, endY);
-
-  //     // 화살표 꼭지를 다시 그립니다.
-  //     const arrowSize = 10; // 화살표 크기
-  //     const angle = Math.atan2(endY - startY, endX - startX);
-  //     edge.lineTo(
-  //       endX - arrowSize * Math.cos(angle - Math.PI / 6),
-  //       endY - arrowSize * Math.sin(angle - Math.PI / 6)
-  //     );
-  //     edge.moveTo(endX, endY);
-  //     edge.lineTo(
-  //       endX - arrowSize * Math.cos(angle + Math.PI / 6),
-  //       endY - arrowSize * Math.sin(angle + Math.PI / 6)
-  //     );
-
-  //     // 에지를 화면에 그립니다.
-  //     edge.strokePath();
-  //   });
-  // }
-
-  // updateEdges = (): void => {
-  //   for (const connection of this.connectedCircles) {
-  //     const targetCircle = connection.targetCircle;
-  //     const edge = connection.edge;
-
-  //     edge.clear();
-
-  //     const startX = this.x;
-  //     const startY = this.y;
-  //     const endX = targetCircle.x;
-  //     const endY = targetCircle.y;
-
-  //     // 컨트롤 포인트 계산 (곡선의 커브를 조절하기 위한 지점)
-  //     const cpX = (startX + endX) / 2;
-  //     const cpY = startY - 50; // -50은 곡선의 높이를 조절합니다. 필요에 따라 조절 가능
-
-  //     const startVec = new Phaser.Math.Vector2(startX, startY);
-  //     const cpVec = new Phaser.Math.Vector2(cpX, cpY);
-  //     const endVec = new Phaser.Math.Vector2(endX, endY);
-
-  //     const curve = new Phaser.Curves.QuadraticBezier(startVec, cpVec, endVec);
-  //     const points = curve.getPoints(64); // 64는 곡선의 해상도입니다. 필요에 따라 조절 가능
-
-  //     edge.lineStyle(2, 0x000000);
-  //     edge.beginPath();
-  //     edge.moveTo(points[0].x, points[0].y);
-
-  //     for (let i = 1; i < points.length; i++) {
-  //       edge.lineTo(points[i].x, points[i].y);
-  //     }
-
-  //     edge.strokePath();
-
-  //     // TODO: 화살표 그리기
-  //     const arrowSize = 10; // 화살표 크기
-  //     const endDirection = new Phaser.Math.Vector2(
-  //       endX - cpX,
-  //       endY - cpY
-  //     ).normalize();
-  //     const arrowPoint1 = new Phaser.Math.Vector2(
-  //       endX - endDirection.x * arrowSize,
-  //       endY - endDirection.y * arrowSize
-  //     );
-  //     const arrowPoint2 = new Phaser.Math.Vector2()
-  //       .setToPolar(endDirection.angle() + Math.PI / 8, arrowSize)
-  //       .add(endVec);
-  //     const arrowPoint3 = new Phaser.Math.Vector2()
-  //       .setToPolar(endDirection.angle() - Math.PI / 8, arrowSize)
-  //       .add(endVec);
-
-  //     edge.lineStyle(2, 0x000000);
-  //     edge.beginPath();
-  //     edge.moveTo(arrowPoint1.x, arrowPoint1.y);
-  //     edge.lineTo(arrowPoint2.x, arrowPoint2.y);
-  //     edge.lineTo(endX, endY);
-  //     edge.lineTo(arrowPoint3.x, arrowPoint3.y);
-  //     edge.lineTo(arrowPoint1.x, arrowPoint1.y);
-  //     edge.closePath();
-  //     edge.strokePath();
-  //   }
-  // };
 }

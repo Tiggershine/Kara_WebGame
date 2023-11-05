@@ -94,17 +94,26 @@ export default class DiagramScene extends Phaser.Scene {
     this.stateCircles.forEach((circle) => {
       circle.stateInputs.forEach((input) => {
         if (input.nextState !== undefined) {
-          const nextStateCircle = this.stateCircles.find(
-            (c) => c.id === input.nextState
-          );
-          if (nextStateCircle) {
-            // 이미 edge가 존재하지 않는 경우에만 새로운 edge를 생성합니다.
-            if (
-              !circle.edges.some(
-                (edge) => edge.data.get('endCircle') === nextStateCircle
-              )
-            ) {
-              this.createEdge(circle, nextStateCircle);
+          if (input.nextState === circle.id) {
+            // Create a self edge
+            this.createSelfEdge(circle);
+          }
+          // Check if the nextState is different from the current circle's id
+          // to avoid creating a self edge again
+          if (input.nextState !== circle.id) {
+            const nextStateCircle = this.stateCircles.find(
+              (c) => c.id === input.nextState
+            );
+            if (nextStateCircle) {
+              // 이미 edge가 존재하지 않는 경우에만 새로운 edge를 생성합니다.
+              if (
+                !circle.edges.some(
+                  (edge) =>
+                    edge.data && edge.data.get('endCircle') === nextStateCircle
+                )
+              ) {
+                this.createEdge(circle, nextStateCircle);
+              }
             }
           }
         }
@@ -394,22 +403,142 @@ export default class DiagramScene extends Phaser.Scene {
     return edge; // Return the edge so it can be stored
   }
 
-  // TODO: DELETE TEST CODE
-  testCreateEdge() {
-    // Create two StateCircles for testing
-    const stateCircle1 = this.createStateCircle(700, 200); // Position (700, 200)
-    const stateCircle2 = this.createStateCircle(900, 300); // Position (900, 300)
-    // const stateCircle3 = this.createStateCircle(900, 200);
+  // createSelfEdge(circle: StateCircle) {
+  //   const edge = this.add.graphics(); // 여기서 this는 DiagramScene을 참조합니다.
+  //   edge.lineStyle(2, 0x000000); // Set line style
 
-    stateCircle1.setDepth(20);
-    stateCircle2.setDepth(20);
-    // stateCircle3.setDepth(20);
+  //   const radius = circle.circle.radius;
+  //   const selfEdgeRadius = (radius * 2) / 3; // Self edge radius is 2/3 of the state circle radius
+  //   const startAngle = (2 * Math.PI) / 4; // Start angle at 120 degrees
+  //   const endAngle = Math.PI / 4; // End angle at 60 degrees
+  //   console.log(
+  //     'radius: ',
+  //     radius,
+  //     'selfEdgeRadius: ',
+  //     selfEdgeRadius,
+  //     'startAngle: ',
+  //     startAngle,
+  //     'endAngle: ',
+  //     endAngle
+  //   );
 
-    // Define an offset for the y-coordinate to avoid overlapping
-    const yOffset = 15; // This value can be adjusted as needed
+  //   // Calculate the center of the self edge circle
+  //   const selfEdgeCenterX = circle.x + radius * Math.cos(startAngle);
+  //   const selfEdgeCenterY = circle.y - selfEdgeRadius - 33; // Move up by 2/3 of the radius
+  //   console.log(
+  //     'selfEdgeCenterX: ',
+  //     selfEdgeCenterX,
+  //     'selfEdgeCenterY',
+  //     selfEdgeCenterY
+  //   );
 
-    this.createEdge(stateCircle1, stateCircle2, yOffset);
-    this.createEdge(stateCircle2, stateCircle1, yOffset);
-    // this.createEdge(stateCircle1, stateCircle3, yOffset);
+  //   // Draw the self edge circle
+  //   edge.beginPath();
+  //   edge.arc(
+  //     selfEdgeCenterX,
+  //     selfEdgeCenterY,
+  //     selfEdgeRadius,
+  //     startAngle,
+  //     endAngle
+  //     // true
+  //   );
+  //   edge.strokePath();
+
+  //   // Draw the arrowhead for the self edge
+  //   // Calculate the end point of the self edge
+  //   const arrowStartX = selfEdgeCenterX + selfEdgeRadius * Math.cos(endAngle);
+  //   const arrowStartY = selfEdgeCenterY + selfEdgeRadius * Math.sin(endAngle);
+
+  //   // Arrowhead dimensions
+  //   const arrowLength = 10;
+  //   const arrowWidth = 5;
+
+  //   // Calculate the points for the arrowhead
+  //   const arrowPointX =
+  //     arrowStartX + arrowLength * Math.cos(endAngle + Math.PI / 2);
+  //   const arrowPointY =
+  //     arrowStartY + arrowLength * Math.sin(endAngle + Math.PI / 2);
+
+  //   const arrowLeftX = arrowStartX + arrowWidth * Math.cos(endAngle + Math.PI);
+  //   const arrowLeftY = arrowStartY + arrowWidth * Math.sin(endAngle + Math.PI);
+
+  //   const arrowRightX = arrowStartX + arrowWidth * Math.cos(endAngle);
+  //   const arrowRightY = arrowStartY + arrowWidth * Math.sin(endAngle);
+
+  //   // Draw the arrowhead
+  //   edge.beginPath();
+  //   edge.moveTo(arrowLeftX, arrowLeftY);
+  //   edge.lineTo(arrowPointX, arrowPointY);
+  //   edge.lineTo(arrowRightX, arrowRightY);
+  //   edge.closePath();
+  //   edge.fillPath();
+
+  //   // Store the self edge in the circle's edges array for updating later
+  //   circle.edges.push(edge);
+
+  //   return edge; // Return the edge so it can be stored
+  // }
+
+  createSelfEdge(circle: StateCircle) {
+    const edge = this.add.graphics(); // 여기서 this는 DiagramScene을 참조합니다.
+    edge.lineStyle(2, 0x000000); // Set line style
+
+    const radius = circle.circle.radius;
+    const selfEdgeRadius = (radius * 2) / 3; // Self edge radius is 2/3 of the state circle radius
+    const startAngle = (2 * Math.PI) / 4; // Start angle at 120 degrees
+    const endAngle = Math.PI / 4; // End angle at 60 degrees
+
+    // Calculate the center of the self edge circle
+    const selfEdgeCenterX = circle.x + radius * Math.cos(startAngle);
+    const selfEdgeCenterY = circle.y - selfEdgeRadius - 33; // Move up by 2/3 of the radius
+
+    // Draw the self edge circle
+    edge.beginPath();
+    edge.arc(
+      selfEdgeCenterX,
+      selfEdgeCenterY,
+      selfEdgeRadius,
+      startAngle,
+      endAngle
+    );
+    edge.strokePath();
+
+    // Draw the arrowhead for the self edge
+    // Calculate the end point of the self edge
+    const arrowStartX = selfEdgeCenterX + selfEdgeRadius * Math.cos(endAngle);
+    const arrowStartY = selfEdgeCenterY + selfEdgeRadius * Math.sin(endAngle);
+
+    // Arrowhead dimensions
+    const arrowLength = 10;
+    const arrowWidth = 5;
+
+    // Calculate the points for the arrowhead
+    const arrowPointX =
+      arrowStartX + arrowLength * Math.cos(endAngle + Math.PI / 2);
+    const arrowPointY =
+      arrowStartY + arrowLength * Math.sin(endAngle + Math.PI / 2);
+
+    const arrowLeftX = arrowStartX + arrowWidth * Math.cos(endAngle + Math.PI);
+    const arrowLeftY = arrowStartY + arrowWidth * Math.sin(endAngle + Math.PI);
+
+    const arrowRightX = arrowStartX + arrowWidth * Math.cos(endAngle);
+    const arrowRightY = arrowStartY + arrowWidth * Math.sin(endAngle);
+
+    // Draw the arrowhead
+    edge.beginPath();
+    edge.moveTo(arrowLeftX, arrowLeftY);
+    edge.lineTo(arrowPointX, arrowPointY);
+    edge.lineTo(arrowRightX, arrowRightY);
+    edge.closePath();
+    edge.fillPath();
+
+    // Set the data for the self-edge
+    edge.setData('startCircle', circle);
+    edge.setData('endCircle', circle);
+
+    // Store the self edge in the circle's edges array for updating later
+    circle.edges.push(edge);
+
+    return edge; // Return the edge so it can be stored
   }
 }
