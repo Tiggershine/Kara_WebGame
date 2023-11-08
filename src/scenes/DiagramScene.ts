@@ -218,7 +218,8 @@ export default class DiagramScene extends Phaser.Scene {
     this.events.emit(
       'updatedStateCircles',
       this.stateCircles.map((stateCircle) => {
-        console.log('(DiagramScene.ts) stateCircles: ', stateCircle);
+        // TODO: DELETE TEST CODE
+        // console.log('(DiagramScene.ts) stateCircles: ', stateCircle);
         return {
           id: stateCircle.getId,
           name: stateCircle.getName,
@@ -252,7 +253,8 @@ export default class DiagramScene extends Phaser.Scene {
     this.events.emit(
       'updatedStateCircles',
       this.stateCircles.map((stateCircle) => {
-        console.log('(DiagramScene.ts) stateCircles: ', stateCircle);
+        // TODO: DELETE TEST CODE
+        // console.log('(DiagramScene.ts) stateCircles: ', stateCircle);
         return {
           id: stateCircle.getId,
           name: stateCircle.getName,

@@ -216,7 +216,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
   private tempSensorInputs: SensorType[] = []; // Store selected sensor button
   private inputRowCount: number = 1; // 줄 순서대로 입력을 강제하기 위한 인수
   private inputGuideline!: InputGuideline;
-  private isActive: boolean = true;
+  private isActive!: boolean;
   private dummyButtons: { [key: string]: Phaser.GameObjects.Image } = {};
   [key: string]: any;
   // private dummynextStateButtons: { [key: string]: NextStateButton} = {}
@@ -375,7 +375,8 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
   // InputWindow의 활성 상태 반환
   getInputwindowActive = (): boolean => {
-    console.log('getInputwindowActive: ', this.isActive);
+    // TODO: DELETE TEST CODE
+    // console.log('getInputwindowActive: ', this.isActive);
     return this.isActive;
   };
 
@@ -507,9 +508,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
     updatedStateCircles: { id: number; name: string }[]
   ): void => {
     this.registeredStates = updatedStateCircles;
-
-    console.log('updateRegisteredStates 함수 실행됨');
-    console.log('등록된 stateCircles', this.registeredStates);
 
     // Update options of the NextState Buttons
     this.updateNextStateButton(this.registeredStates);
@@ -941,7 +939,8 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
   /** Guideline */
   addGuildeline = (): InputGuideline => {
-    console.log('가이드라인 추가');
+    // TODO: DELETE TEST CODE
+    // console.log('가이드라인 추가');
     const inputGutideline = new InputGuideline(
       this.scene,
       guidelinePositions,

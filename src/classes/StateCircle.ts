@@ -164,6 +164,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
         // Check if this is a self-edge
         if (startCircle === this && endCircle === this) {
+          console.log('Into SelfEdge');
           // Handle the self-edge update
           edge.destroy(); // Destroy the old self-edge
 
@@ -171,6 +172,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
           const newSelfEdge = diagramScene.createSelfEdge(this); // Assuming you have a method to create self-edges
           newEdges.push(newSelfEdge);
         } else {
+          console.log('Not into SelfEdge');
           // Handle the regular edge update
           const otherCircle = startCircle === this ? endCircle : startCircle;
 
@@ -178,7 +180,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
           edge.destroy();
 
           // Create a new edge and add it to the temporary array
-          const newEdge = diagramScene.createEdge(startCircle, otherCircle);
+          const newEdge = diagramScene.createEdge(startCircle, endCircle);
           newEdges.push(newEdge);
 
           // Update the edges array for the other circle as well
