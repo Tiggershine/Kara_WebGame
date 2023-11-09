@@ -211,7 +211,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
   private stateCircleId: number = -1;
   private controlButtons: ControlButton[] = [];
   private dropdownButtons: DropdownMenu[] = [];
-  private currentDropdownCount: number = 0;
   private nextStateButtons: NextStateButton[] = [];
   private tempSensorInputs: SensorType[] = []; // Store selected sensor button
   private inputRowCount: number = 1; // 줄 순서대로 입력을 강제하기 위한 인수
@@ -408,8 +407,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
   // Sensor(input) update ( When select Dropdown option )
   updateTempSensorInputs = (sensorType: SensorType): void => {
-    const index = this.currentDropdownCount - 1;
-    console.log('currentDropdownCount: ', this.currentDropdownCount);
+    const index = this.tempSensorInputs.length;
 
     if (index >= 0 && index < 5) {
       this.tempSensorInputs[index] = sensorType;
@@ -573,9 +571,9 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
   // Used to create addtional dropdown button, when a option selected
   addSensorDropdownButton(clickedDropdown: DropdownMenu) {
-    // TODO: DELETE TEST CODE
-    // console.log('handleDropdownClick function executed');
-    if (this.currentDropdownCount < 3 && this.getInputwindowActive()) {
+    const registedSensorCount = this.tempSensorInputs.length;
+
+    if (registedSensorCount < 3) {
       let newX = clickedDropdown.getX + 50;
       let newY = clickedDropdown.getY;
 
@@ -587,7 +585,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
       );
 
       this.dropdownButtons.push(newDropdownButton);
-      this.currentDropdownCount++; // Increment the count here
 
       return;
     }
@@ -743,18 +740,19 @@ export class InputWindow extends Phaser.GameObjects.Container {
             if (distance <= 20) {
               newButton.destroy();
 
-              const sensorCount: number = this.tempSensorInputs.length; // 등록된 sensor 갯수
+              const registedSensorCount: number = this.tempSensorInputs.length; // 등록된 sensor 갯수
               const targetSensorIndex: number = parseInt(
                 point.key.split('_')[1][1]
               ); // 입력 sensor 번호
               const rowNumber: number = parseInt(point.key.split('_')[1][0]); // 입력 줄 번호
 
               if (
-                sensorCount + 1 < targetSensorIndex ||
+                registedSensorCount === 0 ||
+                registedSensorCount < targetSensorIndex ||
                 rowNumber > this.inputRowCount
               ) {
                 console.log('등록된 sensorInputs: ', this.tempSensorInputs);
-                console.log('sensorCount: ', sensorCount);
+                console.log('registedSensorCount: ', registedSensorCount);
                 console.log('targetSensorIndex: ', targetSensorIndex);
                 // 입력하려는 sensor번호에 sensor가 미등록이면, 취소
                 console.log('sensor 미등록으로 취소');

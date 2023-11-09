@@ -161,6 +161,14 @@ export default class DiagramScene extends Phaser.Scene {
         !this.validArea.getBounds().contains(pointer.x, pointer.y) &&
         newStateCircle
       ) {
+        this.inputLabels = this.inputLabels.filter((label) => {
+          if (label.getId === newStateCircle?.getId) {
+            label.destroy();
+            return false;
+          }
+          return true;
+        });
+
         newStateCircle.destroy();
         this.stateCircles.pop();
       }

@@ -117,21 +117,9 @@ export default class Stars extends Phaser.GameObjects.Container {
       (stateCircle) => stateCircle.getId === id
     );
 
-    if (correspondingStateCircle) {
-      // Trigger the pointerdown event on the corresponding StateCircle object
-      correspondingStateCircle.emit('pointerdown');
-    }
+    correspondingStateCircle && correspondingStateCircle.emit('pointerdown');
 
-    // // Deselect all StateCircles first
-    // stateCircles.forEach((stateCircle) => {
-    //   stateCircle.deselect();
-    // });
-
-    // // Now find the StateCircle with the matching id and select it
-    // const currentState = stateCircles.find((circle) => circle.id === id);
-    // if (currentState) {
-    //   currentState.select();
-    // }
+    return;
   }
 
   testConsole = () => {

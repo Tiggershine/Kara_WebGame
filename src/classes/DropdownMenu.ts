@@ -71,10 +71,17 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
           // this.handleOptionSelection(option);
 
           // Check if the event handler has already been executed
-          if (
-            !this.hasEventHandlerExecuted &&
-            this.inputWindow?.getInputwindowActive()
-          ) {
+          console.log(
+            'this.inputWindow?: ',
+            this.inputWindow,
+            'this.hasEventHandlerExecuted: ',
+            this.hasEventHandlerExecuted
+          );
+          // if (
+          //   !this.hasEventHandlerExecuted &&
+          //   this.inputWindow?.getInputwindowActive()
+          // )
+          if (!this.hasEventHandlerExecuted) {
             // Set the flag to true after executing the event handler
             this.hasEventHandlerExecuted = true;
 
