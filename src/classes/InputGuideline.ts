@@ -2,8 +2,8 @@ import Phaser from 'phaser';
 import ControlButton from './ControlButton';
 
 export class InputGuideline extends Phaser.GameObjects.Container {
-  private validArea: Phaser.Geom.Rectangle[] = [];
   private guidelineImages: Phaser.GameObjects.Image[] = [];
+  private validArea: Phaser.Geom.Rectangle[] = [];
 
   constructor(
     scene: Phaser.Scene,
@@ -39,7 +39,7 @@ export class InputGuideline extends Phaser.GameObjects.Container {
     for (let i = 0; i < this.validArea.length; i++) {
       if (this.validArea[i].contains(dragX, dragY)) {
         this.setAllGuidelinesVisible(false); // 모든 guideline을 먼저 숨깁니다.
-        // this.setGuidelineVisible(true, i); // 해당 guideline만 보이게 합니다.
+        this.setGuidelineVisible(true, i); // 해당 guideline만 보이게 합니다.
         return true;
       }
     }

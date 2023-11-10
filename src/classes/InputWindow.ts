@@ -714,10 +714,27 @@ export class InputWindow extends Phaser.GameObjects.Container {
           // TODO: Guideline 관련 다시 수정할 것
           // guideline.isInsideValidArea(newButton, dragX, dragY);
 
-          // console.log('setGuidelineVisible(true, 0)');
-          // for (let i = 0; i < this.inputRowCount; i++) {
-          //   guideline.setGuidelineVisible(true, i);
-          // }
+          if (
+            this.tempSensorInputs.length > 0 &&
+            (newButton.getType === ButtonType.YesButton ||
+              newButton.getType === ButtonType.NoButton ||
+              newButton.getType === ButtonType.YesNoButton)
+          ) {
+            for (let i = 0; i < this.inputRowCount; i++) {
+              guideline.setGuidelineVisible(true, i);
+            }
+          } else if (
+            this.tempSensorInputs.length > 0 &&
+            (newButton.getType === ButtonType.ForwardButton ||
+              newButton.getType === ButtonType.LeftButton ||
+              newButton.getType === ButtonType.RightButton ||
+              newButton.getType === ButtonType.PickButton ||
+              newButton.getType === ButtonType.PutButton)
+          ) {
+            for (let i = 0; i < this.inputRowCount - 1; i++) {
+              guideline.setGuidelineVisible(true, i);
+            }
+          }
         }
       }
     );
@@ -821,7 +838,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
         }
       }
 
-      // guideline.setAllGuidelinesVisible(false);
+      guideline.setAllGuidelinesVisible(false);
     });
   };
 
