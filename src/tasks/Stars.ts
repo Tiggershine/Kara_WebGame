@@ -22,46 +22,46 @@ type State = {
   stateInputs: StateInput[];
 };
 
-const stateInputData = [
-  {
-    id: 0,
-    stateInputs: [{ sensorChecks: [], moves: [], nextStateId: 1 }],
-  },
-  {
-    id: 1, // bottomStar
-    stateInputs: [
-      {
-        sensorChecks: [{ sensor: 4, condition: 0 }], // 아래에 별 있으면
-        moves: [7], // pickStar
-        nextStateId: 2,
-      },
-      {
-        sensorChecks: [{ sensor: 4, condition: 1 }], // 아래에 별 없으면
-        moves: [6], // putStar
-        nextStateId: 2,
-      },
-    ],
-  },
-  {
-    id: 2, // frontWall
-    stateInputs: [
-      {
-        sensorChecks: [{ sensor: 0, condition: 1 }], // 벽 앞 X
-        moves: [3], // forward
-        nextStateId: 1,
-      },
-      {
-        sensorChecks: [{ sensor: 0, condition: 0 }], // 벽 앞 O
-        moves: [],
-        nextStateId: 100, // stop
-      },
-    ],
-  },
-  {
-    id: 100,
-    stateInputs: [{ sensorChecks: [], moves: [], nextStateId: 101 }],
-  },
-];
+// const stateInputData = [
+//   {
+//     id: 0,
+//     stateInputs: [{ sensorChecks: [], moves: [], nextStateId: 1 }],
+//   },
+//   {
+//     id: 1, // bottomStar
+//     stateInputs: [
+//       {
+//         sensorChecks: [{ sensor: 4, condition: 0 }], // 아래에 별 있으면
+//         moves: [7], // pickStar
+//         nextStateId: 2,
+//       },
+//       {
+//         sensorChecks: [{ sensor: 4, condition: 1 }], // 아래에 별 없으면
+//         moves: [6], // putStar
+//         nextStateId: 2,
+//       },
+//     ],
+//   },
+//   {
+//     id: 2, // frontWall
+//     stateInputs: [
+//       {
+//         sensorChecks: [{ sensor: 0, condition: 1 }], // 벽 앞 X
+//         moves: [3], // forward
+//         nextStateId: 1,
+//       },
+//       {
+//         sensorChecks: [{ sensor: 0, condition: 0 }], // 벽 앞 O
+//         moves: [],
+//         nextStateId: 100, // stop
+//       },
+//     ],
+//   },
+//   {
+//     id: 100,
+//     stateInputs: [{ sensorChecks: [], moves: [], nextStateId: 101 }],
+//   },
+// ];
 export default class Stars extends Phaser.GameObjects.Container {
   private player!: Player;
   private star1!: Star;
@@ -86,12 +86,7 @@ export default class Stars extends Phaser.GameObjects.Container {
     scene.add.existing(this.star2);
     scene.add.existing(this.wall);
 
-    // this.stateInputData = stateInputData;
     this.stateInputData = diagramScene.getSelectedCircle();
-    // this.stateInputData.push({
-    //   id: 100,
-    //   stateInputs: [{ sensorChecks: [], moves: [], nextStateId: 101 }],
-    // });
 
     this.simulationHighlight = new SimulationHighlight(
       this.scene,
@@ -99,7 +94,7 @@ export default class Stars extends Phaser.GameObjects.Container {
     );
     this.simulationHighlight.setDepth(1000);
 
-    this.scene.events.on('updatedStateCircles', this.testConsole, this);
+    // this.scene.events.on('updatedStateCircles', this.testConsole, this);
 
     // this.scene.events.on(
     //   'stateInputDataUpdated',
@@ -122,9 +117,9 @@ export default class Stars extends Phaser.GameObjects.Container {
     return;
   }
 
-  testConsole = () => {
-    console.log('SSSTTTTAAAAARRR');
-  };
+  // testConsole = () => {
+  //   console.log('SSSTTTTAAAAARRR');
+  // };
 
   // Handler for the 'stateInputDataUpdated' event
   handleStateInputDataUpdated = (id: number, newInputs: StateInput[]) => {

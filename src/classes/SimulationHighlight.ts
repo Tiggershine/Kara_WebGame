@@ -101,7 +101,7 @@ class SimulationHighlight extends Phaser.GameObjects.Image {
     super(scene, 0, 0, 'inputHighlight');
     scene.add.existing(this);
     this.setVisible(false);
-    this.setDepth(10);
+    this.setDepth(100);
   }
 
   async processStateInputData() {
@@ -169,7 +169,7 @@ class SimulationHighlight extends Phaser.GameObjects.Image {
       x: x2,
       y: y2,
       duration: 1000, // 이동하는데 걸리는 시간 (밀리초)
-      ease: 'Linear', // 이동하는 방식
+      // ease: 'Linear', // 이동하는 방식
       // onComplete: () => {
       //   this.setVisible(false);
       // },

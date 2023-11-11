@@ -17,6 +17,8 @@ export default class PlaygroundScene extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private playButton!: Phaser.GameObjects.Sprite;
   private isSimulationPlaying: boolean = false;
+  containerGraphics!: Phaser.GameObjects.Graphics;
+  tileGraphics!: Phaser.GameObjects.Graphics;
   // private player!: Player;
   // private wall!: Wall;
   // private star!: Star;
@@ -57,10 +59,10 @@ export default class PlaygroundScene extends Phaser.Scene {
     // this.cameras.main.setViewport(0, 0, 1050, 1050);
 
     // Container Object
-    const containerGraphics = this.add.graphics({
+    this.containerGraphics = this.add.graphics({
       fillStyle: { color: this.containerStyle.backgroundColor },
     });
-    containerGraphics.fillRoundedRect(
+    this.containerGraphics.fillRoundedRect(
       30,
       90,
       this.containerStyle.size,
@@ -69,7 +71,7 @@ export default class PlaygroundScene extends Phaser.Scene {
     );
 
     // Tile Object
-    const tileGraphics = this.add.graphics({
+    this.tileGraphics = this.add.graphics({
       lineStyle: {
         width: this.tileStyle.lineWidth,
         color: this.tileStyle.lineColor,
@@ -77,13 +79,13 @@ export default class PlaygroundScene extends Phaser.Scene {
       },
     });
     for (let i = 1; i < 10; i++) {
-      tileGraphics.lineBetween(
+      this.tileGraphics.lineBetween(
         i * this.tileStyle.size + 30,
         90,
         i * this.tileStyle.size + 30,
         this.containerStyle.size + 90
       ); // Vertical line
-      tileGraphics.lineBetween(
+      this.tileGraphics.lineBetween(
         30,
         i * this.tileStyle.size + 90,
         this.containerStyle.size + 30,
@@ -111,6 +113,10 @@ export default class PlaygroundScene extends Phaser.Scene {
         this.isSimulationPlaying = true;
         this.playButton.setTexture('pauseButton');
 
+        // this.scene.moveAbove('DiagramScene', 'PlaygroundScene');
+        // this.scene.moveAbove('InputWindowScene', 'PlaygroundScene');
+        // PlaygroundScene의 게임 객체들의 depth 값을 조정
+
         const stateInputData = this.stateInputData;
         this.taskStars.processStateInputData(stateInputData);
         // Code to start or resume processStateInputData
@@ -128,14 +134,8 @@ export default class PlaygroundScene extends Phaser.Scene {
 
     // this.star.checkStarObjectAt(175, 225);
 
-    // 키보드 입력을 받기 위한 CursorKeys 객체를 생성합니다.
-    this.cursors = this.input.keyboard.createCursorKeys();
-
-    this.scene.moveAbove('DiagramScene', 'PlaygroundScene');
-    // this.scene.moveAbove('PlaygroundScene', 'DiagramScene');
-    // this.scene.moveAbove('PlaygroundScene', 'InputWindowScene');
-
-    this.scene.moveAbove('InputWindowScene', 'PlaygroundScene');
+    // this.scene.moveAbove('DiagramScene', 'PlaygroundScene');
+    // this.scene.moveAbove('InputWindowScene', 'PlaygroundScene');
   }
 
   update() {

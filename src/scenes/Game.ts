@@ -65,9 +65,9 @@ export default class Game extends Phaser.Scene {
 
   create() {
     this.scene.launch('BackgroundScene');
-    this.scene.launch('PlaygroundScene');
     this.scene.launch('DiagramScene');
     this.scene.launch('InputWindowScene');
+    this.scene.launch('PlaygroundScene');
 
     // Set up a pointer move event listener
     // this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {

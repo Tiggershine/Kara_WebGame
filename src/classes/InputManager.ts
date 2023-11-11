@@ -4,12 +4,12 @@ import { SensorType } from './DropdownMenu';
 
 export interface SensorCheck {
   sensor: SensorType;
-  condition: ButtonType;
+  condition: ButtonType | undefined;
 }
 
 export interface StateInput {
   sensorChecks: SensorCheck[];
-  move: ButtonType[];
+  move: (ButtonType | null)[];
   nextState: number;
 }
 

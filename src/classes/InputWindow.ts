@@ -8,6 +8,7 @@ import { StateInput, SensorCheck } from './InputManager';
 import { InputGuideline } from '../classes/InputGuideline';
 import ControlButton, { ButtonType } from './ControlButton';
 import DiagramScene from '../scenes/DiagramScene';
+import PlaygroundScene from '../scenes/PlaygroundScene';
 import StateCircle from './StateCircle';
 import { NextStateButton } from './NextStateButton';
 
@@ -329,6 +330,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
       );
 
       this.dummyButtons[point.key].setVisible(false);
+      this.makeDummyButtonDraggable(this.dummyButtons[point.key], point.key);
       this.add(this.dummyButtons[point.key]);
     });
     // Move button ymages in InputWindow (default: invisible)
@@ -340,6 +342,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
       );
 
       this.dummyButtons[point.key].setVisible(false);
+      this.makeDummyButtonDraggable(this.dummyButtons[point.key], point.key);
       this.add(this.dummyButtons[point.key]);
     });
 
@@ -369,6 +372,63 @@ export class InputWindow extends Phaser.GameObjects.Container {
     // Set Divider for Controller container
     dividerGraphics.lineBetween(230, 700, 510, 700);
   }
+
+  // Set DummyButtons for condition input and move input draggable
+  makeDummyButtonDraggable = (
+    image: Phaser.GameObjects.Image,
+    pointKey: string
+  ) => {
+    const originalPosition = { x: image.x, y: image.y };
+
+    image.setInteractive();
+    this.scene.input.setDraggable(image);
+
+    image.on(
+      'drag',
+      (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+        image.x = dragX;
+        image.y = dragY;
+      }
+    );
+
+    image.on(
+      'dragend',
+      (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+        const containerGraphicBounds = {
+          x: 550,
+          y: 400,
+          width: 500,
+          height: 380,
+        };
+
+        const isInsideContainer: boolean =
+          pointer.x >= containerGraphicBounds.x &&
+          pointer.x <=
+            containerGraphicBounds.x + containerGraphicBounds.width &&
+          pointer.y >= containerGraphicBounds.y &&
+          pointer.y <= containerGraphicBounds.y + containerGraphicBounds.height;
+
+        // 원래 자리로 이동
+        image.x = originalPosition.x;
+        image.y = originalPosition.y;
+
+        if (!isInsideContainer) {
+          image.setVisible(false);
+
+          const rowNumber: number = parseInt(pointKey.split('_')[1][0]);
+          const targetSensorIndex: number = parseInt(pointKey.split('_')[1][1]);
+
+          console.log(
+            'rowNumber: ',
+            rowNumber,
+            'targetSensorIndex: ',
+            targetSensorIndex
+          );
+          this.clearConditionButtonInput(rowNumber, targetSensorIndex);
+        }
+      }
+    );
+  };
 
   ///////** METHODS *//////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -427,8 +487,8 @@ export class InputWindow extends Phaser.GameObjects.Container {
   // Condition Button(input) update
   // SensorCheck: {sensor: SensorType, condition: ButtonType}
   updateConditionButtonInput = (
-    sensorNumber: number, // 등록된 Sensor 순번
-    rowNumber: number, // 줄 순번
+    sensorNumber: number, // 등록된 Sensor 순번 (index X_)
+    rowNumber: number, // 줄 순번 (index _X)
     buttonType: ButtonType
   ): void => {
     const sensor = this.tempSensorInputs[sensorNumber - 1]; // Sensor 종류
@@ -457,11 +517,30 @@ export class InputWindow extends Phaser.GameObjects.Container {
     }
   };
 
+  clearConditionButtonInput = (
+    rowNumber: number, // 줄 순번 (index _X)
+    sensorNumber: number // 등록된 Sensor 순번 (index X_)
+  ): void => {
+    const stateInputOrder = rowNumber - 1; // StateInput 배열의 index
+    const sensorChecksOrder = sensorNumber - 1; // SensorChecks 배열의 index
+
+    // 해당 sensorCheck가 존재하는지 확인
+    if (this.tempStateInputs[stateInputOrder].sensorChecks[sensorChecksOrder]) {
+      // 해당 sensorCheck의 condition만 -1로 설정
+      this.tempStateInputs[stateInputOrder].sensorChecks[
+        sensorChecksOrder
+      ].condition = undefined;
+
+      // StateCircle의 StateInputs 업데이트
+      this.updateStateCircleData();
+    }
+  };
+
   updateMoveButtonInput = (
     moveButtonIndex: number,
     rowNumber: number,
     buttonType: ButtonType
-  ) => {
+  ): void => {
     console.log(
       'rowNumber: ',
       rowNumber,
@@ -489,8 +568,19 @@ export class InputWindow extends Phaser.GameObjects.Container {
     );
   };
 
+  clearMoveButtonInput = (rowNumber: number, buttonsOrder: number): void => {
+    const stateInputOrder = rowNumber - 1; // StateInput 배열의 index
+    const moveButtonsOrder = buttonsOrder - 5; // SensorChecks 배열의 index
+
+    if (
+      this.tempStateInputs[stateInputOrder].move[moveButtonsOrder] !== undefined
+    ) {
+      this.tempStateInputs[stateInputOrder].move[moveButtonsOrder] = null;
+    }
+  };
+
   // NextState (input) update
-  updateNextStateInput(buttonId: number, nextStateId: number) {
+  updateNextStateInput(buttonId: number, nextStateId: number): void {
     const stateInputIndex = buttonId - 1;
 
     this.tempStateInputs[stateInputIndex].nextState = nextStateId;
@@ -710,9 +800,14 @@ export class InputWindow extends Phaser.GameObjects.Container {
       (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
         if (newButton) {
           newButton.setPosition(dragX, dragY);
+          newButton.setDepth(100);
 
-          // TODO: Guideline 관련 다시 수정할 것
-          // guideline.isInsideValidArea(newButton, dragX, dragY);
+          // newButton.setDepth(10);
+          // const playgroundScene = this.scene.scene.get(
+          //   'PlaygroundScene'
+          // ) as PlaygroundScene;
+          // playgroundScene.containerGraphics.setDepth(5);
+          // playgroundScene.tileGraphics.setDepth(5);
 
           if (
             this.tempSensorInputs.length > 0 &&
@@ -741,6 +836,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
     button.on('dragend', (pointer: Phaser.Input.Pointer) => {
       if (newButton) {
+        newButton.setDepth(1);
         if (
           newButton.getType === ButtonType.YesButton ||
           newButton.getType === ButtonType.NoButton ||
