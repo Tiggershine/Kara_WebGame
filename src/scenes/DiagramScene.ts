@@ -317,6 +317,13 @@ export default class DiagramScene extends Phaser.Scene {
     return this.stateCircles.find((circle) => circle.id === id);
   };
 
+  public deleteStateCircleById = (id: number): void => {
+    // StateCircle 배열에서 해당 ID를 가진 요소 찾아서 제거
+    this.stateCircles = this.stateCircles.filter(
+      (circle) => circle.getId !== id
+    );
+  };
+
   /** InputWindow Label */
   // InputLabel 그래픽 추가
   addLabels = () => {
@@ -412,82 +419,6 @@ export default class DiagramScene extends Phaser.Scene {
 
     return edge; // Return the edge so it can be stored
   }
-
-  // createSelfEdge(circle: StateCircle) {
-  //   const edge = this.add.graphics(); // 여기서 this는 DiagramScene을 참조합니다.
-  //   edge.lineStyle(2, 0x000000); // Set line style
-
-  //   const radius = circle.circle.radius;
-  //   const selfEdgeRadius = (radius * 2) / 3; // Self edge radius is 2/3 of the state circle radius
-  //   const startAngle = (2 * Math.PI) / 4; // Start angle at 120 degrees
-  //   const endAngle = Math.PI / 4; // End angle at 60 degrees
-  //   console.log(
-  //     'radius: ',
-  //     radius,
-  //     'selfEdgeRadius: ',
-  //     selfEdgeRadius,
-  //     'startAngle: ',
-  //     startAngle,
-  //     'endAngle: ',
-  //     endAngle
-  //   );
-
-  //   // Calculate the center of the self edge circle
-  //   const selfEdgeCenterX = circle.x + radius * Math.cos(startAngle);
-  //   const selfEdgeCenterY = circle.y - selfEdgeRadius - 33; // Move up by 2/3 of the radius
-  //   console.log(
-  //     'selfEdgeCenterX: ',
-  //     selfEdgeCenterX,
-  //     'selfEdgeCenterY',
-  //     selfEdgeCenterY
-  //   );
-
-  //   // Draw the self edge circle
-  //   edge.beginPath();
-  //   edge.arc(
-  //     selfEdgeCenterX,
-  //     selfEdgeCenterY,
-  //     selfEdgeRadius,
-  //     startAngle,
-  //     endAngle
-  //     // true
-  //   );
-  //   edge.strokePath();
-
-  //   // Draw the arrowhead for the self edge
-  //   // Calculate the end point of the self edge
-  //   const arrowStartX = selfEdgeCenterX + selfEdgeRadius * Math.cos(endAngle);
-  //   const arrowStartY = selfEdgeCenterY + selfEdgeRadius * Math.sin(endAngle);
-
-  //   // Arrowhead dimensions
-  //   const arrowLength = 10;
-  //   const arrowWidth = 5;
-
-  //   // Calculate the points for the arrowhead
-  //   const arrowPointX =
-  //     arrowStartX + arrowLength * Math.cos(endAngle + Math.PI / 2);
-  //   const arrowPointY =
-  //     arrowStartY + arrowLength * Math.sin(endAngle + Math.PI / 2);
-
-  //   const arrowLeftX = arrowStartX + arrowWidth * Math.cos(endAngle + Math.PI);
-  //   const arrowLeftY = arrowStartY + arrowWidth * Math.sin(endAngle + Math.PI);
-
-  //   const arrowRightX = arrowStartX + arrowWidth * Math.cos(endAngle);
-  //   const arrowRightY = arrowStartY + arrowWidth * Math.sin(endAngle);
-
-  //   // Draw the arrowhead
-  //   edge.beginPath();
-  //   edge.moveTo(arrowLeftX, arrowLeftY);
-  //   edge.lineTo(arrowPointX, arrowPointY);
-  //   edge.lineTo(arrowRightX, arrowRightY);
-  //   edge.closePath();
-  //   edge.fillPath();
-
-  //   // Store the self edge in the circle's edges array for updating later
-  //   circle.edges.push(edge);
-
-  //   return edge; // Return the edge so it can be stored
-  // }
 
   createSelfEdge(circle: StateCircle) {
     const edge = this.add.graphics(); // 여기서 this는 DiagramScene을 참조합니다.

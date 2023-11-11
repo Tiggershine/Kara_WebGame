@@ -9,6 +9,8 @@ export class InputLabel extends Phaser.GameObjects.Container {
   private isSelected: boolean = false;
   private stateId: number = 0;
   private timerEvent?: Phaser.Time.TimerEvent;
+  private lastClickTime: number = 0;
+  private doubleClickDelay: number = 300;
 
   constructor(
     scene: Phaser.Scene,
@@ -51,32 +53,35 @@ export class InputLabel extends Phaser.GameObjects.Container {
 
     // Set to handle pointerdown event
     // this.on('pointerdown', () => {
-    //   if (this.getIsSelected) {
-    //     return;
-    //   } else {
-    //     const diagramScene = this.scene.scene.get(
-    //       'DiagramScene'
-    //     ) as DiagramScene;
+    //   this.timerEvent = scene.time.addEvent({
+    //     delay: 1000, // 1초 후에 실행
+    //     callback: this.handleLongPress,
+    //     callbackScope: this,
+    //   });
+    // });
 
-    //     // Find the corresponding StateCircle object
-    //     const correspondingStateCircle = diagramScene.getStateCircles.find(
-    //       (stateCircle) => stateCircle.getId === this.getId
-    //     );
-
-    //     if (correspondingStateCircle) {
-    //       // Trigger the pointerdown event on the corresponding StateCircle object
-    //       correspondingStateCircle.emit('pointerdown');
-    //     }
+    // // Set to handle pointerup event
+    // this.on('pointerup', () => {
+    //   if (this.timerEvent) {
+    //     this.timerEvent.remove(); // pointerup 이벤트가 발생하면 타이머 이벤트를 제거
+    //     this.handleShortPress();
     //   }
     // });
 
     // Set to handle pointerdown event
     this.on('pointerdown', () => {
-      this.timerEvent = scene.time.addEvent({
-        delay: 1000, // 1초 후에 실행
-        callback: this.handleLongPress,
-        callbackScope: this,
-      });
+      const currentTime = new Date().getTime();
+      if (currentTime - this.lastClickTime < this.doubleClickDelay) {
+        // DoubleClick 감지
+        this.handleDoubleClick();
+      } else {
+        this.timerEvent = scene.time.addEvent({
+          delay: 1000, // 1초 후에 실행
+          callback: this.handleLongPress,
+          callbackScope: this,
+        });
+      }
+      this.lastClickTime = currentTime;
     });
 
     // Set to handle pointerup event
@@ -97,36 +102,7 @@ export class InputLabel extends Phaser.GameObjects.Container {
     scene.add.existing(this);
   }
 
-  // private handleLongPress = (): void => {
-  //   console.log(this.getX, this.getY);
-  //   const inputField = document.createElement('input');
-  //   inputField.type = 'text';
-  //   inputField.value = this.label.text;
-  //   inputField.style.position = 'absolute';
-
-  //   // Get the Phaser Canvas element and its bounding box
-  //   // const canvas = this.scene.game.canvas;
-  //   // const boundingBox = canvas.getBoundingClientRect();
-
-  //   // inputField.style.left = `${this.getX + boundingBox.left - 35}px`;
-  //   // inputField.style.top = `${
-  //   //   this.getY + boundingBox.top - inputField.clientHeight / 2 - 15
-  //   // }px`;
-  //   inputField.style.left = `${this.getX}px`;
-  //   inputField.style.top = `${this.getY}px`;
-
-  //   // Set width and height
-  //   inputField.style.width = '70px'; // Set the width to 100 pixels
-  //   inputField.style.height = '20px'; // Set the height to 30 pixels
-
-  //   // Add keyup event listener
-  //   inputField.addEventListener('keyup', this.handleKeyUp);
-
-  //   document.body.appendChild(inputField);
-  //   inputField.focus();
-  // };
-
-  private handleLongPress = (): void => {
+  private handleDoubleClick = (): void => {
     console.log('LongPress event');
 
     // Store the original text in case no new text is entered
@@ -199,6 +175,9 @@ export class InputLabel extends Phaser.GameObjects.Container {
     // Stop the cursor blinking effect
     cursorBlink.remove();
 
+    // newText가 비어 있으면 originalText 사용, 그렇지 않으면 newText 사용
+    const finalText = newText.trim().length > 0 ? newText : originalText;
+
     // Remove the cursor from the label
     this.label.text = this.formatText(newText) || originalText;
     this.label.setOrigin(0.5, 0.5);
@@ -218,28 +197,29 @@ export class InputLabel extends Phaser.GameObjects.Container {
       (stateCircle) => stateCircle.getId === this.getId
     );
     if (correspondingStateCircle) {
-      correspondingStateCircle.updateName(this.formatText(newText));
+      correspondingStateCircle.updateName(this.formatText(finalText));
     }
   };
 
-  private handleKeyUp = (event: KeyboardEvent): void => {
-    // Check if the key pressed is Enter
-    if (event.key === 'Enter') {
-      const inputField = event.target as HTMLInputElement;
-      const newName = inputField.value;
-      this.label.text = newName;
+  private handleLongPress = (): void => {
+    console.log('LongPress event - StateCircle 삭제');
 
-      const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
-      const correspondingStateCircle = diagramScene.getStateCircles.find(
-        (stateCircle) => stateCircle.getId === this.getId
-      );
-      if (correspondingStateCircle) {
-        correspondingStateCircle.updateName(newName);
-      }
+    // DiagramScene 참조
+    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
 
-      // Remove the inputField from the document
-      document.body.removeChild(inputField);
+    // 해당 StateCircle 찾아서 삭제
+    const stateCircle = diagramScene.getStateCircles.find(
+      (circle) => circle.getId === this.stateId
+    );
+
+    if (stateCircle) {
+      // StateCircle 삭제
+      diagramScene.deleteStateCircleById(this.stateId);
+      stateCircle.destroy(); // StateCircle 객체 파괴
     }
+
+    // InputLabel 객체 파괴
+    this.destroy();
   };
 
   private handleShortPress = (): void => {

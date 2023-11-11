@@ -418,12 +418,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
           const rowNumber: number = parseInt(pointKey.split('_')[1][0]);
           const targetSensorIndex: number = parseInt(pointKey.split('_')[1][1]);
 
-          console.log(
-            'rowNumber: ',
-            rowNumber,
-            'targetSensorIndex: ',
-            targetSensorIndex
-          );
           this.clearConditionButtonInput(rowNumber, targetSensorIndex);
         }
       }
