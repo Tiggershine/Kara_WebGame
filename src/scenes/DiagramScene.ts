@@ -333,6 +333,9 @@ export default class DiagramScene extends Phaser.Scene {
     const gap = 95;
 
     // Update 시, 기존의 Array 초기화
+    this.inputLabels.forEach((inputLabel) => {
+      inputLabel.destroy();
+    });
     this.inputLabels = [];
 
     const excludingStartEnd = this.getStateCircles.filter(

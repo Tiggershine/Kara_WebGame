@@ -114,7 +114,13 @@ export class InputLabel extends Phaser.GameObjects.Container {
   }
 
   private handleDoubleClick = (): void => {
-    console.log('LongPress event');
+    console.log('DoubleClick event');
+
+    // Store the original text in case no new text is entered
+    const originalText = this.label.text;
+
+    // Change the label's color to indicate editing
+    this.label.setColor('#F9A02D');
 
     // HTML input 요소 생성 및 설정
     const htmlInput = document.createElement('input');
@@ -137,14 +143,8 @@ export class InputLabel extends Phaser.GameObjects.Container {
     // HTML input 요소에 포커스 설정하여 가상 키보드 활성화
     htmlInput.focus();
 
-    // Store the original text in case no new text is entered
-    const originalText = this.label.text;
-
     // Initialize new text input
     // let newText = '';
-
-    // Change the label's color to indicate editing
-    this.label.setColor('#F9A02D');
 
     // Create a blinking cursor effect
     // const cursorBlink = this.scene.time.addEvent({
@@ -203,6 +203,11 @@ export class InputLabel extends Phaser.GameObjects.Container {
           htmlInput.style.display = 'none'; // HTML input 요소 숨기기
           htmlInput.removeEventListener('input', onInput); // 이벤트 리스너 제거
           document.body.removeChild(htmlInput); // HTML input 요소 제거
+
+          // 사용자 입력이 없는 경우 원래 텍스트 유지
+          if (!htmlInput.value) {
+            this.label.text = originalText;
+          }
           cursorBlink.remove(); // cursorBlink 중지
           this.finishEditing(cursorBlink, htmlInput.value, this.label.text); // 편집 완료 처리
         }
