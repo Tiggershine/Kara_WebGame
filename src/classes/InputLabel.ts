@@ -11,6 +11,8 @@ export class InputLabel extends Phaser.GameObjects.Container {
   private timerEvent?: Phaser.Time.TimerEvent;
   private lastClickTime: number = 0;
   private doubleClickDelay: number = 300;
+  private inputElement!: HTMLInputElement;
+  private newText: string = ''; // 새로운 멤버 변수 추가
 
   constructor(
     scene: Phaser.Scene,
@@ -100,6 +102,28 @@ export class InputLabel extends Phaser.GameObjects.Container {
     this.label.setDepth(2);
 
     scene.add.existing(this);
+
+    this.createInputElement(); // HTML input 요소 생성
+  }
+
+  private createInputElement() {
+    // 이미 존재하는 input 요소가 있다면 삭제
+    const existingInput = document.getElementById('phaser-game-input');
+    if (existingInput) {
+      document.body.removeChild(existingInput);
+    }
+
+    // 새 input 요소 생성
+    this.inputElement = document.createElement('input');
+    this.inputElement.type = 'text';
+    this.inputElement.id = 'phaser-game-input';
+    this.inputElement.style.position = 'absolute';
+    this.inputElement.style.bottom = '0';
+    this.inputElement.style.left = '0';
+    this.inputElement.style.opacity = '0'; // 보이지 않게 설정
+
+    // input 요소를 DOM에 추가
+    document.body.appendChild(this.inputElement);
   }
 
   private handleDoubleClick = (): void => {
@@ -109,7 +133,17 @@ export class InputLabel extends Phaser.GameObjects.Container {
     const originalText = this.label.text;
 
     // Initialize new text input
-    let newText = '';
+    // let newText = '';
+    // HTML input 요소 활성화
+    this.inputElement.style.opacity = '1'; // 보이게 설정
+    this.inputElement.value = this.label.text; // 현재 라벨 텍스트를 input 값으로 설정
+    this.inputElement.focus(); // input 요소에 포커스 설정
+
+    this.inputElement.oninput = () => {
+      // input 요소에서 입력된 텍스트를 Phaser 게임으로 가져옴
+      this.newText = this.inputElement.value;
+      this.label.text = this.formatText(this.newText);
+    };
 
     // Change the label's color to indicate editing
     this.label.setColor('#F9A02D');
@@ -119,7 +153,8 @@ export class InputLabel extends Phaser.GameObjects.Container {
       delay: 530,
       callback: () => {
         this.label.text =
-          this.formatText(newText) + (this.label.text.endsWith('|') ? '' : '|');
+          this.formatText(this.newText) +
+          (this.label.text.endsWith('|') ? '' : '|');
       },
       loop: true,
     });
@@ -129,14 +164,14 @@ export class InputLabel extends Phaser.GameObjects.Container {
 
     // Create a keyboard listener for mobile key inputs
     this.scene.input.keyboard.on('keydown', (event: KeyboardEvent) => {
-      if (event.keyCode === 8 && newText.length > 0) {
+      if (event.keyCode === 8 && this.newText.length > 0) {
         // Backspace
-        newText = newText.slice(0, -1);
-      } else if (event.key.length === 1 && newText.length < 10) {
+        this.newText = this.newText.slice(0, -1);
+      } else if (event.key.length === 1 && this.newText.length < 10) {
         // Other characters
-        newText += event.key;
+        this.newText += event.key;
       }
-      this.label.text = this.formatText(newText) + '|';
+      this.label.text = this.formatText(this.newText) + '|';
       this.label.setOrigin(0.5, 0.5);
     });
 
@@ -148,7 +183,7 @@ export class InputLabel extends Phaser.GameObjects.Container {
       'pointerdown',
       (pointer: Phaser.Input.Pointer) => {
         if (!this.getBounds().contains(pointer.x, pointer.y)) {
-          this.finishEditing(cursorBlink, newText, originalText);
+          this.finishEditing(cursorBlink, this.newText, originalText);
         }
       },
       this

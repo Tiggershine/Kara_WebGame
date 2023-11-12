@@ -101,25 +101,16 @@ export default class PlaygroundScene extends Phaser.Scene {
     this.load.image('playButton', 'playButton');
     this.load.image('pauseButton', 'pauseButton');
 
-    // Input event listener for the play button
     this.playButton.on('pointerdown', () => {
       if (this.isSimulationPlaying) {
-        // Pause the simulation
         this.isSimulationPlaying = false;
         this.playButton.setTexture('playButton');
-        // Code to pause processStateInputData
       } else {
-        // Start the simulation
         this.isSimulationPlaying = true;
         this.playButton.setTexture('pauseButton');
 
-        // this.scene.moveAbove('DiagramScene', 'PlaygroundScene');
-        // this.scene.moveAbove('InputWindowScene', 'PlaygroundScene');
-        // PlaygroundScene의 게임 객체들의 depth 값을 조정
-
         const stateInputData = this.stateInputData;
         this.taskStars.processStateInputData(stateInputData);
-        // Code to start or resume processStateInputData
       }
     });
 
