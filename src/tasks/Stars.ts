@@ -125,6 +125,7 @@ export default class Stars extends Phaser.GameObjects.Container {
 
   // To simulate ths mission based on user input
   processStateInputData = async (stateInputData: any) => {
+    this.player.playerHighlight.setVisible(true);
     if (!this.inputDataChecked) {
       const startState = stateInputData.find((state: State) => state.id === 0);
 

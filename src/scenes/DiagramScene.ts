@@ -63,9 +63,42 @@ export default class DiagramScene extends Phaser.Scene {
     // StateCircles 배열의 Update
     this.events.on('stateInputsChanged', this.updateStateCircleInputs, this);
 
+    // Listen for the updateLabels event
+    this.events.on('updateLabels', this.addLabels, this);
+    this.events.on('updateName', this.updateNameById, this);
+
     this.scene.moveAbove('InputWindowScene', 'DiagramScene');
     this.scene.moveAbove('DiagramScene', 'PlaygroundScene');
   }
+
+  updateNameById = (id: number, newName: string): void => {
+    // stateCircles 배열에서 id에 해당하는 StateCircle 객체 찾기
+    const stateCircle = this.stateCircles.find((circle) => circle.getId === id);
+    if (stateCircle) {
+      // StateCircle 객체의 이름 변경
+      stateCircle.setName(newName);
+    }
+
+    // inputLabels 배열에서 id에 해당하는 InputLabel 객체 찾기
+    const inputLabel = this.inputLabels.find((label) => label.getId === id);
+    if (inputLabel) {
+      // InputLabel 객체의 텍스트 변경
+      inputLabel.setLabelText = newName;
+    }
+
+    // Event emit -> stateCircle: { id, name } emit
+    this.events.emit(
+      'updatedStateCircles',
+      this.stateCircles.map((stateCircle) => {
+        // TODO: DELETE TEST CODE
+        // console.log('(DiagramScene.ts) stateCircles: ', stateCircle);
+        return {
+          id: stateCircle.getId,
+          name: stateCircle.getName,
+        };
+      })
+    );
+  };
 
   updateStateCircleInputs(id: number, newInputs: StateInput[]) {
     const stateCircle = this.stateCircles.find((circle) => circle.id === id);
@@ -319,9 +352,33 @@ export default class DiagramScene extends Phaser.Scene {
 
   public deleteStateCircleById = (id: number): void => {
     // StateCircle 배열에서 해당 ID를 가진 요소 찾아서 제거
+    // this.stateCircles = this.stateCircles.filter(
+    //   (circle) => circle.getId !== id
+    // );
+
+    const circleToDelete = this.getStateCircleById(id);
+    if (!circleToDelete) {
+      console.error('StateCircle not found with id:', id);
+      return;
+    }
+    const connectedCircles = this.getStateCircles.filter((circle) =>
+      circle.edges.some(
+        (edge) =>
+          edge.data.get('startCircle') === circleToDelete ||
+          edge.data.get('endCircle') === circleToDelete
+      )
+    );
+    // 삭제할 StateCircle의 모든 에지 제거
+    circleToDelete.edges.forEach((edge) => edge.destroy());
+
+    // 연결된 StateCircle들의 에지 업데이트
+    connectedCircles.forEach((circle) => circle.updateEdges());
+
     this.stateCircles = this.stateCircles.filter(
       (circle) => circle.getId !== id
     );
+
+    circleToDelete.destroy();
   };
 
   /** InputWindow Label */

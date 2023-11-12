@@ -8,6 +8,7 @@ export class InputLabel extends Phaser.GameObjects.Container {
   private graphic!: Phaser.GameObjects.Graphics;
   private isSelected: boolean = false;
   private stateId: number = 0;
+  private labelText: string = '';
   private timerEvent?: Phaser.Time.TimerEvent;
   private lastClickTime: number = 0;
   private doubleClickDelay: number = 300;
@@ -23,7 +24,7 @@ export class InputLabel extends Phaser.GameObjects.Container {
     super(scene, x, y);
 
     this.stateId = stateId;
-    this.name = name;
+    this.labelText = name;
     this.isSelected = isSelected;
 
     const backgroundColor = this.isSelected ? 0xfcf6f5 : 6710886;
@@ -37,7 +38,7 @@ export class InputLabel extends Phaser.GameObjects.Container {
 
     // Label Text
     this.label = scene.add
-      .text(0, 0, name, {
+      .text(0, 0, this.labelText, {
         fontSize: '14px',
         fontFamily: 'RobotoFlex',
         color: textColor,
@@ -143,19 +144,6 @@ export class InputLabel extends Phaser.GameObjects.Container {
     // HTML input 요소에 포커스 설정하여 가상 키보드 활성화
     htmlInput.focus();
 
-    // Initialize new text input
-    // let newText = '';
-
-    // Create a blinking cursor effect
-    // const cursorBlink = this.scene.time.addEvent({
-    //   delay: 530,
-    //   callback: () => {
-    //     this.label.text =
-    //       this.formatText(newText) + (this.label.text.endsWith('|') ? '' : '|');
-    //   },
-    //   loop: true,
-    // });
-    // cursorBlink 효과 계속 사용
     const cursorBlink = this.scene.time.addEvent({
       delay: 530,
       callback: () => {
@@ -166,36 +154,6 @@ export class InputLabel extends Phaser.GameObjects.Container {
       loop: true,
     });
 
-    // Remove any existing keyboard listeners to prevent duplicates
-    // this.scene.input.keyboard.off('keydown');
-
-    // // Create a keyboard listener for mobile key inputs
-    // this.scene.input.keyboard.on('keydown', (event: KeyboardEvent) => {
-    //   if (event.keyCode === 8 && newText.length > 0) {
-    //     // Backspace
-    //     newText = newText.slice(0, -1);
-    //   } else if (event.key.length === 1 && newText.length < 10) {
-    //     // Other characters
-    //     newText += event.key;
-    //   }
-    //   this.label.text = this.formatText(newText) + '|';
-    //   this.label.setOrigin(0.5, 0.5);
-    // });
-
-    // // Remove any existing pointerdown listeners to prevent duplicates
-    // this.scene.input.off('pointerdown');
-
-    // // Listen for pointerdown events outside this object
-    // this.scene.input.on(
-    //   'pointerdown',
-    //   (pointer: Phaser.Input.Pointer) => {
-    //     if (!this.getBounds().contains(pointer.x, pointer.y)) {
-    //       this.finishEditing(cursorBlink, newText, originalText);
-    //     }
-    //   },
-    //   this
-    // );
-    // 포인터 다운 이벤트 리스너에서 HTML input 요소 숨기기 및 cursorBlink 중지
     this.scene.input.on(
       'pointerdown',
       (pointer: Phaser.Input.Pointer) => {
@@ -210,6 +168,17 @@ export class InputLabel extends Phaser.GameObjects.Container {
           }
           cursorBlink.remove(); // cursorBlink 중지
           this.finishEditing(cursorBlink, htmlInput.value, this.label.text); // 편집 완료 처리
+
+          if (htmlInput.value) {
+            const diagramScene = this.scene.scene.get(
+              'DiagramScene'
+            ) as DiagramScene;
+            diagramScene.events.emit(
+              'updateName',
+              this.stateId,
+              htmlInput.value
+            );
+          }
         }
       },
       this
@@ -276,11 +245,14 @@ export class InputLabel extends Phaser.GameObjects.Container {
     if (stateCircle) {
       // StateCircle 삭제
       diagramScene.deleteStateCircleById(this.stateId);
-      stateCircle.destroy(); // StateCircle 객체 파괴
+      // stateCircle.destroy(); // StateCircle 객체 파괴
+
+      // Emit an event to update labels
+      diagramScene.events.emit('updateLabels');
     }
 
     // InputLabel 객체 파괴
-    this.destroy();
+    // this.destroy();
   };
 
   private handleShortPress = (): void => {
@@ -307,8 +279,8 @@ export class InputLabel extends Phaser.GameObjects.Container {
     return this.stateId;
   }
 
-  get getName(): string {
-    return this.name;
+  get getLabelText(): string {
+    return this.labelText;
   }
 
   get getX(): number {
@@ -321,5 +293,9 @@ export class InputLabel extends Phaser.GameObjects.Container {
 
   get getIsSelected(): boolean {
     return this.isSelected;
+  }
+
+  set setLabelText(newText: string) {
+    this.labelText = newText;
   }
 }

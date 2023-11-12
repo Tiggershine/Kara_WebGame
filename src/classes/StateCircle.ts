@@ -87,6 +87,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
     // Set to handle pointerdown event
     this.on('pointerdown', () => {
+      console.log('pointerdown event', this.label);
       if (this.isSelected) {
         return;
       } else {
@@ -258,8 +259,13 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   };
 
   setIsSelected(selected: boolean): void {
+    console.log('setIsSelected called', selected, this.label);
     this.isSelected = selected;
-    this.label.setColor(this.isSelected ? '#FCF6F5' : '#1B1C1D');
+    if (this.label) {
+      this.label.setColor(this.isSelected ? '#FCF6F5' : '#1B1C1D');
+    } else {
+      console.error('Label is null in setIsSelected');
+    }
     this.circle.setFillStyle(this.isSelected ? 0xef3d38 : 0xfcf6f5);
   }
 

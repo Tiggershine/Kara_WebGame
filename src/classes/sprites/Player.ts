@@ -5,7 +5,7 @@ import Monster from './Monster';
 
 export default class Player extends BaseSprite {
   stars: Star[] = [];
-  private playerHighlight!: Phaser.GameObjects.Image;
+  playerHighlight!: Phaser.GameObjects.Image;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player');
@@ -24,12 +24,12 @@ export default class Player extends BaseSprite {
     return new Promise((resolve) => setTimeout(resolve, ms));
   };
 
-  moveForwardTest = async () => {
-    console.log('1번 도입');
-    await this.delay(2000);
-    console.log('2번 도입');
-    this.x += 50;
-  };
+  //  moveForwardTest = async () => {
+  //     console.log('1번 도입');
+  //     await this.delay(2000);
+  //     console.log('2번 도입');
+  //     this.x += 50;
+  //   };
 
   /** Methods for Moves */
   moveForward = async () => {
