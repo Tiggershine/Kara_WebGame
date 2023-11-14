@@ -222,52 +222,62 @@ export default class DiagramScene extends Phaser.Scene {
 
   /** Add Button */
   createAddButton() {
-    // const addButton = this.add
-    //   .circle(575, 55, 25, 0xfcf6f5)
-    //   .setStrokeStyle(3, 0x2bae66)
-    //   .setInteractive();
     const addButton = this.add.image(575, 55, 'addButton');
-    addButton.setInteractive();
-
+    addButton.setDepth(5).setInteractive();
     this.input.setDraggable(addButton);
 
-    let newStateCircle: StateCircle | null = null;
+    // let newStateCircle: StateCircle | null = null;
 
     addButton.on('dragstart', (pointer: Phaser.Input.Pointer) => {
-      newStateCircle = this.createStateCircle(pointer.x, pointer.y);
-      newStateCircle && newStateCircle.select();
+      // newStateCircle = this.createStateCircle(pointer.x, pointer.y);
+      // newStateCircle && newStateCircle.select();
 
-      // Transfer the drag event from the addButton to the newStateCircle
-      if (newStateCircle) {
-        this.input.setDraggable(newStateCircle);
-        newStateCircle.emit('dragstart', pointer);
-      }
+      // // Transfer the drag event from the addButton to the newStateCircle
+      // if (newStateCircle) {
+      //   this.input.setDraggable(newStateCircle);
+      //   newStateCircle.emit('dragstart', pointer);
+      // }
+
+      addButton.setTexture('addButtonSelected');
     });
 
     addButton.on(
       'drag',
       (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
-        newStateCircle && newStateCircle.setPosition(dragX, dragY);
+        console.log('addButtondrag');
+        // newStateCircle && newStateCircle.setPosition(dragX, dragY);
+        addButton.setPosition(dragX, dragY);
       }
     );
 
     addButton.on('dragend', (pointer: Phaser.Input.Pointer) => {
-      if (
-        !this.validArea.getBounds().contains(pointer.x, pointer.y) &&
-        newStateCircle
-      ) {
-        this.inputLabels = this.inputLabels.filter((label) => {
-          if (label.getId === newStateCircle?.getId) {
-            label.destroy();
-            return false;
-          }
-          return true;
-        });
+      // if (
+      //   !this.validArea.getBounds().contains(pointer.x, pointer.y) &&
+      //   newStateCircle
+      // ) {
+      //   this.inputLabels = this.inputLabels.filter((label) => {
+      //     if (label.getId === newStateCircle?.getId) {
+      //       label.destroy();
+      //       return false;
+      //     }
+      //     return true;
+      //   });
 
-        newStateCircle.destroy();
-        this.stateCircles.pop();
+      //   newStateCircle.destroy();
+      //   this.stateCircles.pop();
+      // }
+      if (!this.validArea.getBounds().contains(pointer.x, pointer.y)) {
+        addButton.destroy();
+      } else {
+        addButton.destroy();
+
+        let newStateCircle: StateCircle | null = null;
+        newStateCircle = this.createStateCircle(pointer.x, pointer.y);
+        newStateCircle && newStateCircle.select();
       }
-      newStateCircle = null;
+
+      this.createAddButton();
+      return;
     });
   }
 

@@ -275,6 +275,10 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     return this.stateInputs;
   }
 
+  get getInputLabel(): InputLabel {
+    return this.inputLabel;
+  }
+
   set setId(id: number) {
     this.id = id;
   }
