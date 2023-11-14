@@ -18,7 +18,6 @@ interface StateCircleType {
 export default class StateCircle extends Phaser.GameObjects.Container {
   circle: Phaser.GameObjects.Image;
   label: Phaser.GameObjects.Text;
-  // stateCircleContainer: Phaser.GameObjects.Container;
   id: number;
   name: string;
   stateInputs: StateInput[] = [];
@@ -49,20 +48,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.edges = [];
     this.edgeManager = edgeManager;
     this.inputLabel = inputLabel;
-    // this.stateCircleContainer = this.scene.add.container(0, 0);
 
-    // Create StateCircle Object
-    // this.circle = new Phaser.GameObjects.Arc(
-    //   scene,
-    //   0,
-    //   0,
-    //   35,
-    //   0,
-    //   360,
-    //   false,
-    //   this.isSelected ? 0xef3d38 : 0xfcf6f5
-    // );
-    // this.circle.setStrokeStyle(3, 1776669);
     this.circle = new Phaser.GameObjects.Image(scene, 0, 0, 'stateCircle');
     this.add(this.circle);
 
