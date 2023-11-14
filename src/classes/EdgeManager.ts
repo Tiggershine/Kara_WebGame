@@ -20,7 +20,7 @@ export default class EdgeManager {
     // Calculate the angle between the two circles
     const angle = Math.atan2(circleB.y - circleA.y, circleB.x - circleA.x);
 
-    const radius = circleA.circle.radius;
+    const radius = circleA.circle.width / 2;
 
     // Calculate the offset from the center of circleA to the edge point
     const offsetX_A = radius * Math.cos(angle);
@@ -75,7 +75,7 @@ export default class EdgeManager {
     const edge = this.diagramScene.add.graphics(); // 여기서 this는 DiagramScene을 참조합니다.
     edge.lineStyle(2, 0x000000); // Set line style
 
-    const radius = circle.circle.radius;
+    const radius = circle.circle.width / 2;
     const selfEdgeRadius = (radius * 2) / 3; // Self edge radius is 2/3 of the state circle radius
     const startAngle = (2 * Math.PI) / 4; // Start angle at 120 degrees
     const endAngle = Math.PI / 4; // End angle at 60 degrees

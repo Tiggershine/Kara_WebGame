@@ -16,8 +16,9 @@ interface StateCircleType {
 }
 
 export default class StateCircle extends Phaser.GameObjects.Container {
-  circle: Phaser.GameObjects.Arc;
+  circle: Phaser.GameObjects.Image;
   label: Phaser.GameObjects.Text;
+  // stateCircleContainer: Phaser.GameObjects.Container;
   id: number;
   name: string;
   stateInputs: StateInput[] = [];
@@ -48,32 +49,35 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.edges = [];
     this.edgeManager = edgeManager;
     this.inputLabel = inputLabel;
+    // this.stateCircleContainer = this.scene.add.container(0, 0);
 
     // Create StateCircle Object
-    this.circle = new Phaser.GameObjects.Arc(
-      scene,
-      0,
-      0,
-      30,
-      0,
-      360,
-      false,
-      this.isSelected ? 0xef3d38 : 0xfcf6f5
-    );
-    this.circle.setStrokeStyle(3, 1776669);
-    // this.circle.setDepth(1);
+    // this.circle = new Phaser.GameObjects.Arc(
+    //   scene,
+    //   0,
+    //   0,
+    //   35,
+    //   0,
+    //   360,
+    //   false,
+    //   this.isSelected ? 0xef3d38 : 0xfcf6f5
+    // );
+    // this.circle.setStrokeStyle(3, 1776669);
+    this.circle = new Phaser.GameObjects.Image(scene, 0, 0, 'stateCircle');
+    this.add(this.circle);
 
     // Create Text on Circle
     this.label = new Phaser.GameObjects.Text(scene, 0, 0, this.name, {
-      fontSize: '14px',
+      fontSize: '16px',
       fontFamily: 'Roboto Condensed',
       color: '#1B1C1D',
     });
     this.label.setOrigin(0.5);
+    this.add(this.label);
 
     // Set interactive
     this.setInteractive(
-      new Phaser.Geom.Circle(0, 0, 25),
+      new Phaser.Geom.Circle(0, 0, 35),
       Phaser.Geom.Circle.Contains
     );
     scene.input.setDraggable(this);
@@ -241,7 +245,9 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     } else {
       console.error('Label is null in setIsSelected');
     }
-    this.circle.setFillStyle(this.isSelected ? 0xef3d38 : 0xfcf6f5);
+    this.circle.setTexture(
+      this.isSelected ? 'stateCircleSelected' : 'stateCircle'
+    );
   }
 
   // Call function in InputWindowScene to render InputLabels

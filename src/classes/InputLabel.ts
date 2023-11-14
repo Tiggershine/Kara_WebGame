@@ -53,23 +53,6 @@ export class InputLabel extends Phaser.GameObjects.Container {
     );
 
     // Set to handle pointerdown event
-    // this.on('pointerdown', () => {
-    //   this.timerEvent = scene.time.addEvent({
-    //     delay: 1000, // 1초 후에 실행
-    //     callback: this.deleteInputLabel,
-    //     callbackScope: this,
-    //   });
-    // });
-
-    // // Set to handle pointerup event
-    // this.on('pointerup', () => {
-    //   if (this.timerEvent) {
-    //     this.timerEvent.remove(); // pointerup 이벤트가 발생하면 타이머 이벤트를 제거
-    //     this.handleShortPress();
-    //   }
-    // });
-
-    // Set to handle pointerdown event
     this.on('pointerdown', () => {
       const currentTime = new Date().getTime();
       if (currentTime - this.lastClickTime < this.doubleClickDelay) {

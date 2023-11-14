@@ -16,6 +16,7 @@ export default class DiagramScene extends Phaser.Scene {
   private inputLabels: InputLabel[] = [];
   private startStateCircle!: StateCircle;
   private edgeManager!: EdgeManager;
+  private idCount: number = 1;
 
   constructor() {
     super('DiagramScene');
@@ -209,6 +210,8 @@ export default class DiagramScene extends Phaser.Scene {
     );
     inputLabelToDelete?.destroy();
 
+    this.addLabels();
+
     console.log(
       '(DiagramScene.ts',
       'StateCircles: ',
@@ -226,56 +229,31 @@ export default class DiagramScene extends Phaser.Scene {
     addButton.setDepth(5).setInteractive();
     this.input.setDraggable(addButton);
 
-    // let newStateCircle: StateCircle | null = null;
+    // // Create new StateCircle object
+    // let newStateCircle: StateCircle = this.createStateCircle(0, 0);
+    // newStateCircle.setVisible(false);
 
     addButton.on('dragstart', (pointer: Phaser.Input.Pointer) => {
-      // newStateCircle = this.createStateCircle(pointer.x, pointer.y);
-      // newStateCircle && newStateCircle.select();
-
-      // // Transfer the drag event from the addButton to the newStateCircle
-      // if (newStateCircle) {
-      //   this.input.setDraggable(newStateCircle);
-      //   newStateCircle.emit('dragstart', pointer);
-      // }
-
       addButton.setTexture('addButtonSelected');
     });
 
     addButton.on(
       'drag',
       (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
-        console.log('addButtondrag');
-        // newStateCircle && newStateCircle.setPosition(dragX, dragY);
         addButton.setPosition(dragX, dragY);
       }
     );
 
     addButton.on('dragend', (pointer: Phaser.Input.Pointer) => {
-      // if (
-      //   !this.validArea.getBounds().contains(pointer.x, pointer.y) &&
-      //   newStateCircle
-      // ) {
-      //   this.inputLabels = this.inputLabels.filter((label) => {
-      //     if (label.getId === newStateCircle?.getId) {
-      //       label.destroy();
-      //       return false;
-      //     }
-      //     return true;
-      //   });
+      addButton.destroy();
 
-      //   newStateCircle.destroy();
-      //   this.stateCircles.pop();
-      // }
-      if (!this.validArea.getBounds().contains(pointer.x, pointer.y)) {
-        addButton.destroy();
-      } else {
-        addButton.destroy();
-
+      if (this.validArea.getBounds().contains(pointer.x, pointer.y)) {
+        // Create new StateCircle object
         let newStateCircle: StateCircle | null = null;
         newStateCircle = this.createStateCircle(pointer.x, pointer.y);
+        // newStateCircle.setPosition(pointer.x, pointer.y).setVisible(true);
         newStateCircle && newStateCircle.select();
       }
-
       this.createAddButton();
       return;
     });
@@ -286,8 +264,10 @@ export default class DiagramScene extends Phaser.Scene {
     // Before creating a new state, remove the endStateCircle from the array
     const endStateCircle = this.stateCircles.pop();
 
-    const stateId = this.stateCircles.length;
-    const stateName = 'State ' + Number(this.stateCircles.length);
+    const stateId = this.idCount;
+    this.idCount++;
+    console.log('idCount: ', this.idCount);
+    const stateName = 'State ' + stateId;
     const newStateInput: StateInput[] = [];
     const inputLabel: InputLabel = new InputLabel(
       this,
