@@ -10,6 +10,7 @@ export default class Player extends BaseSprite {
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player');
 
+    this.setDisplaySize(45, 45).setAngle(90);
     this.setDepth(5);
 
     this.playerHighlight = this.scene.add.image(
