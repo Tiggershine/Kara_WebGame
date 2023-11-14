@@ -12,6 +12,8 @@ export default class Game extends Phaser.Scene {
       star: 'assets/Star.png',
       wall: 'assets/Wall.png',
       // Images for ControlButtons
+      addButton: 'assets/AddButton.png',
+      addButtonSelected: 'assets/AddButtonSelected.png',
       yesButton: 'assets/YesButton.png',
       noButton: 'assets/NoButton.png',
       yesNoButton: 'assets/YesNoButton.png',

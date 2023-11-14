@@ -11,202 +11,14 @@ import DiagramScene from '../scenes/DiagramScene';
 import PlaygroundScene from '../scenes/PlaygroundScene';
 import StateCircle from './StateCircle';
 import { NextStateButton } from './NextStateButton';
-
-/** DropdownMenu Options */
-const options: DropdownOption[] = [
-  {
-    texture: 'wallFront',
-    value: 'wallFront',
-    type: SensorType.WallFront,
-  },
-  {
-    texture: 'wallLeft',
-    value: 'wallLeft',
-    type: SensorType.WallLeft,
-  },
-  {
-    texture: 'wallRight',
-    value: 'wallRight',
-    type: SensorType.WallRight,
-  },
-  {
-    texture: 'monsterFront',
-    value: 'monsterFront',
-    type: SensorType.MonsterFront,
-  },
-  {
-    texture: 'starBottom',
-    value: 'starBottom',
-    type: SensorType.StarBottom,
-  },
-];
-
-/** Contorl Button Options */
-const buttonConfigurations = [
-  {
-    name: 'yesButton',
-    type: ButtonType.YesButton,
-    texture: 'yesButton',
-    selectedTexture: 'yesButtonSelected',
-    x: 370,
-    y: 665,
-  },
-  {
-    name: 'noButton',
-    type: ButtonType.NoButton,
-    texture: 'noButton',
-    selectedTexture: 'noButtonSelected',
-    x: 430,
-    y: 665,
-  },
-  {
-    name: 'yesNoButton',
-    type: ButtonType.YesNoButton,
-    texture: 'yesNoButton',
-    selectedTexture: 'yesNoButtonSelected',
-    x: 490,
-    y: 665,
-  },
-  {
-    name: 'forwardButton',
-    type: ButtonType.ForwardButton,
-    texture: 'forwardButton',
-    selectedTexture: 'forwardButtonSelected',
-    x: 250,
-    y: 745,
-  },
-  {
-    name: 'leftButton',
-    type: ButtonType.LeftButton,
-    texture: 'leftButton',
-    selectedTexture: 'leftButtonSelected',
-    x: 310,
-    y: 745,
-  },
-  {
-    name: 'rightButton',
-    type: ButtonType.RightButton,
-    texture: 'rightButton',
-    selectedTexture: 'rightButtonSelected',
-    x: 370,
-    y: 745,
-  },
-  {
-    name: 'putButton',
-    type: ButtonType.PutButton,
-    texture: 'putButton',
-    selectedTexture: 'putButtonSelected',
-    x: 430,
-    y: 745,
-  },
-  {
-    name: 'pickButton',
-    type: ButtonType.PickButton,
-    texture: 'pickButton',
-    selectedTexture: 'pickButtonSelected',
-    x: 490,
-    y: 745,
-  },
-];
-
-/** Dummy Button Options */
-const dummyButtonConfigurations = [
-  {
-    name: 'yesNoButton',
-    type: ButtonType.YesNoButton,
-    texture: 'yesNoButton',
-    selectedTexture: 'yesNoButtonSelected',
-    x: 586,
-    y: 490,
-  },
-  {
-    name: 'yesNoButton',
-    type: ButtonType.YesNoButton,
-    texture: 'yesNoButton',
-    selectedTexture: 'yesNoButtonSelected',
-    x: 636,
-    y: 490,
-  },
-  {
-    name: 'yesNoButton',
-    type: ButtonType.YesNoButton,
-    texture: 'yesNoButton',
-    selectedTexture: 'yesNoButtonSelected',
-    x: 686,
-    y: 490,
-  },
-  {
-    name: 'yesNoButton',
-    type: ButtonType.YesNoButton,
-    texture: 'yesNoButton',
-    selectedTexture: 'yesNoButtonSelected',
-    x: 736,
-    y: 490,
-  },
-];
-
-export const conditionInputPoints = [
-  { key: 'dummyBtn_11', x: 580, y: 490 },
-  { key: 'dummyBtn_12', x: 630, y: 490 },
-  { key: 'dummyBtn_13', x: 680, y: 490 },
-  { key: 'dummyBtn_14', x: 730, y: 490 },
-  { key: 'dummyBtn_21', x: 580, y: 555 },
-  { key: 'dummyBtn_22', x: 630, y: 555 },
-  { key: 'dummyBtn_23', x: 680, y: 555 },
-  { key: 'dummyBtn_24', x: 730, y: 555 },
-  { key: 'dummyBtn_31', x: 580, y: 620 },
-  { key: 'dummyBtn_32', x: 630, y: 620 },
-  { key: 'dummyBtn_33', x: 680, y: 620 },
-  { key: 'dummyBtn_34', x: 730, y: 620 },
-  { key: 'dummyBtn_41', x: 580, y: 685 },
-  { key: 'dummyBtn_42', x: 630, y: 685 },
-  { key: 'dummyBtn_43', x: 680, y: 685 },
-  { key: 'dummyBtn_44', x: 730, y: 685 },
-  { key: 'dummyBtn_51', x: 580, y: 750 },
-  { key: 'dummyBtn_52', x: 630, y: 750 },
-  { key: 'dummyBtn_53', x: 680, y: 750 },
-  { key: 'dummyBtn_54', x: 730, y: 750 },
-];
-
-export const moveInputPoints = [
-  { key: 'dummyBtn_15', x: 785, y: 490 },
-  { key: 'dummyBtn_16', x: 835, y: 490 },
-  { key: 'dummyBtn_17', x: 885, y: 490 },
-  { key: 'dummyBtn_18', x: 935, y: 490 },
-  { key: 'dummyBtn_25', x: 785, y: 555 },
-  { key: 'dummyBtn_26', x: 835, y: 555 },
-  { key: 'dummyBtn_27', x: 885, y: 555 },
-  { key: 'dummyBtn_28', x: 935, y: 555 },
-  { key: 'dummyBtn_35', x: 785, y: 620 },
-  { key: 'dummyBtn_36', x: 835, y: 620 },
-  { key: 'dummyBtn_37', x: 885, y: 620 },
-  { key: 'dummyBtn_38', x: 935, y: 620 },
-  { key: 'dummyBtn_45', x: 785, y: 685 },
-  { key: 'dummyBtn_46', x: 835, y: 685 },
-  { key: 'dummyBtn_47', x: 885, y: 685 },
-  { key: 'dummyBtn_48', x: 935, y: 685 },
-  { key: 'dummyBtn_55', x: 785, y: 750 },
-  { key: 'dummyBtn_56', x: 835, y: 750 },
-  { key: 'dummyBtn_57', x: 885, y: 750 },
-  { key: 'dummyBtn_58', x: 935, y: 750 },
-];
-
-export const nextStatePoints = [
-  { key: '19', x: 1005, y: 488 },
-  { key: '29', x: 1005, y: 553 },
-  { key: '39', x: 1005, y: 618 },
-  { key: '49', x: 1005, y: 683 },
-  { key: '59', x: 1005, y: 748 },
-];
-
-/** InputGuideline Coordinate */
-const guidelinePositions = [
-  { x: 800, y: 486 },
-  { x: 800, y: 551 },
-  { x: 800, y: 616 },
-  { x: 800, y: 681 },
-  { x: 800, y: 746 },
-];
+import {
+  options,
+  buttonConfigurations,
+  conditionInputPoints,
+  moveInputPoints,
+  nextStatePoints,
+  guidelinePositions,
+} from '../configurations';
 
 export class InputWindow extends Phaser.GameObjects.Container {
   private stateCircleId: number = -1;
@@ -241,25 +53,22 @@ export class InputWindow extends Phaser.GameObjects.Container {
     super(scene, x, y);
 
     this.stateCircleId = stateCircleId;
-    // console.log('StateCircleID: ', this.stateCircleId);
 
     const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+    //
     diagramScene.events.on(
       'updatedStateCircles',
       this.updateRegisteredStates,
       this
     );
 
-    // this.on('updateRegisteredCircles', this.updateNextStateButton);
-
-    // Continaer Graphic
+    /** Continaer Graphic (Input) */
     const containerStyle = {
       width: 500,
       height: 380,
       borderRadius: 10,
       backgroundColor: 0xfcf6f5,
     };
-
     this.containerGraphic = this.scene.add.graphics({
       fillStyle: { color: containerStyle.backgroundColor },
     });
@@ -270,7 +79,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
       containerStyle.height,
       containerStyle.borderRadius
     );
-
+    /** Continaer Graphic (Control) */
     const controllerContainerStyle = {
       width: 320,
       height: 160,
@@ -288,9 +97,9 @@ export class InputWindow extends Phaser.GameObjects.Container {
       controllerContainerStyle.borderRadius
     );
 
-    // Label for Inputwindow
-    const moveLabel = this.scene.add.image(862.5, 433, 'moveLabel');
-    const nextStateLabel = this.scene.add.image(1000, 433, 'nextStateLabel');
+    /** Label Images (Move, NextState) */
+    const moveLabel = this.scene.add.image(862.5, 431, 'moveLabel');
+    const nextStateLabel = this.scene.add.image(1000, 431, 'nextStateLabel');
 
     // Add objects into Scene
     this.add(this.containerGraphic);
@@ -298,7 +107,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
     this.add(moveLabel);
     this.add(nextStateLabel);
 
-    // NextState Button (initial) - setVisible(false)
+    // Initialize - NextState Button (default: invisible)
     for (let i = nextStatePoints.length - 1; i >= 0; i--) {
       const point = nextStatePoints[i];
       const buttonId = i + 1;
@@ -306,7 +115,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
       const backgroundTexture = 'nextStateButton';
       const options = this.registeredStates;
 
-      const nextStateButton: NextStateButton = this.addNextStateButton(
+      const nextStateButton: NextStateButton = this.createNextStateButton(
         point.x,
         point.y,
         buttonId,
@@ -315,32 +124,30 @@ export class InputWindow extends Phaser.GameObjects.Container {
         options
       );
       nextStateButton.setVisible(false);
-
       this.nextStateButtons.unshift(nextStateButton);
     }
-    // Default: set 1st.NextState Button visible
+    // Default: Set 1st.NextState Button visible
     this.nextStateButtons[0].setVisible(true);
 
-    // Condition button images in InputWindow (default: invisible)
+    // Initialize - Condition button images (default: invisible)
     conditionInputPoints.forEach((point) => {
       this.dummyButtons[point.key] = this.scene.add.image(
         point.x,
         point.y,
         'yesNoButton'
       );
-
       this.dummyButtons[point.key].setVisible(false);
       this.makeDummyButtonDraggable(this.dummyButtons[point.key], point.key);
       this.add(this.dummyButtons[point.key]);
     });
-    // Move button ymages in InputWindow (default: invisible)
+
+    // Initialize - Move button images (default: invisible)
     moveInputPoints.forEach((point) => {
       this.dummyButtons[point.key] = this.scene.add.image(
         point.x,
         point.y,
         'forwardButton'
       );
-
       this.dummyButtons[point.key].setVisible(false);
       this.makeDummyButtonDraggable(this.dummyButtons[point.key], point.key);
       this.add(this.dummyButtons[point.key]);
@@ -348,7 +155,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
     scene.add.existing(this);
 
-    // Guideline
+    /** Guideline */
     this.inputGuideline = this.addGuildeline();
     // Control Buttons (Condition buttons, Move buttons)
     this.addControlButtons();
@@ -364,7 +171,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
         color: 14277081, // #D9D9D9
       },
     });
-
     // Set Divider for Input container (210, 400)
     dividerGraphics.lineBetween(559, 457, 1041, 457);
     dividerGraphics.lineBetween(760, 408, 760, 774);
@@ -373,58 +179,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
     dividerGraphics.lineBetween(230, 700, 510, 700);
   }
 
-  // Set DummyButtons for condition input and move input draggable
-  makeDummyButtonDraggable = (
-    image: Phaser.GameObjects.Image,
-    pointKey: string
-  ) => {
-    const originalPosition = { x: image.x, y: image.y };
-
-    image.setInteractive();
-    this.scene.input.setDraggable(image);
-
-    image.on(
-      'drag',
-      (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
-        image.x = dragX;
-        image.y = dragY;
-      }
-    );
-
-    image.on(
-      'dragend',
-      (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
-        const containerGraphicBounds = {
-          x: 550,
-          y: 400,
-          width: 500,
-          height: 380,
-        };
-
-        const isInsideContainer: boolean =
-          pointer.x >= containerGraphicBounds.x &&
-          pointer.x <=
-            containerGraphicBounds.x + containerGraphicBounds.width &&
-          pointer.y >= containerGraphicBounds.y &&
-          pointer.y <= containerGraphicBounds.y + containerGraphicBounds.height;
-
-        // 원래 자리로 이동
-        image.x = originalPosition.x;
-        image.y = originalPosition.y;
-
-        if (!isInsideContainer) {
-          image.setVisible(false);
-
-          const rowNumber: number = parseInt(pointKey.split('_')[1][0]);
-          const targetSensorIndex: number = parseInt(pointKey.split('_')[1][1]);
-
-          this.clearConditionButtonInput(rowNumber, targetSensorIndex);
-        }
-      }
-    );
-  };
-
-  ///////** METHODS *//////////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////** STATE UPDATE METHODS *//////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // InputWindow의 활성 상태 반환
   getInputwindowActive = (): boolean => {
@@ -441,6 +196,9 @@ export class InputWindow extends Phaser.GameObjects.Container {
     // this.updateDropdownButtonsActiveState(active);
   }
 
+  /** USER INPUT DATA UPDATE FUNCTIONS */
+  // StateCircle의 StateInputs 업데이트 역할 (POST to StateCircle)
+
   // 이 InputWindow 객체가 소속된 StateCircle 객체 반환
   getStateCircleById(): StateCircle | undefined {
     const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
@@ -448,9 +206,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
     return diagramScene.getStateCircleById(this.stateCircleId);
   }
 
-  /** USER INPUT DATA UPDATE FUNCTIONS */
-  // StateCircle의 StateInputs 업데이트 (POST to StateCircle)
-  updateStateCircleData = () => {
+  updateStateCircleStateInput = () => {
     const stateCircle = this.getStateCircleById();
 
     if (stateCircle) {
@@ -478,7 +234,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
     }
   };
 
-  // Condition Button(input) update
+  // Update - Condition input
   // SensorCheck: {sensor: SensorType, condition: ButtonType}
   updateConditionButtonInput = (
     sensorNumber: number, // 등록된 Sensor 순번 (index X_)
@@ -500,14 +256,14 @@ export class InputWindow extends Phaser.GameObjects.Container {
       ].condition = buttonType;
 
       // StateCircle의 StateInputs 업데이트
-      this.updateStateCircleData();
+      this.updateStateCircleStateInput();
       return;
     } else {
       const targetElement = this.tempStateInputs[stateInputOrder];
       targetElement.sensorChecks.push(sensorCheck);
 
       // StateCircle의 StateInputs 업데이트
-      this.updateStateCircleData();
+      this.updateStateCircleStateInput();
     }
   };
 
@@ -526,10 +282,11 @@ export class InputWindow extends Phaser.GameObjects.Container {
       ].condition = undefined;
 
       // StateCircle의 StateInputs 업데이트
-      this.updateStateCircleData();
+      this.updateStateCircleStateInput();
     }
   };
 
+  // Update - Move input
   updateMoveButtonInput = (
     moveButtonIndex: number,
     rowNumber: number,
@@ -546,20 +303,11 @@ export class InputWindow extends Phaser.GameObjects.Container {
     const stateInputOrder = rowNumber - 1;
     const moveInputIndex = moveButtonIndex - 5;
 
-    console.log(
-      '업데이트 전 move 배열: ',
-      this.tempStateInputs[stateInputOrder]
-    );
     const targetElement = this.tempStateInputs[stateInputOrder];
     targetElement.move[moveInputIndex] = buttonType;
 
     // StateCircle의 StateInputs 업데이트
-    this.updateStateCircleData();
-
-    console.log(
-      'move Input 업데이트 된 tempStateInputs: ',
-      this.tempStateInputs
-    );
+    this.updateStateCircleStateInput();
   };
 
   clearMoveButtonInput = (rowNumber: number, buttonsOrder: number): void => {
@@ -573,14 +321,14 @@ export class InputWindow extends Phaser.GameObjects.Container {
     }
   };
 
-  // NextState (input) update
+  // Update -  NextState input
   updateNextStateInput(buttonId: number, nextStateId: number): void {
     const stateInputIndex = buttonId - 1;
 
     this.tempStateInputs[stateInputIndex].nextState = nextStateId;
 
     // StateCircle의 StateInputs 업데이트
-    this.updateStateCircleData();
+    this.updateStateCircleStateInput();
 
     console.log('update nextState', this.tempStateInputs);
   }
@@ -604,8 +352,62 @@ export class InputWindow extends Phaser.GameObjects.Container {
     }
   }
 
-  /** Related to Graphic  */
+  // ControlButton 객체들의 활성 상태를 업데이트하는 메서드
+  updateControlButtonsActiveState(active: boolean): void {
+    this.controlButtons.forEach((button) => {
+      button.setActive(active); // Phaser의 내장 메서드를 사용하여 활성 상태 설정
+      button.setVisible(active); // 버튼의 가시성도 업데이트
+    });
+  }
+  // updateDropdownButtonsActiveState(active: boolean): void {
+  //   this.dropdownButtons.forEach((dropdown) => {
+  //     dropdown.setActive(active); // Phaser의 내장 메서드를 사용하여 활성 상태 설정
+  //     dropdown.setVisible(active); // 버튼의 가시성도 업데이트
+  //   });
+  // }
 
+  // Change the boolean value indicating whether the line registered or not
+  registerInputRow = (rowNumber: number) => {
+    switch (rowNumber) {
+      case 1:
+        this.registeredRow1 = true;
+        this.inputRowCount++;
+        break;
+      case 2:
+        this.registeredRow2 = true;
+
+        this.inputRowCount++;
+        this.nextStateButtons[1].setVisible(true);
+        // for (let i = 0; i < this.inputRowCount; i++) {
+        // this.inputGuideline.setGuidelineVisible(true, 2);
+        // }
+        break;
+      case 3:
+        this.registeredRow3 = true;
+        this.inputRowCount++;
+        this.nextStateButtons[2].setVisible(true);
+        break;
+      case 4:
+        this.registeredRow4 = true;
+        this.inputRowCount++;
+        this.nextStateButtons[3].setVisible(true);
+        break;
+      case 5:
+        this.registeredRow5 = true;
+        this.inputRowCount++;
+        this.nextStateButtons[4].setVisible(true);
+        break;
+      default:
+        return;
+    }
+  };
+
+  // Button을 드래그하여 올렸을 때 버튼 이미지를 등록하는 함수
+  registerConditionBtn = (inputBtn: ControlButton) => {};
+
+  ///////** UNTILITY METHODS */////////////////////////////////////////////////////////////////////////////////////////////
+
+  /** Graphic  */
   // Creating Container Graphic
   createRoundRectGraphics = (
     x: number,
@@ -623,8 +425,8 @@ export class InputWindow extends Phaser.GameObjects.Container {
     return roundRectGraphics;
   };
 
-  /** Dropdown Button */
-  // Used to add dropdown button into Scene
+  /** Sensor Dropdown Button */
+  // Used to create a dropdown button into Scene (Initial)
   createSensorDropdownButton = (
     x: number,
     y: number,
@@ -641,7 +443,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
     );
     this.add(dropdownButton);
     this.dropdownButtons.push(dropdownButton);
-    // dropdownButton.setActive(this.active);
     dropdownButton.on(
       'pointerdown',
       () => {
@@ -653,7 +454,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
     return dropdownButton;
   };
 
-  // Used to create addtional dropdown button, when a option selected
+  // Used to create addtional dropdown button, when option selected
   addSensorDropdownButton(clickedDropdown: DropdownMenu) {
     const registedSensorCount = this.tempSensorInputs.length;
 
@@ -669,11 +470,11 @@ export class InputWindow extends Phaser.GameObjects.Container {
       );
 
       this.dropdownButtons.push(newDropdownButton);
-
       return;
     }
   }
 
+  // TODO: 이거 다시 분류할 것
   checkRegistedSensor = (sensorType: SensorType): void => {
     // 배열에 sensorType이 이미 존재하는지 확인
     if (this.tempSensorInputs.includes(sensorType)) {
@@ -683,8 +484,8 @@ export class InputWindow extends Phaser.GameObjects.Container {
     }
   };
 
-  /** NextState Dropdown */
-  addNextStateButton = (
+  /** NextState Dropdown Button */
+  createNextStateButton = (
     x: number,
     y: number,
     buttonId: number,
@@ -704,7 +505,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
     );
 
     this.add(nextStateButton);
-    // this.dropdownButtons.push(dropdownButton);
     nextStateButton.on(
       'pointerdown',
       () => {
@@ -717,6 +517,17 @@ export class InputWindow extends Phaser.GameObjects.Container {
   };
 
   /** Control Buttons */
+  // create control button object
+  createControlButton = (
+    x: number,
+    y: number,
+    texture: string,
+    type: ButtonType
+  ): ControlButton => {
+    const newControlButton = new ControlButton(this.scene, x, y, texture, type);
+
+    return newControlButton;
+  };
   // Add control button which are draggable into ContorlButtonContainer
   addControlButtons = (): void => {
     buttonConfigurations.forEach((config) => {
@@ -740,33 +551,16 @@ export class InputWindow extends Phaser.GameObjects.Container {
     });
   };
 
-  // ControlButton 객체들의 활성 상태를 업데이트하는 메서드
-  updateControlButtonsActiveState(active: boolean): void {
-    this.controlButtons.forEach((button) => {
-      button.setActive(active); // Phaser의 내장 메서드를 사용하여 활성 상태 설정
-      button.setVisible(active); // 버튼의 가시성도 업데이트
-    });
-  }
-  // updateDropdownButtonsActiveState(active: boolean): void {
-  //   this.dropdownButtons.forEach((dropdown) => {
-  //     dropdown.setActive(active); // Phaser의 내장 메서드를 사용하여 활성 상태 설정
-  //     dropdown.setVisible(active); // 버튼의 가시성도 업데이트
-  //   });
+  // TODO: 필요없는 듯, 확인하고 삭제할 것
+  /** Control Button */
+  // addControlButton(button: ControlButton, x: number, y: number): void {
+  //   this.controlButtons.push(button);
+  //   this.add(button);
+
+  //   button.setPosition(x, y);
   // }
 
-  // Add control button object
-  createControlButton = (
-    x: number,
-    y: number,
-    texture: string,
-    type: ButtonType
-  ): ControlButton => {
-    const newControlButton = new ControlButton(this.scene, x, y, texture, type);
-
-    return newControlButton;
-  };
-
-  // Set ControllButton Draggable
+  // Set ControlButton Draggable
   setButtonDraggable = (
     button: ControlButton,
     selectedButtonImage: string,
@@ -932,41 +726,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
     });
   };
 
-  // Change the boolean value indicating whether the line registered or not
-  registerInputRow = (rowNumber: number) => {
-    switch (rowNumber) {
-      case 1:
-        this.registeredRow1 = true;
-        this.inputRowCount++;
-        break;
-      case 2:
-        this.registeredRow2 = true;
-        this.inputRowCount++;
-        this.nextStateButtons[1].setVisible(true);
-        // for (let i = 0; i < this.inputRowCount; i++) {
-        // this.inputGuideline.setGuidelineVisible(true, 2);
-        // }
-        break;
-      case 3:
-        this.registeredRow3 = true;
-        this.inputRowCount++;
-        this.nextStateButtons[2].setVisible(true);
-        break;
-      case 4:
-        this.registeredRow4 = true;
-        this.inputRowCount++;
-        this.nextStateButtons[3].setVisible(true);
-        break;
-      case 5:
-        this.registeredRow5 = true;
-        this.inputRowCount++;
-        this.nextStateButtons[4].setVisible(true);
-        break;
-      default:
-        return;
-    }
-  };
-
   // Change the image of a button when dragged to input
   changeButtonImage = (
     buttonImg: Phaser.GameObjects.Image,
@@ -1031,16 +790,57 @@ export class InputWindow extends Phaser.GameObjects.Container {
     buttonImg.setVisible(true);
   };
 
-  // Button을 드래그하여 올렸을 때 버튼 이미지를 등록하는 함수
-  registerConditionBtn = (inputBtn: ControlButton) => {};
+  /** Dummy Button Images for Input (Condition, Move) */
+  // Set DummyButton Images for condition input and move input draggable
+  makeDummyButtonDraggable = (
+    image: Phaser.GameObjects.Image,
+    pointKey: string
+  ) => {
+    const originalPosition = { x: image.x, y: image.y };
 
-  /** Control Button */
-  addControlButton(button: ControlButton, x: number, y: number): void {
-    this.controlButtons.push(button);
-    this.add(button);
+    image.setInteractive();
+    this.scene.input.setDraggable(image);
 
-    button.setPosition(x, y);
-  }
+    image.on(
+      'drag',
+      (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+        image.x = dragX;
+        image.y = dragY;
+      }
+    );
+
+    image.on(
+      'dragend',
+      (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+        const containerGraphicBounds = {
+          x: 550,
+          y: 400,
+          width: 500,
+          height: 380,
+        };
+
+        const isInsideContainer: boolean =
+          pointer.x >= containerGraphicBounds.x &&
+          pointer.x <=
+            containerGraphicBounds.x + containerGraphicBounds.width &&
+          pointer.y >= containerGraphicBounds.y &&
+          pointer.y <= containerGraphicBounds.y + containerGraphicBounds.height;
+
+        // 원래 자리로 이동
+        image.x = originalPosition.x;
+        image.y = originalPosition.y;
+
+        if (!isInsideContainer) {
+          image.setVisible(false);
+
+          const rowNumber: number = parseInt(pointKey.split('_')[1][0]);
+          const targetSensorIndex: number = parseInt(pointKey.split('_')[1][1]);
+
+          this.clearConditionButtonInput(rowNumber, targetSensorIndex);
+        }
+      }
+    );
+  };
 
   /** Guideline */
   addGuildeline = (): InputGuideline => {

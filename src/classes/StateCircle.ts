@@ -1,8 +1,10 @@
-import Phaser from 'phaser';
+import Phaser, { Input } from 'phaser';
 import InputManager, { StateInput } from './InputManager';
 import DiagramScene from '../scenes/DiagramScene';
 import InputWindowScene from '../scenes/InputWindowScene';
 import { InputWindow } from './InputWindow';
+import EdgeManager from './EdgeManager';
+import { InputLabel } from './InputLabel';
 
 interface StateCircleType {
   id: number;
@@ -18,8 +20,10 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   label: Phaser.GameObjects.Text;
   id: number;
   name: string;
-  isSelected: boolean = false;
   stateInputs: StateInput[] = [];
+  edgeManager!: EdgeManager;
+  inputLabel!: InputLabel;
+  isSelected: boolean = false;
   inputManager: InputManager = new InputManager();
   inputWindowScene?: InputWindowScene;
   edges: Phaser.GameObjects.Graphics[] = [];
@@ -31,7 +35,9 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     y: number,
     id: number,
     name: string,
-    stateInputs: StateInput[]
+    stateInputs: StateInput[],
+    edgeManager: EdgeManager, // EdgeManager 인스턴스를 생성자로 전달
+    inputLabel: InputLabel
   ) {
     super(scene, x, y);
 
@@ -40,6 +46,8 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.stateInputs = stateInputs;
     this.isSelected = true;
     this.edges = [];
+    this.edgeManager = edgeManager;
+    this.inputLabel = inputLabel;
 
     // Create StateCircle Object
     this.circle = new Phaser.GameObjects.Arc(
@@ -58,7 +66,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     // Create Text on Circle
     this.label = new Phaser.GameObjects.Text(scene, 0, 0, this.name, {
       fontSize: '14px',
-      fontFamily: 'Roboto Flex',
+      fontFamily: 'Roboto Condensed',
       color: '#1B1C1D',
     });
     this.label.setOrigin(0.5);
@@ -115,41 +123,6 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     // this.inputWindow.setVisible(false);
   }
 
-  // Update Edge btw. this StateCircle and Next StateCircle
-  // updateEdges = (): void => {
-  //   // Get a reference to the DiagramScene
-  //   const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
-
-  //   // Create a temporary array to hold the new edges
-  //   const newEdges: Phaser.GameObjects.Graphics[] = [];
-
-  //   this.edges.forEach((edge) => {
-  //     // Check if the data property is enabled before accessing it
-  //     if (edge.data) {
-  //       const startCircle: StateCircle = edge.data.get('startCircle');
-  //       const endCircle: StateCircle = edge.data.get('endCircle');
-  //       const otherCircle = startCircle === this ? endCircle : startCircle;
-
-  //       // First, destroy the old edge
-  //       edge.destroy();
-
-  //       // Then, create a new edge and add it to the temporary array
-  //       const newEdge = diagramScene.createEdge(startCircle, endCircle);
-  //       newEdges.push(newEdge);
-
-  //       // Update the edges array for the other circle as well
-  //       const otherCircleEdges = otherCircle.edges;
-  //       const otherEdgeIndex = otherCircleEdges.indexOf(edge);
-  //       if (otherEdgeIndex !== -1) {
-  //         otherCircleEdges[otherEdgeIndex] = newEdge;
-  //       }
-  //     }
-  //   });
-
-  //   // Replace the old edges array with the new array
-  //   this.edges = newEdges;
-  // };
-
   updateEdges = (): void => {
     // Get a reference to the DiagramScene
     const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
@@ -170,7 +143,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
           edge.destroy(); // Destroy the old self-edge
 
           // Create a new self-edge and add it to the temporary array
-          const newSelfEdge = diagramScene.createSelfEdge(this); // Assuming you have a method to create self-edges
+          const newSelfEdge = this.edgeManager.createSelfEdge(this); // Assuming you have a method to create self-edges
           newEdges.push(newSelfEdge);
         } else {
           console.log('Not into SelfEdge');
@@ -181,7 +154,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
           edge.destroy();
 
           // Create a new edge and add it to the temporary array
-          const newEdge = diagramScene.createEdge(startCircle, endCircle);
+          const newEdge = this.edgeManager.createEdge(startCircle, endCircle);
           newEdges.push(newEdge);
 
           // Update the edges array for the other circle as well
@@ -198,16 +171,18 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.edges = newEdges;
   };
 
+  // 새로운 StateInput을 DiagramScene의 StateCircles 배열에 업데이트
   addStateInputs = (newStateInputs: StateInput[]): void => {
     // Filter out the elements based on the given conditions
     const filteredStateInputs = newStateInputs.filter((input) => {
       const hasSensorChecks = input.sensorChecks.length > 0;
       const hasMoveInputs = input.move.length > 0;
-      const hasNextState = input.nextState !== 0;
+      const hasNextState = input.nextState !== -1;
       return hasSensorChecks || hasMoveInputs || hasNextState;
     });
 
     this.stateInputs = filteredStateInputs;
+
     console.log(
       '(StateCircle.ts) id: ',
       this.id,
@@ -304,9 +279,14 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.id = id;
   }
 
-  updateName = (newName: string): void => {
+  // Used to change name of StateCircle + name of corresponded InputLabel
+  updateStateCircleName = (newName: string): void => {
     this.name = newName;
     this.label.text = newName;
+    // this.inputLabel.setLabelText = newName;
+    console.log('StateCircle.ts', 'name: ', this.name);
+
+    this.scene.events.emit('updateStateCircleName', this.id, this.name);
   };
 
   /** InputWindow */
@@ -316,6 +296,17 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
   getInputWindow(): InputWindow | undefined {
     return this.inputWindow;
+  }
+
+  // destroy 메소드 오버라이드 - StateCircle의 객체가 파괴되면, InputLabel
+  destroy(fromScene?: boolean): void {
+    // inputLabel이 존재하면 파괴
+    if (this.inputLabel) {
+      this.inputLabel.destroy();
+    }
+
+    // StateCircle의 나머지 부분을 파괴
+    super.destroy(fromScene);
   }
 
   /** Edge */
@@ -332,15 +323,15 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   //   }
   // };
 
-  getOtherCircleConnectedByEdge(
-    edge: Phaser.GameObjects.Graphics
-  ): StateCircle | null {
-    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
-    for (const circle of diagramScene.getStateCircles) {
-      if (circle !== this && circle.edges.includes(edge)) {
-        return circle;
-      }
-    }
-    return null;
-  }
+  // getOtherCircleConnectedByEdge(
+  //   edge: Phaser.GameObjects.Graphics
+  // ): StateCircle | null {
+  //   const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+  //   for (const circle of diagramScene.getStateCircles) {
+  //     if (circle !== this && circle.edges.includes(edge)) {
+  //       return circle;
+  //     }
+  //   }
+  //   return null;
+  // }
 }

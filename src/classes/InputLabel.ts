@@ -56,7 +56,7 @@ export class InputLabel extends Phaser.GameObjects.Container {
     // this.on('pointerdown', () => {
     //   this.timerEvent = scene.time.addEvent({
     //     delay: 1000, // 1초 후에 실행
-    //     callback: this.handleLongPress,
+    //     callback: this.deleteInputLabel,
     //     callbackScope: this,
     //   });
     // });
@@ -74,11 +74,11 @@ export class InputLabel extends Phaser.GameObjects.Container {
       const currentTime = new Date().getTime();
       if (currentTime - this.lastClickTime < this.doubleClickDelay) {
         // DoubleClick 감지
-        this.handleDoubleClick();
+        this.editInputLabel();
       } else {
         this.timerEvent = scene.time.addEvent({
           delay: 1000, // 1초 후에 실행
-          callback: this.handleLongPress,
+          callback: this.deleteInputLabel,
           callbackScope: this,
         });
       }
@@ -103,33 +103,16 @@ export class InputLabel extends Phaser.GameObjects.Container {
     scene.add.existing(this);
   }
 
-  // HTML input 요소 생성 및 설정
-  createHiddenInput() {
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.style.position = 'absolute';
-    input.style.opacity = '0'; // 보이지 않게 설정
-    input.style.pointerEvents = 'none'; // 포인터 이벤트 방지
-    document.body.appendChild(input);
-    return input;
-  }
-
-  private handleDoubleClick = (): void => {
-    console.log('DoubleClick event');
-
+  private editInputLabel = (): void => {
     // Store the original text in case no new text is entered
     const originalText = this.label.text;
-
     // Change the label's color to indicate editing
-    this.label.setColor('#F9A02D');
+    this.label.setColor('#EF3D38');
 
     // HTML input 요소 생성 및 설정
     const htmlInput = document.createElement('input');
     htmlInput.type = 'text';
-    htmlInput.style.position = 'absolute';
     htmlInput.style.opacity = '0'; // 보이지 않게 설정
-    htmlInput.style.left = `${this.x}px`;
-    htmlInput.style.top = `${this.y}px`;
     document.body.appendChild(htmlInput);
 
     // input 이벤트 리스너 함수
@@ -168,17 +151,6 @@ export class InputLabel extends Phaser.GameObjects.Container {
           }
           cursorBlink.remove(); // cursorBlink 중지
           this.finishEditing(cursorBlink, htmlInput.value, this.label.text); // 편집 완료 처리
-
-          if (htmlInput.value) {
-            const diagramScene = this.scene.scene.get(
-              'DiagramScene'
-            ) as DiagramScene;
-            diagramScene.events.emit(
-              'updateName',
-              this.stateId,
-              htmlInput.value
-            );
-          }
         }
       },
       this
@@ -227,29 +199,32 @@ export class InputLabel extends Phaser.GameObjects.Container {
       (stateCircle) => stateCircle.getId === this.getId
     );
     if (correspondingStateCircle) {
-      correspondingStateCircle.updateName(this.formatText(finalText));
+      correspondingStateCircle.updateStateCircleName(
+        this.formatText(finalText)
+      );
     }
   };
 
-  private handleLongPress = (): void => {
+  private deleteInputLabel = (): void => {
     console.log('LongPress event - StateCircle 삭제');
 
     // DiagramScene 참조
     const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+    diagramScene.deleteStateCircleById(this.stateId);
 
-    // 해당 StateCircle 찾아서 삭제
-    const stateCircle = diagramScene.getStateCircles.find(
-      (circle) => circle.getId === this.stateId
-    );
+    // // 해당 StateCircle 찾아서 삭제
+    // const stateCircle = diagramScene.getStateCircles.find(
+    //   (circle) => circle.getId === this.stateId
+    // );
 
-    if (stateCircle) {
-      // StateCircle 삭제
-      diagramScene.deleteStateCircleById(this.stateId);
-      // stateCircle.destroy(); // StateCircle 객체 파괴
+    // if (stateCircle) {
+    //   // StateCircle 삭제
+    //   diagramScene.deleteStateCircleById(this.stateId);
+    //   // stateCircle.destroy(); // StateCircle 객체 파괴
 
-      // Emit an event to update labels
-      diagramScene.events.emit('updateLabels');
-    }
+    //   // Emit an event to update labels
+    //   diagramScene.events.emit('updateLabels');
+    // }
 
     // InputLabel 객체 파괴
     // this.destroy();
