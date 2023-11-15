@@ -156,7 +156,7 @@ class SimulationHighlight extends Phaser.GameObjects.Image {
   moveImageTo(x: number, y: number): Promise<void> {
     return new Promise((resolve) => {
       this.showHighlight(this.x, this.y, x, y);
-      this.scene.time.delayedCall(1000, resolve);
+      this.scene.time.delayedCall(500, resolve);
     });
   }
 
@@ -168,7 +168,7 @@ class SimulationHighlight extends Phaser.GameObjects.Image {
       targets: this,
       x: x2,
       y: y2,
-      duration: 1000, // 이동하는데 걸리는 시간 (밀리초)
+      duration: 500, // 이동하는데 걸리는 시간 (밀리초)
       // ease: 'Linear', // 이동하는 방식
       // onComplete: () => {
       //   this.setVisible(false);

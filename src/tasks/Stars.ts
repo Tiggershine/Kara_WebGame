@@ -12,46 +12,6 @@ type State = {
   stateInputs: StateInput[];
 };
 
-// const stateInputData = [
-//   {
-//     id: 0,
-//     stateInputs: [{ sensorChecks: [], moves: [], nextStateId: 1 }],
-//   },
-//   {
-//     id: 1, // bottomStar
-//     stateInputs: [
-//       {
-//         sensorChecks: [{ sensor: 4, condition: 0 }], // 아래에 별 있으면
-//         moves: [7], // pickStar
-//         nextStateId: 2,
-//       },
-//       {
-//         sensorChecks: [{ sensor: 4, condition: 1 }], // 아래에 별 없으면
-//         moves: [6], // putStar
-//         nextStateId: 2,
-//       },
-//     ],
-//   },
-//   {
-//     id: 2, // frontWall
-//     stateInputs: [
-//       {
-//         sensorChecks: [{ sensor: 0, condition: 1 }], // 벽 앞 X
-//         moves: [3], // forward
-//         nextStateId: 1,
-//       },
-//       {
-//         sensorChecks: [{ sensor: 0, condition: 0 }], // 벽 앞 O
-//         moves: [],
-//         nextStateId: 100, // stop
-//       },
-//     ],
-//   },
-//   {
-//     id: 100,
-//     stateInputs: [{ sensorChecks: [], moves: [], nextStateId: 101 }],
-//   },
-// ];
 export default class Stars extends Phaser.GameObjects.Container {
   private player!: Player;
   private star1!: Star;
@@ -70,6 +30,7 @@ export default class Stars extends Phaser.GameObjects.Container {
     const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
 
     this.player = new Player(this.scene, 155, 315); // (125+30, 225+90)
+    this.player.setAngle(90);
     this.star1 = new Star(this.scene, 205, 315);
     this.star2 = new Star(this.scene, 305, 315);
     this.wall = new Wall(this.scene, 405, 315);
@@ -97,7 +58,7 @@ export default class Stars extends Phaser.GameObjects.Container {
   }
 
   // To find a StateCircle by id and to pointerdown the found StateCircle (by emit event)
-  private findStateCircleById(id: number): void {
+  private findStateCircleByIdSelect(id: number): void {
     const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
     const stateCircles = diagramScene.getStateCircles; // Assuming this is an array of StateCircle
 
@@ -142,7 +103,7 @@ export default class Stars extends Phaser.GameObjects.Container {
           break;
         }
 
-        this.findStateCircleById(currentStateId); // pointerdown the found StateCircle
+        this.findStateCircleByIdSelect(currentStateId); // pointerdown the found StateCircle
 
         // let nextStateId = null;
         let sensorCheckPassed: boolean = false;
@@ -229,6 +190,7 @@ export default class Stars extends Phaser.GameObjects.Container {
           }
         }
       }
+      this.findStateCircleByIdSelect(100);
 
       const isStarAt155315 = this.scene.children.list.some(
         (child) => child instanceof Star && child.x === 155 && child.y === 315

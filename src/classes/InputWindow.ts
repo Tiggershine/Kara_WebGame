@@ -183,8 +183,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
   // InputWindow의 활성 상태 반환
   getInputwindowActive = (): boolean => {
-    // TODO: DELETE TEST CODE
-    // console.log('getInputwindowActive: ', this.isActive);
     return this.isActive;
   };
 
@@ -221,14 +219,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
     if (index >= 0 && index < 5) {
       this.tempSensorInputs[index] = sensorType;
-      // TODO: DELETE TEST CODE
-      console.log('tempSensorInputs: ', this.tempSensorInputs);
-      console.log(
-        'index',
-        index,
-        '저장된 SesorType: ',
-        this.tempSensorInputs[index]
-      );
     } else {
       console.log('Index out of bounds: ', index);
     }
@@ -292,14 +282,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
     rowNumber: number,
     buttonType: ButtonType
   ): void => {
-    console.log(
-      'rowNumber: ',
-      rowNumber,
-      'buttonType: ',
-      buttonType,
-      'moveButtonIndex: ',
-      moveButtonIndex - 5
-    );
     const stateInputOrder = rowNumber - 1;
     const moveInputIndex = moveButtonIndex - 5;
 
@@ -329,8 +311,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
     // StateCircle의 StateInputs 업데이트
     this.updateStateCircleStateInput();
-
-    console.log('update nextState', this.tempStateInputs);
   }
 
   // RegisteredStates update { id: number; name: string }[] - DiagramScene에서 StateCircles가 update되면, 바로 실행
@@ -551,15 +531,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
     });
   };
 
-  // TODO: 필요없는 듯, 확인하고 삭제할 것
-  /** Control Button */
-  // addControlButton(button: ControlButton, x: number, y: number): void {
-  //   this.controlButtons.push(button);
-  //   this.add(button);
-
-  //   button.setPosition(x, y);
-  // }
-
   // Set ControlButton Draggable
   setButtonDraggable = (
     button: ControlButton,
@@ -589,13 +560,6 @@ export class InputWindow extends Phaser.GameObjects.Container {
         if (newButton) {
           newButton.setPosition(dragX, dragY);
           newButton.setDepth(100);
-
-          // newButton.setDepth(10);
-          // const playgroundScene = this.scene.scene.get(
-          //   'PlaygroundScene'
-          // ) as PlaygroundScene;
-          // playgroundScene.containerGraphics.setDepth(5);
-          // playgroundScene.tileGraphics.setDepth(5);
 
           if (
             this.tempSensorInputs.length > 0 &&
@@ -652,31 +616,17 @@ export class InputWindow extends Phaser.GameObjects.Container {
                 registedSensorCount < targetSensorIndex ||
                 rowNumber > this.inputRowCount
               ) {
-                console.log('등록된 sensorInputs: ', this.tempSensorInputs);
-                console.log('registedSensorCount: ', registedSensorCount);
-                console.log('targetSensorIndex: ', targetSensorIndex);
-                // 입력하려는 sensor번호에 sensor가 미등록이면, 취소
-                console.log('sensor 미등록으로 취소');
-                return; // 함수 종료
+                return;
               }
               const pointKey: string = point.key;
               const buttonType: ButtonType = newButton.getType;
-              console.log('buttonImg:', this.dummyButtons[pointKey]);
-              console.log('buttonType:', buttonType);
               this.changeButtonImage(this.dummyButtons[pointKey], buttonType);
               this.registerInputRow(rowNumber);
-              console.log(
-                'sensor 순번: ',
-                targetSensorIndex,
-                '줄 순번: ',
-                rowNumber
-              );
               this.updateConditionButtonInput(
                 targetSensorIndex,
                 rowNumber,
                 buttonType
               );
-              // break;
             } else {
               newButton.destroy();
             }
@@ -738,50 +688,41 @@ export class InputWindow extends Phaser.GameObjects.Container {
         replaceImgTexture = 'yesButton';
         buttonImg.setTexture(replaceImgTexture);
         buttonImg.setVisible(true);
-        console.log('buttonImg texture after setTexture:', buttonImg.texture);
-        console.log('change to yesButton');
         break;
       case ButtonType.NoButton:
         replaceImgTexture = 'noButton';
         buttonImg.setTexture(replaceImgTexture);
         buttonImg.setVisible(true);
-        console.log('change to noButton');
         break;
       case ButtonType.YesNoButton:
         replaceImgTexture = 'yesNoButton';
         buttonImg.setTexture(replaceImgTexture);
         buttonImg.setVisible(true);
-        console.log('change to yesNoButton');
         break;
       case ButtonType.ForwardButton:
         replaceImgTexture = 'forwardButton';
         buttonImg.setTexture(replaceImgTexture);
         buttonImg.setVisible(true);
-        console.log('change to forwardButton');
         break;
       case ButtonType.LeftButton:
         replaceImgTexture = 'leftButton';
         buttonImg.setTexture(replaceImgTexture);
         buttonImg.setVisible(true);
-        console.log('change to leftButton');
         break;
       case ButtonType.RightButton:
         replaceImgTexture = 'rightButton';
         buttonImg.setTexture(replaceImgTexture);
         buttonImg.setVisible(true);
-        console.log('change to rightButton');
         break;
       case ButtonType.PutButton:
         replaceImgTexture = 'putButton';
         buttonImg.setTexture(replaceImgTexture);
         buttonImg.setVisible(true);
-        console.log('change to putButton');
         break;
       case ButtonType.PickButton:
         replaceImgTexture = 'pickButton';
         buttonImg.setTexture(replaceImgTexture);
         buttonImg.setVisible(true);
-        console.log('change to pickButton');
         break;
       default:
         return;
@@ -844,15 +785,12 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
   /** Guideline */
   addGuildeline = (): InputGuideline => {
-    // TODO: DELETE TEST CODE
-    // console.log('가이드라인 추가');
     const inputGutideline = new InputGuideline(
       this.scene,
       guidelinePositions,
       'inputGuideline'
     );
 
-    // this.add(inputGutideline);
     this.scene.add.existing(inputGutideline);
     return inputGutideline;
   };
