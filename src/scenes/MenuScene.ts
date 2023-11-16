@@ -34,13 +34,9 @@ export default class MenuScene extends Phaser.Scene {
       right: [1050, 359.5],
     };
 
-    // this.add.image(0, 0, 'backgroundImg').setOrigin(0, 0);
     this.add
       .graphics({ fillStyle: { color: 0xfcf6f5 } })
       .fillRect(0, 0, 1080, 810);
-
-    // this.add.image(540.5, 359.5, 'menuImg1');
-    // this.add.image(1050, 359.5, 'menuImg2').setScale(1 / 2);
 
     // Initialize images
     this.currentImage = this.add.image(
@@ -48,6 +44,9 @@ export default class MenuScene extends Phaser.Scene {
       imagePosition.center[1],
       'menuImg1'
     );
+    // Set up events for the initial currentImage
+    this.setupImageEvents(this.currentImage);
+
     this.rightImage = this.add
       .image(imagePosition.right[0], imagePosition.right[1], 'menuImg2')
       .setScale(0.5);
@@ -74,11 +73,16 @@ export default class MenuScene extends Phaser.Scene {
       );
 
       if (swipeDistance > 150) {
-        // 스와이프 거리 임계값
         this.handleSwipe();
       }
 
       this.isSwiping = false;
+    });
+  }
+
+  setupImageEvents(image: Phaser.GameObjects.Image) {
+    image.setInteractive().on('pointerdown', () => {
+      this.handleImageClick();
     });
   }
 
@@ -114,6 +118,8 @@ export default class MenuScene extends Phaser.Scene {
           duration: 300,
         });
         this.currentImage = this.rightImage;
+        this.currentImage.texture.key = 'menuImg2';
+        this.setupImageEvents(this.currentImage);
 
         // Set menuImg3 to the right
         this.tweens.add({
@@ -154,6 +160,8 @@ export default class MenuScene extends Phaser.Scene {
           duration: 300,
         });
         this.currentImage = this.rightImage;
+        this.currentImage.texture.key = 'menuImg3';
+        this.setupImageEvents(this.currentImage);
       } else if (this.currentImage.texture.key === 'menuImg3') {
         return;
       }
@@ -178,6 +186,8 @@ export default class MenuScene extends Phaser.Scene {
           duration: 300,
         });
         this.currentImage = this.leftImage;
+        this.currentImage.texture.key = 'menuImg2';
+        this.setupImageEvents(this.currentImage);
 
         // Set menuImg1 to the left
         this.tweens.add({
@@ -189,7 +199,7 @@ export default class MenuScene extends Phaser.Scene {
         });
         this.leftImage = this.leftImage2;
       } else if (this.currentImage.texture.key === 'menuImg2') {
-        // Tween currentImage to the right
+        // Tween menuImg2 to the right2
         this.tweens.add({
           targets: this.rightImage,
           x: imagePosition.right2[0],
@@ -199,7 +209,7 @@ export default class MenuScene extends Phaser.Scene {
         });
         this.rightImage2 = this.rightImage;
 
-        // Tween menuImg2 to the center
+        // Tween menuImg2 to the right
         this.tweens.add({
           targets: this.currentImage,
           x: imagePosition.right[0],
@@ -209,7 +219,7 @@ export default class MenuScene extends Phaser.Scene {
         });
         this.rightImage = this.currentImage;
 
-        // Hide the rightImage
+        // Tween menuImg1 to the center
         this.tweens.add({
           targets: this.leftImage,
           x: imagePosition.center[0],
@@ -218,9 +228,34 @@ export default class MenuScene extends Phaser.Scene {
           duration: 300,
         });
         this.currentImage = this.leftImage;
+        this.currentImage.texture.key = '1';
+        this.setupImageEvents(this.currentImage);
       } else if (this.currentImage.texture.key === 'menuImg1') {
         return;
       }
     }
+  }
+
+  handleImageClick() {
+    let selectedMission;
+    switch (this.currentImage.texture.key) {
+      case 'menuImg1':
+        console.log('menuImg1');
+        selectedMission = 1;
+        break;
+      case 'menuImg2':
+        console.log('menuImg2');
+        selectedMission = 2;
+        break;
+      case 'menuImg3':
+        console.log('menuImg3');
+        selectedMission = 3;
+        break;
+      default:
+        console.log('Unknown image');
+        return;
+    }
+
+    this.scene.start('SubMenuScene', { selectedMission: selectedMission });
   }
 }
