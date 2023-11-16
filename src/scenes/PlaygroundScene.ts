@@ -16,13 +16,11 @@ export default class PlaygroundScene extends Phaser.Scene {
   private tunnelFinder!: TunnelFinder;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private playButton!: Phaser.GameObjects.Sprite;
+  private highlightToggle!: Phaser.GameObjects.Image;
   private isSimulationPlaying: boolean = false;
   containerGraphics!: Phaser.GameObjects.Graphics;
   tileGraphics!: Phaser.GameObjects.Graphics;
-  // private player!: Player;
-  // private wall!: Wall;
-  // private star!: Star;
-  // private star2!: Star;
+  private highlightSelected: boolean = false;
 
   constructor() {
     super('PlaygroundScene');
@@ -97,7 +95,7 @@ export default class PlaygroundScene extends Phaser.Scene {
     this.taskStars = new Stars(this, 30, 90);
 
     // Play Button
-    this.playButton = this.add.sprite(65, 615, 'playButton').setInteractive();
+    this.playButton = this.add.sprite(65, 645, 'playButton').setInteractive();
     this.load.image('playButton', 'playButton');
     this.load.image('pauseButton', 'pauseButton');
 
@@ -110,35 +108,28 @@ export default class PlaygroundScene extends Phaser.Scene {
         this.playButton.setTexture('pauseButton');
 
         const stateInputData = this.stateInputData;
-        this.taskStars.processStateInputData(stateInputData);
+        this.taskStars.processStateInputData(
+          stateInputData,
+          this.highlightSelected
+        );
       }
     });
 
-    // this.taskStars.processStateInputData();
-
-    // this.tunnelFinder = new TunnelFinder(this, 0, 0);
-    // this.tunnelFinder.processStateInputData();
-
-    // const simulationHighlight = new SimulationHighlight(this, 'inputHighlight');
-    // simulationHighlight.setDepth(10);
-    // simulationHighlight.processStateInputData();
-
-    // this.star.checkStarObjectAt(175, 225);
-
-    // this.scene.moveAbove('DiagramScene', 'PlaygroundScene');
-    // this.scene.moveAbove('InputWindowScene', 'PlaygroundScene');
+    // Hightlight On/Off Button
+    this.highlightToggle = this.add.image(64, 689, 'hightlightToggleOff');
+    this.highlightToggle.setInteractive();
+    this.highlightToggle.on('pointerdown', () => {
+      if (!this.highlightSelected) {
+        this.highlightToggle.setTexture('hightlightToggleOn');
+        this.highlightSelected = true;
+      } else {
+        this.highlightToggle.setTexture('hightlightToggleOff');
+        this.highlightSelected = false;
+      }
+    });
   }
 
-  update() {
-    // const angle = this.player.angle % 360;
-    // this.star.checkStarObjectAt(175, 225);
-    // this.star2.checkStarObjectAt(275, 225);
-    // if (Phaser.Input.Keyboard.JustUp(this.cursors.right)) {
-    //   this.player.moveRight();
-    // } else if (Phaser.Input.Keyboard.JustUp(this.cursors.left)) {
-    //   this.player.moveLeft();
-    // }
-  }
+  update() {}
   private handleStateCirclesUpdated(stateCircles: StateCircle[]) {
     this.stateCircles = stateCircles;
 
@@ -156,6 +147,5 @@ export default class PlaygroundScene extends Phaser.Scene {
         inputData.stateInputs
       );
     }
-    // You can now use id and newInputs to perform further actions in this scene
   }
 }

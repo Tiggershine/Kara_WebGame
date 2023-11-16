@@ -85,7 +85,10 @@ export default class Stars extends Phaser.GameObjects.Container {
   };
 
   // To simulate ths mission based on user input
-  processStateInputData = async (stateInputData: any) => {
+  processStateInputData = async (
+    stateInputData: any,
+    hightlightSelected: boolean
+  ) => {
     this.player.playerHighlight.setVisible(true);
     if (!this.inputDataChecked) {
       const startState = stateInputData.find((state: State) => state.id === 0);
@@ -137,7 +140,7 @@ export default class Stars extends Phaser.GameObjects.Container {
               break;
             }
 
-            if (simulationPoint) {
+            if (hightlightSelected && simulationPoint) {
               console.log(
                 'Condition Point: ',
                 simulationPoint.x,
@@ -162,7 +165,7 @@ export default class Stars extends Phaser.GameObjects.Container {
                 (p) => p.key === simulationKey
               );
 
-              if (simulationPoint) {
+              if (hightlightSelected && simulationPoint) {
                 await this.simulationHighlight.moveImageTo(
                   simulationPoint.x,
                   simulationPoint.y
@@ -175,7 +178,7 @@ export default class Stars extends Phaser.GameObjects.Container {
             const nextStateSimulationPoint = nextStatePoints.find(
               (p) => p.key === nextStateSimulationKey
             );
-            if (nextStateSimulationPoint) {
+            if (hightlightSelected && nextStateSimulationPoint) {
               await this.simulationHighlight.moveImageTo(
                 nextStateSimulationPoint.x,
                 nextStateSimulationPoint.y
@@ -190,7 +193,7 @@ export default class Stars extends Phaser.GameObjects.Container {
           }
         }
       }
-      this.findStateCircleByIdSelect(100);
+      // this.findStateCircleByIdSelect(100);
 
       const isStarAt155315 = this.scene.children.list.some(
         (child) => child instanceof Star && child.x === 155 && child.y === 315
@@ -251,7 +254,7 @@ export default class Stars extends Phaser.GameObjects.Container {
 
   resumeSimulation() {
     this.isPaused = false;
-    this.processStateInputData(this.stateInputData);
+    // this.processStateInputData(this.stateInputData);
   }
 
   // Sensor Check (0 - 4)

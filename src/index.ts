@@ -5,10 +5,14 @@ import BackgroundScene from './scenes/BackgroundScene';
 import PlaygroundScene from './scenes/PlaygroundScene';
 import DiagramScene from './scenes/DiagramScene';
 import InputWindowScene from './scenes/InputWindowScene';
+import MenuScene from './scenes/MenuScene';
+import SceneB from './scenes/SceneB';
 
 new Phaser.Game(
   Object.assign(config, {
     scene: [
+      // MenuScene,
+      // SceneB,
       GameScene,
       BackgroundScene,
       PlaygroundScene,

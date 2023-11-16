@@ -59,6 +59,8 @@ export default class Game extends Phaser.Scene {
       // Images for Simulation Buttons
       playButton: 'assets/PlayButton.png',
       pauseButton: 'assets/PauseButton.png',
+      hightlightToggleOff: 'assets/HightlightToggleOff.png',
+      hightlightToggleOn: 'assets/HightlightToggleOn.png',
     };
 
     for (let key in imageSources) {
