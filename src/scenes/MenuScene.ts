@@ -34,34 +34,17 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   create(data: MenuSceneData) {
-    const imagePosition = {
-      center: [540, 359.5],
-      left: [30, 359.5],
-      right: [1050, 359.5],
-    };
-
     this.add
       .graphics({ fillStyle: { color: 0xfcf6f5 } })
       .fillRect(0, 0, 1080, 810);
 
     this.setupInitialImages(data.selectedMission);
-    // Initialize images
-    // this.currentImage = this.add.image(
-    //   imagePosition.center[0],
-    //   imagePosition.center[1],
-    //   'menuImg1'
-    // );
-    // // Set up events for the initial currentImage
-    // this.setupImageClickEvents(this.currentImage);
-
-    // this.rightImage = this.add
-    //   .image(imagePosition.right[0], imagePosition.right[1], 'menuImg2')
-    //   .setScale(0.5);
-    // this.rightImage2 = this.add.image(1560, 359.5, 'menuImg3');
 
     this.startPoint = new Phaser.Geom.Point();
     this.endPoint = new Phaser.Geom.Point();
-    // this.isSwiping = false;
+
+    this.isSwiping = false;
+    this.isSwipe = false;
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       this.startPoint.setTo(pointer.x, pointer.y);
@@ -88,6 +71,8 @@ export default class MenuScene extends Phaser.Scene {
 
       this.isSwiping = false;
     });
+
+    this.cameras.main.fadeIn(500, 0, 0, 0);
   }
 
   setupInitialImages = (level?: number): void => {
@@ -282,18 +267,15 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   handleImageClick() {
-    let selectedMission;
+    let selectedMission: number;
     switch (this.currentImage.texture.key) {
       case 'menuImg1':
-        console.log('menuImg1');
         selectedMission = 1;
         break;
       case 'menuImg2':
-        console.log('menuImg2');
         selectedMission = 2;
         break;
       case 'menuImg3':
-        console.log('menuImg3');
         selectedMission = 3;
         break;
       default:
@@ -301,6 +283,11 @@ export default class MenuScene extends Phaser.Scene {
         return;
     }
 
-    this.scene.start('SubMenuScene', { selectedMission: selectedMission });
+    this.cameras.main.fadeOut(500, 0, 0, 0, (_: any, progress: number) => {
+      if (progress === 1) {
+        // 페이드 아웃이 완료되면 새 장면 시작
+        this.scene.start('SubMenuScene', { selectedMission: selectedMission });
+      }
+    });
   }
 }
