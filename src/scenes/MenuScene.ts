@@ -1,5 +1,9 @@
 import Phaser from 'phaser';
 
+interface MenuSceneData {
+  selectedMission: number;
+}
+
 export default class MenuScene extends Phaser.Scene {
   private startPoint!: Phaser.Geom.Point;
   private endPoint!: Phaser.Geom.Point;
@@ -29,7 +33,7 @@ export default class MenuScene extends Phaser.Scene {
     }
   }
 
-  create() {
+  create(data: MenuSceneData) {
     const imagePosition = {
       center: [540, 359.5],
       left: [30, 359.5],
@@ -40,19 +44,20 @@ export default class MenuScene extends Phaser.Scene {
       .graphics({ fillStyle: { color: 0xfcf6f5 } })
       .fillRect(0, 0, 1080, 810);
 
+    this.setupInitialImages(data.selectedMission);
     // Initialize images
-    this.currentImage = this.add.image(
-      imagePosition.center[0],
-      imagePosition.center[1],
-      'menuImg1'
-    );
-    // Set up events for the initial currentImage
-    this.setupImageEvents(this.currentImage);
+    // this.currentImage = this.add.image(
+    //   imagePosition.center[0],
+    //   imagePosition.center[1],
+    //   'menuImg1'
+    // );
+    // // Set up events for the initial currentImage
+    // this.setupImageClickEvents(this.currentImage);
 
-    this.rightImage = this.add
-      .image(imagePosition.right[0], imagePosition.right[1], 'menuImg2')
-      .setScale(0.5);
-    this.rightImage2 = this.add.image(1560, 359.5, 'menuImg3');
+    // this.rightImage = this.add
+    //   .image(imagePosition.right[0], imagePosition.right[1], 'menuImg2')
+    //   .setScale(0.5);
+    // this.rightImage2 = this.add.image(1560, 359.5, 'menuImg3');
 
     this.startPoint = new Phaser.Geom.Point();
     this.endPoint = new Phaser.Geom.Point();
@@ -85,13 +90,46 @@ export default class MenuScene extends Phaser.Scene {
     });
   }
 
-  setupImageEvents(image: Phaser.GameObjects.Image) {
+  setupInitialImages = (level?: number): void => {
+    switch (level) {
+      case 1:
+        this.currentImage = this.add.image(540, 359.5, 'menuImg1');
+        this.setupImageClickEvents(this.currentImage);
+        this.rightImage = this.add.image(1050, 359.5, 'menuImg2').setScale(0.5);
+        this.rightImage2 = this.add
+          .image(1560, 359.5, 'menuImg3')
+          .setScale(0.5);
+        break;
+      case 2:
+        this.currentImage = this.add.image(540, 359.5, 'menuImg2');
+        this.setupImageClickEvents(this.currentImage);
+        this.leftImage = this.add.image(30, 359.5, 'menuImg1').setScale(0.5);
+        this.rightImage = this.add.image(1050, 359.5, 'menuImg3').setScale(0.5);
+        break;
+      case 3:
+        this.currentImage = this.add.image(540, 359.5, 'menuImg3');
+        this.setupImageClickEvents(this.currentImage);
+        this.leftImage = this.add.image(30, 359.5, 'menuImg2').setScale(0.5);
+        this.leftImage2 = this.add.image(-480, 359.5, 'menuImg1').setScale(0.5);
+        break;
+      default:
+        this.currentImage = this.add.image(540, 359.5, 'menuImg1');
+        this.setupImageClickEvents(this.currentImage);
+        this.rightImage = this.add.image(1050, 359.5, 'menuImg2').setScale(0.5);
+        this.rightImage2 = this.add
+          .image(1560, 359.5, 'menuImg3')
+          .setScale(0.5);
+        break;
+    }
+  };
+
+  setupImageClickEvents = (image: Phaser.GameObjects.Image): void => {
     image.setInteractive().on('pointerdown', () => {
       if (!this.isSwipe) {
         this.handleImageClick();
       }
     });
-  }
+  };
 
   handleSwipe() {
     const swipeDirection =
@@ -126,7 +164,7 @@ export default class MenuScene extends Phaser.Scene {
         });
         this.currentImage = this.rightImage;
         this.currentImage.texture.key = 'menuImg2';
-        this.setupImageEvents(this.currentImage);
+        this.setupImageClickEvents(this.currentImage);
 
         // Set menuImg3 to the right
         this.tweens.add({
@@ -168,7 +206,7 @@ export default class MenuScene extends Phaser.Scene {
         });
         this.currentImage = this.rightImage;
         this.currentImage.texture.key = 'menuImg3';
-        this.setupImageEvents(this.currentImage);
+        this.setupImageClickEvents(this.currentImage);
       } else if (this.currentImage.texture.key === 'menuImg3') {
         return;
       }
@@ -194,7 +232,7 @@ export default class MenuScene extends Phaser.Scene {
         });
         this.currentImage = this.leftImage;
         this.currentImage.texture.key = 'menuImg2';
-        this.setupImageEvents(this.currentImage);
+        this.setupImageClickEvents(this.currentImage);
 
         // Set menuImg1 to the left
         this.tweens.add({
@@ -236,7 +274,7 @@ export default class MenuScene extends Phaser.Scene {
         });
         this.currentImage = this.leftImage;
         this.currentImage.texture.key = 'menuImg1';
-        this.setupImageEvents(this.currentImage);
+        this.setupImageClickEvents(this.currentImage);
       } else if (this.currentImage.texture.key === 'menuImg1') {
         return;
       }
