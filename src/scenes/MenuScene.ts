@@ -4,6 +4,8 @@ export default class MenuScene extends Phaser.Scene {
   private startPoint!: Phaser.Geom.Point;
   private endPoint!: Phaser.Geom.Point;
   private isSwiping: boolean = false;
+  private swipeThreshold: number = 150;
+  private isSwipe: boolean = false; // Flag to indicate if the action is a swipe
   private currentImage!: Phaser.GameObjects.Image;
   private leftImage!: Phaser.GameObjects.Image;
   private leftImage2!: Phaser.GameObjects.Image;
@@ -59,6 +61,8 @@ export default class MenuScene extends Phaser.Scene {
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       this.startPoint.setTo(pointer.x, pointer.y);
       this.isSwiping = true;
+
+      this.isSwipe = false;
     });
 
     this.input.on('pointerup', (pointer: Phaser.Input.Pointer) => {
@@ -72,7 +76,8 @@ export default class MenuScene extends Phaser.Scene {
         this.endPoint.y
       );
 
-      if (swipeDistance > 150) {
+      if (swipeDistance > this.swipeThreshold) {
+        this.isSwipe = true;
         this.handleSwipe();
       }
 
@@ -82,7 +87,9 @@ export default class MenuScene extends Phaser.Scene {
 
   setupImageEvents(image: Phaser.GameObjects.Image) {
     image.setInteractive().on('pointerdown', () => {
-      this.handleImageClick();
+      if (!this.isSwipe) {
+        this.handleImageClick();
+      }
     });
   }
 
@@ -228,7 +235,7 @@ export default class MenuScene extends Phaser.Scene {
           duration: 300,
         });
         this.currentImage = this.leftImage;
-        this.currentImage.texture.key = '1';
+        this.currentImage.texture.key = 'menuImg1';
         this.setupImageEvents(this.currentImage);
       } else if (this.currentImage.texture.key === 'menuImg1') {
         return;
