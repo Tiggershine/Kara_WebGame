@@ -1,11 +1,6 @@
 import Phaser from 'phaser';
-import Player from '../classes/sprites/Player';
-import Wall from '../classes/sprites/Wall';
-import Star from '../classes/sprites/Star';
 import Stars from '../tasks/Stars';
 import TunnelFinder from '../tasks/TunnelFinder';
-import SimulationHighlight from '../classes/SimulationHighlight';
-import DiagramScene from './DiagramScene';
 import { StateInput } from '../classes/InputManager';
 import StateCircle from '../classes/StateCircle';
 
@@ -45,16 +40,6 @@ export default class PlaygroundScene extends Phaser.Scene {
       this.handleStateCirclesUpdated,
       this
     );
-
-    // const diagramScene = this.scene.get('DiagramScene') as DiagramScene;
-    // diagramScene.events.on(
-    //   'updatedStateCircles',
-    //   this.handleStateInputDataUpdated,
-    //   this
-    // );
-    // Set position of the Scene
-    // this.cameras.main.setViewport(30, 90, 500, 500);
-    // this.cameras.main.setViewport(0, 0, 1050, 1050);
 
     // Container Object
     this.containerGraphics = this.add.graphics({

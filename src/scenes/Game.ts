@@ -71,6 +71,8 @@ export default class Game extends Phaser.Scene {
   }
 
   create() {
+    this.cameras.main.fadeIn(500, 0, 0, 0);
+
     this.scene.launch('BackgroundScene');
     this.scene.launch('DiagramScene');
     this.scene.launch('InputWindowScene');

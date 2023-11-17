@@ -12,6 +12,7 @@ export default class StateScene extends Phaser.Scene {
       startSceneImg: 'assets/StartSceneImg.png',
       startBtn: 'assets/StartBtn.png',
       startBtnHover: 'assets/StartBtnHover.png',
+      backgroundImg: 'assets/BackgroundImg.png',
     };
     for (let key in imageSources) {
       if (imageSources.hasOwnProperty(key)) {
@@ -21,9 +22,10 @@ export default class StateScene extends Phaser.Scene {
   }
 
   create() {
-    this.add
-      .graphics({ fillStyle: { color: 0xfcf6f5 } })
-      .fillRect(0, 0, 1080, 810);
+    // this.add
+    //   .graphics({ fillStyle: { color: 0xfcf6f5 } })
+    //   .fillRect(0, 0, 1080, 810);
+    this.add.image(0, 0, 'backgroundImg').setOrigin(0, 0);
 
     this.add.image(139, 108, 'startSceneImg').setOrigin(0, 0);
     this.startBtn = this.add.image(540, 572, 'startBtn');

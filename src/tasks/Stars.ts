@@ -21,8 +21,6 @@ export default class Stars extends Phaser.GameObjects.Container {
   private inputDataChecked: boolean = false;
   private simulationHighlight!: SimulationHighlight;
   isPaused: boolean = false;
-  private tempCurrentStateId: number | null = null;
-  private tempStateInputIndex: number = 0;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);

@@ -6,6 +6,7 @@ interface SubMenuSceneData {
 
 export default class SubMenuScene extends Phaser.Scene {
   private iconBack!: Phaser.GameObjects.Image;
+  private missionBtn1!: Phaser.GameObjects.Image;
   constructor() {
     super({ key: 'SubMenuScene' });
   }
@@ -18,6 +19,7 @@ export default class SubMenuScene extends Phaser.Scene {
       subMenuImg2: 'assets/SubMenuImg2.png',
       subMenuImg3: 'assets/SubMenuImg3.png',
       missionBtnNumber: 'assets/MissionBtnNumber.png',
+      missionBtn1Hover: 'assets/MissionBtn1Hover.png',
       missionBtnLock: 'assets/MissionBtnLock.png',
     };
     for (let key in imageSources) {
@@ -34,10 +36,20 @@ export default class SubMenuScene extends Phaser.Scene {
       this.scene.start('MenuScene', { selectedMission: data.selectedMission });
     });
 
-    this.add.image(255, 543, 'missionBtnNumber');
+    this.missionBtn1 = this.add.image(255, 543, 'missionBtnNumber');
     this.add.image(429, 543, 'missionBtnLock');
     this.add.image(603, 543, 'missionBtnLock');
     this.add.image(777, 543, 'missionBtnLock');
+
+    this.missionBtn1.setInteractive().on('pointerdown', () => {
+      this.missionBtn1.setTexture('missionBtn1Hover');
+      this.cameras.main.fadeOut(500, 0, 0, 0, (_: any, progress: number) => {
+        if (progress === 1) {
+          // 페이드 아웃이 완료되면 새 장면 시작
+          this.scene.start('GameScene');
+        }
+      });
+    });
 
     if (data.selectedMission) {
       console.log('data.selectedMission: ', data.selectedMission);
