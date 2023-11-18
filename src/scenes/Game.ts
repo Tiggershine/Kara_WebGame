@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 interface GameSceneData {
   level: number;
   mission: number;
+  isFromPlaygroundScene: boolean;
 }
 
 export default class Game extends Phaser.Scene {
@@ -12,6 +13,8 @@ export default class Game extends Phaser.Scene {
 
   preload() {
     const imageSources = {
+      // Image for Background
+      backgroundImg: 'assets/BackgroundImg.png',
       // Images for Sprites
       player: 'assets/Player.png',
       star: 'assets/Star.png',
@@ -81,20 +84,25 @@ export default class Game extends Phaser.Scene {
   }
 
   create(data: GameSceneData) {
+    if (data.isFromPlaygroundScene) {
+      this.scene.start('SubMenuScene', { level: data.level });
+    }
+
     this.cameras.main.fadeIn(500, 0, 0, 0);
 
-    this.scene.launch('BackgroundScene');
+    this.add.image(0, 0, 'backgroundImg').setOrigin(0, 0);
+
+    console.log('(Game.ts', {
+      level: data.level,
+      mission: data.mission,
+    });
+
     this.scene.launch('DiagramScene');
     this.scene.launch('InputWindowScene');
     this.scene.launch('PlaygroundScene', {
       level: data.level,
       mission: data.mission,
     });
-
-    // Set up a pointer move event listener
-    // this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
-    //   console.log('X: ', pointer.x, 'Y: ', pointer.y);
-    // });
   }
 
   update() {}

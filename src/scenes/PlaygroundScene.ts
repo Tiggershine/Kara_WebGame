@@ -14,7 +14,6 @@ export default class PlaygroundScene extends Phaser.Scene {
   private stateInputData: { id: number; stateInputs: StateInput[] }[] = [];
   private taskStars!: Stars;
   private tunnelFinder!: TunnelFinder;
-  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private playButton!: Phaser.GameObjects.Sprite;
   private highlightToggle!: Phaser.GameObjects.Image;
   private isSimulationPlaying: boolean = false;
@@ -94,6 +93,27 @@ export default class PlaygroundScene extends Phaser.Scene {
     });
     this.iconBack.on('pointerout', () => {
       this.iconBack.setTexture('iconBack');
+    });
+    this.iconBack.on('pointerdown', () => {
+      this.cameras.main.fadeOut(500, 0, 0, 0, (_: any, progress: number) => {
+        // if (progress === 1) {
+        //   // 다른 장면들이 활성 상태인지 확인하고 종료
+        //   if (this.scene.isActive('DiagramScene')) {
+        //     this.scene.stop('DiagramScene');
+        //   }
+        //   if (this.scene.isActive('InputWindowScene')) {
+        //     this.scene.stop('InputWindowScene');
+        //   }
+
+        //   // 페이드 아웃이 완료되면 새 장면 시작
+        //   this.scene.start('GameScene', {
+        //     level: this.selectedLevel,
+        //     mission: this.selectedMission,
+        //     isFromPlaygroundScene: true,
+        //   });
+        // }
+        this.transitionToNewScene(data.level);
+      });
     });
 
     this.iconReset = this.add.image(100, 50, 'iconReset').setInteractive();
@@ -186,4 +206,41 @@ export default class PlaygroundScene extends Phaser.Scene {
         break;
     }
   };
+
+  cleanupCurrentScene() {
+    // 현재 장면에서 사용 중인 리소스 정리
+    // 예: 이벤트 리스너 제거, 타이머 정지 등
+
+    // 다른 활성화된 장면 정리
+    if (
+      this.scene.isActive('DiagramScene') &&
+      this.scene.isActive('DiagramScene') !== undefined
+    ) {
+      console.log('this.scene.stop(DiagramScene)');
+      this.scene.stop('DiagramScene');
+    }
+    if (
+      this.scene.isActive('InputWindowScene') &&
+      this.scene.isActive('InputWindowScene') !== undefined
+    ) {
+      console.log('this.scene.stop(InputWindowScene)');
+      this.scene.stop('InputWindowScene');
+    }
+    if (
+      this.scene.isActive('PlaygroundScene') &&
+      this.scene.isActive('PlaygroundScene') !== undefined
+    ) {
+      console.log('this.scene.stop(PlaygroundScene)');
+      this.scene.stop('PlaygroundScene');
+    }
+  }
+
+  // 새 장면으로 전환하는 메서드
+  transitionToNewScene(selectedLevel: number) {
+    this.cleanupCurrentScene();
+    this.scene.start('GameScene', {
+      level: selectedLevel,
+      isFromPlaygroundScene: true,
+    }); // 'NewScene'을 새 장면의 키로 교체
+  }
 }
