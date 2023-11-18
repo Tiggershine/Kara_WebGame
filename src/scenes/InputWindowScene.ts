@@ -256,16 +256,6 @@ export default class InputWindowScene extends Phaser.Scene {
   preload() {}
 
   create() {
-    // this.diagramScene = this.scene.get('DiagramScene') as DiagramScene;
-
-    // Divider graphics
-    // const dividerGraphics = this.add.graphics({
-    //   lineStyle: {
-    //     width: 1,
-    //     color: 14277081, // #D9D9D9
-    //   },
-    // });
-
     // Continaer Graphic
     const containerStyle = {
       width: 500,
@@ -323,14 +313,6 @@ export default class InputWindowScene extends Phaser.Scene {
     buttonConfigurations.forEach((config) => {
       this.createControlButton(config.x, config.y, config.texture, config.type);
     });
-
-    // TODO: DELETE CODE FOR TEST
-    // conditionInputPoints.forEach((point) => {
-    //   this.add.image(point.x, point.y, 'noButton');
-    // });
-    // moveInputPoints.forEach((point) => {
-    //   this.add.image(point.x, point.y, 'forwardButton');
-    // });
   }
 
   ///////** METHODS *//////////////////////////////////////////////////////////////////////////////////////////////////////

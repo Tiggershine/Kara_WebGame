@@ -5,7 +5,7 @@ import InputManager from '../classes/InputManager';
 import { StateInput } from '../classes/InputManager';
 import { InputWindow } from '../classes/InputWindow';
 import { InputLabel } from '../classes/InputLabel';
-import { InputGuideline } from '../classes/InputGuideline';
+// import { InputGuideline } from '../classes/InputGuideline';
 import EdgeManager from '../classes/EdgeManager';
 
 export default class DiagramScene extends Phaser.Scene {
@@ -40,12 +40,9 @@ export default class DiagramScene extends Phaser.Scene {
     this.edgeManager = new EdgeManager(this);
 
     this.createAddButton();
-    // this.createButtonLabel(575, 55, 'New');
 
     this.createStartStateCircle();
     this.createEndStateCircle();
-    // TODO: DELETE TEST CODE
-    // this.testCreateEdge();
 
     // Valid area allows state circle on that
     this.validArea = this.add.rectangle(800, 215, 500 - 30, 250 - 30);
@@ -86,12 +83,27 @@ export default class DiagramScene extends Phaser.Scene {
   }
 
   // StateCircle id로 해당 StateCircle 찾아서 return
-  getStateCircleById = (id: number): StateCircle | undefined => {
-    return this.stateCircles.find((circle) => circle.id === id);
+  // getStateCircleById = (id: number): StateCircle | undefined => {
+  //   return this.stateCircles.find((circle) => circle.id === id);
+  // };
+
+  // getInputLabelById = (id: number): InputLabel | undefined => {
+  //   return this.inputLabels.find((inputLabel) => inputLabel.getId === id);
+  // };
+  getStateCircleById = (id: number): StateCircle => {
+    const circle = this.stateCircles.find((circle) => circle.id === id);
+    if (!circle) {
+      throw new Error(`StateCircle with id ${id} not found`);
+    }
+    return circle;
   };
 
-  getInputLabelById = (id: number): InputLabel | undefined => {
-    return this.inputLabels.find((inputLabel) => inputLabel.getId === id);
+  getInputLabelById = (id: number): InputLabel => {
+    const label = this.inputLabels.find((label) => label.getId === id);
+    if (!label) {
+      throw new Error(`InputLabel with id ${id} not found`);
+    }
+    return label;
   };
 
   ///////** STATE UPDATE METHODS *//////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -157,8 +169,17 @@ export default class DiagramScene extends Phaser.Scene {
 
   // stateCircles array 관련 함수
   // StateCircle 중 Select된 객체 알려줌
-  getSelectedCircle = (): StateCircle | undefined => {
-    return this.stateCircles.find((circle) => circle.isSelected);
+  // getSelectedCircle = (): StateCircle | undefined => {
+  //   return this.stateCircles.find((circle) => circle.isSelected);
+  // };
+  getSelectedCircle = (): StateCircle => {
+    const selectedCircle = this.stateCircles.find(
+      (circle) => circle.isSelected
+    );
+    if (!selectedCircle) {
+      throw new Error('No circle is currently selected');
+    }
+    return selectedCircle;
   };
 
   // Add label on addButton 575, 55, New\nState
@@ -194,7 +215,14 @@ export default class DiagramScene extends Phaser.Scene {
       )
     );
     // 삭제할 StateCircle의 모든 에지 제거
-    circleToDelete.edges.forEach((edge) => edge.destroy());
+    if (circleToDelete) {
+      circleToDelete.edges.forEach((edge) => {
+        if (edge) {
+          edge.destroy();
+        }
+      });
+      circleToDelete.destroy();
+    }
 
     // 연결된 StateCircle들의 에지 업데이트
     connectedCircles.forEach((circle) => circle.updateEdges());
@@ -202,13 +230,17 @@ export default class DiagramScene extends Phaser.Scene {
     this.stateCircles = this.stateCircles.filter(
       (circle) => circle.getId !== id
     );
-    circleToDelete.destroy();
+    if (circleToDelete) {
+      circleToDelete.destroy();
+    }
 
     const inputLabelToDelete = this.getInputLabelById(id);
     this.inputLabels = this.inputLabels.filter(
       (inputLabel) => inputLabel.getId !== id
     );
-    inputLabelToDelete?.destroy();
+    if (inputLabelToDelete) {
+      inputLabelToDelete?.destroy();
+    }
 
     this.addLabels();
 
@@ -245,7 +277,9 @@ export default class DiagramScene extends Phaser.Scene {
     );
 
     addButton.on('dragend', (pointer: Phaser.Input.Pointer) => {
-      addButton.destroy();
+      if (addButton) {
+        addButton.destroy();
+      }
 
       if (this.validArea.getBounds().contains(pointer.x, pointer.y)) {
         // Create new StateCircle object
@@ -405,7 +439,9 @@ export default class DiagramScene extends Phaser.Scene {
 
     // Update 시, 기존의 Array 초기화
     this.inputLabels.forEach((inputLabel) => {
-      inputLabel.destroy();
+      if (inputLabel) {
+        inputLabel.destroy();
+      }
     });
     this.inputLabels = [];
 
@@ -435,7 +471,11 @@ export default class DiagramScene extends Phaser.Scene {
   createEdgesForStateCircles() {
     // 먼저 모든 기존 엣지를 제거합니다.
     this.stateCircles.forEach((circle) => {
-      circle.edges.forEach((edge) => edge.destroy());
+      circle.edges.forEach((edge) => {
+        if (edge) {
+          edge.destroy();
+        }
+      });
       circle.edges = [];
     });
 

@@ -92,6 +92,7 @@ export default class SubMenuScene extends Phaser.Scene {
   }
 
   setupInitialImg = (level: number): void => {
+    console.log('setupInitialImg 실행 - level: ', level);
     switch (level) {
       case 1:
         this.add.image(540, 243, 'subMenuImg1');

@@ -9,6 +9,7 @@ export enum ButtonType {
   RightButton,
   PutButton,
   PickButton,
+  DummyButton,
 }
 
 export default class ControlButton extends GameObjects.Image {

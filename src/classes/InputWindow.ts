@@ -198,7 +198,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
   // StateCircle의 StateInputs 업데이트 역할 (POST to StateCircle)
 
   // 이 InputWindow 객체가 소속된 StateCircle 객체 반환
-  getStateCircleById(): StateCircle | undefined {
+  getStateCircleById(): StateCircle {
     const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
 
     return diagramScene.getStateCircleById(this.stateCircleId);

@@ -27,7 +27,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   inputManager: InputManager = new InputManager();
   inputWindowScene?: InputWindowScene;
   edges: Phaser.GameObjects.Graphics[] = [];
-  private inputWindow?: InputWindow | undefined;
+  private inputWindow?: InputWindow;
 
   constructor(
     scene: Phaser.Scene,
@@ -130,7 +130,9 @@ export default class StateCircle extends Phaser.GameObjects.Container {
         if (startCircle === this && endCircle === this) {
           console.log('Into SelfEdge');
           // Handle the self-edge update
-          edge.destroy(); // Destroy the old self-edge
+          if (edge) {
+            edge.destroy(); // Destroy the old self-edge
+          }
 
           // Create a new self-edge and add it to the temporary array
           const newSelfEdge = this.edgeManager.createSelfEdge(this); // Assuming you have a method to create self-edges
@@ -141,7 +143,9 @@ export default class StateCircle extends Phaser.GameObjects.Container {
           const otherCircle = startCircle === this ? endCircle : startCircle;
 
           // Destroy the old edge
-          edge.destroy();
+          if (edge) {
+            edge.destroy();
+          }
 
           // Create a new edge and add it to the temporary array
           const newEdge = this.edgeManager.createEdge(startCircle, endCircle);
@@ -295,15 +299,15 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   }
 
   // destroy 메소드 오버라이드 - StateCircle의 객체가 파괴되면, InputLabel
-  destroy(fromScene?: boolean): void {
-    // inputLabel이 존재하면 파괴
-    if (this.inputLabel) {
-      this.inputLabel.destroy();
-    }
+  // destroy(fromScene?: boolean): void {
+  //   // inputLabel이 존재하면 파괴
+  //   if (this.inputLabel) {
+  //     this.inputLabel.destroy();
+  //   }
 
-    // StateCircle의 나머지 부분을 파괴
-    super.destroy(fromScene);
-  }
+  //   // StateCircle의 나머지 부분을 파괴
+  //   super.destroy(fromScene);
+  // }
 
   /** Edge */
   // updateEdges = (): void => {
