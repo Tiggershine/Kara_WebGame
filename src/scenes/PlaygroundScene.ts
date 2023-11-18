@@ -77,7 +77,9 @@ export default class PlaygroundScene extends Phaser.Scene {
     }
 
     // Task 생성
-    this.taskStars = new Stars(this, 30, 90);
+    // this.taskStars = new Stars(this, 30, 90);
+
+    this.tunnelFinder = new TunnelFinder(this, 60, 180);
 
     // Play Button
     this.playButton = this.add.sprite(65, 645, 'playButton').setInteractive();
@@ -93,7 +95,11 @@ export default class PlaygroundScene extends Phaser.Scene {
         this.playButton.setTexture('pauseButton');
 
         const stateInputData = this.stateInputData;
-        this.taskStars.processStateInputData(
+        // this.taskStars.processStateInputData(
+        //   stateInputData,
+        //   this.highlightSelected
+        // );
+        this.tunnelFinder.processStateInputData(
           stateInputData,
           this.highlightSelected
         );

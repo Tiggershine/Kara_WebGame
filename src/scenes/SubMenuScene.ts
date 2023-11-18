@@ -15,6 +15,7 @@ export default class SubMenuScene extends Phaser.Scene {
     const imageSources = {
       backgroundImg: 'assets/BackgroundImg.png',
       iconBack: 'assets/IconBack.png',
+      iconBackClick: 'assets/IconBackClick.png',
       subMenuImg1: 'assets/SubMenuImg1.png',
       subMenuImg2: 'assets/SubMenuImg2.png',
       subMenuImg3: 'assets/SubMenuImg3.png',
@@ -33,7 +34,12 @@ export default class SubMenuScene extends Phaser.Scene {
     this.add.image(0, 0, 'backgroundImg').setOrigin(0, 0);
     this.iconBack = this.add.image(106, 90, 'iconBack');
     this.iconBack.setInteractive().on('pointerdown', () => {
-      this.scene.start('MenuScene', { selectedMission: data.selectedMission });
+      this.iconBack.setTexture('iconBackClick');
+      this.cameras.main.fadeOut(1000, 0, 0, 0, (_: any, progress: number) => {
+        this.scene.start('MenuScene', {
+          selectedMission: data.selectedMission,
+        });
+      });
     });
 
     this.missionBtn1 = this.add.image(255, 543, 'missionBtnNumber');
