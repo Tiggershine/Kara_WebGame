@@ -1,5 +1,10 @@
 import Phaser from 'phaser';
 
+interface GameSceneData {
+  level: number;
+  mission: number;
+}
+
 export default class Game extends Phaser.Scene {
   constructor() {
     super('GameScene');
@@ -14,6 +19,11 @@ export default class Game extends Phaser.Scene {
       // Images for StateCircle
       stateCircle: 'assets/StateCircle1.png',
       stateCircleSelected: 'assets/StateCircleSelected1.png',
+      // Images for Button on Header
+      iconBack: 'assets/IconBack.png',
+      iconBackClick: 'assets/IconBackClick.png',
+      iconReset: 'assets/IconReset.png',
+      iconResetClick: 'assets/IconResetClick.png',
       // Images for ControlButtons
       addButton: 'assets/AddButton.png',
       addButtonSelected: 'assets/AddButtonSelected.png',
@@ -70,13 +80,16 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  create() {
+  create(data: GameSceneData) {
     this.cameras.main.fadeIn(500, 0, 0, 0);
 
     this.scene.launch('BackgroundScene');
     this.scene.launch('DiagramScene');
     this.scene.launch('InputWindowScene');
-    this.scene.launch('PlaygroundScene');
+    this.scene.launch('PlaygroundScene', {
+      level: data.level,
+      mission: data.mission,
+    });
 
     // Set up a pointer move event listener
     // this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {

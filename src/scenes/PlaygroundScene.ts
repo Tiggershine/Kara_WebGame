@@ -4,6 +4,11 @@ import TunnelFinder from '../tasks/TunnelFinder';
 import { StateInput } from '../classes/InputManager';
 import StateCircle from '../classes/StateCircle';
 
+interface PlaygroundSceneData {
+  level: number;
+  mission: number;
+}
+
 export default class PlaygroundScene extends Phaser.Scene {
   private stateCircles: StateCircle[] = [];
   private stateInputData: { id: number; stateInputs: StateInput[] }[] = [];
@@ -16,6 +21,10 @@ export default class PlaygroundScene extends Phaser.Scene {
   containerGraphics!: Phaser.GameObjects.Graphics;
   tileGraphics!: Phaser.GameObjects.Graphics;
   private highlightSelected: boolean = false;
+  private selectedLevel: number = 0;
+  private selectedMission: number = 0;
+  private iconBack!: Phaser.GameObjects.Image;
+  private iconReset!: Phaser.GameObjects.Image;
 
   constructor() {
     super('PlaygroundScene');
@@ -34,7 +43,10 @@ export default class PlaygroundScene extends Phaser.Scene {
     lineColorAlpha: 128 / 255,
   };
 
-  create() {
+  create(data: PlaygroundSceneData) {
+    this.selectedLevel = data.level;
+    this.selectedMission = data.mission;
+
     this.events.on(
       'stateInputDataUpdated',
       this.handleStateCirclesUpdated,
@@ -76,10 +88,26 @@ export default class PlaygroundScene extends Phaser.Scene {
       ); // Horizontal line
     }
 
-    // Task 생성
-    // this.taskStars = new Stars(this, 30, 90);
+    this.iconBack = this.add.image(50, 50, 'iconBack').setInteractive();
+    this.iconBack.on('pointerover', () => {
+      this.iconBack.setTexture('iconBackClick');
+    });
+    this.iconBack.on('pointerout', () => {
+      this.iconBack.setTexture('iconBack');
+    });
 
-    this.tunnelFinder = new TunnelFinder(this, 60, 180);
+    this.iconReset = this.add.image(100, 50, 'iconReset').setInteractive();
+    this.iconReset.on('pointerover', () => {
+      this.iconReset.setTexture('iconResetClick');
+    });
+    this.iconReset.on('pointerout', () => {
+      this.iconReset.setTexture('iconReset');
+    });
+
+    // Task 생성
+    this.gameLoader(this.selectedLevel, this.selectedMission);
+    // this.taskStars = new Stars(this, 30, 90);
+    // this.tunnelFinder = new TunnelFinder(this, 60, 180);
 
     // Play Button
     this.playButton = this.add.sprite(65, 645, 'playButton').setInteractive();
@@ -139,4 +167,23 @@ export default class PlaygroundScene extends Phaser.Scene {
       );
     }
   }
+
+  gameLoader = (level: number, mission: number) => {
+    switch (level) {
+      case 1:
+        switch (mission) {
+          case 1:
+            this.taskStars = new Stars(this, 30, 90);
+            break;
+        }
+        break;
+      case 2:
+        switch (mission) {
+          case 1:
+            this.tunnelFinder = new TunnelFinder(this, 30, 90);
+            break;
+        }
+        break;
+    }
+  };
 }

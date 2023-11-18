@@ -36,7 +36,7 @@ export default class StateScene extends Phaser.Scene {
       this.startBtn.setTexture('startBtn');
     });
     this.startBtn.on('pointerdown', () => {
-      this.cameras.main.fadeOut(500, 0, 0, 0, (_: any, progress: number) => {
+      this.cameras.main.fadeOut(300, 0, 0, 0, (_: any, progress: number) => {
         if (progress === 1) {
           // 페이드 아웃이 완료되면 새 장면 시작
           this.scene.start('MenuScene');

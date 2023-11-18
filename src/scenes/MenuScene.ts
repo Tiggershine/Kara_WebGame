@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 
 interface MenuSceneData {
-  selectedMission: number;
+  level: number;
 }
 
 export default class MenuScene extends Phaser.Scene {
@@ -38,7 +38,7 @@ export default class MenuScene extends Phaser.Scene {
       .graphics({ fillStyle: { color: 0xfcf6f5 } })
       .fillRect(0, 0, 1080, 810);
 
-    this.setupInitialImages(data.selectedMission);
+    this.setupInitialImages(data.level);
 
     this.startPoint = new Phaser.Geom.Point();
     this.endPoint = new Phaser.Geom.Point();
@@ -75,6 +75,7 @@ export default class MenuScene extends Phaser.Scene {
     this.cameras.main.fadeIn(500, 0, 0, 0);
   }
 
+  // Set inital images according to level (considering back from subMenu)
   setupInitialImages = (level?: number): void => {
     switch (level) {
       case 1:
@@ -115,6 +116,31 @@ export default class MenuScene extends Phaser.Scene {
       }
     });
   };
+
+  handleImageClick() {
+    let level: number;
+    switch (this.currentImage.texture.key) {
+      case 'menuImg1':
+        level = 1;
+        break;
+      case 'menuImg2':
+        level = 2;
+        break;
+      case 'menuImg3':
+        level = 3;
+        break;
+      default:
+        console.log('Unknown image');
+        return;
+    }
+
+    this.cameras.main.fadeOut(500, 0, 0, 0, (_: any, progress: number) => {
+      if (progress === 1) {
+        // 페이드 아웃이 완료되면 새 장면 시작
+        this.scene.start('SubMenuScene', { level: level });
+      }
+    });
+  }
 
   handleSwipe() {
     const swipeDirection =
@@ -264,30 +290,5 @@ export default class MenuScene extends Phaser.Scene {
         return;
       }
     }
-  }
-
-  handleImageClick() {
-    let selectedMission: number;
-    switch (this.currentImage.texture.key) {
-      case 'menuImg1':
-        selectedMission = 1;
-        break;
-      case 'menuImg2':
-        selectedMission = 2;
-        break;
-      case 'menuImg3':
-        selectedMission = 3;
-        break;
-      default:
-        console.log('Unknown image');
-        return;
-    }
-
-    this.cameras.main.fadeOut(500, 0, 0, 0, (_: any, progress: number) => {
-      if (progress === 1) {
-        // 페이드 아웃이 완료되면 새 장면 시작
-        this.scene.start('SubMenuScene', { selectedMission: selectedMission });
-      }
-    });
   }
 }
