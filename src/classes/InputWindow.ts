@@ -794,4 +794,32 @@ export class InputWindow extends Phaser.GameObjects.Container {
     this.scene.add.existing(inputGutideline);
     return inputGutideline;
   };
+
+  /** Cleanup function to destroy all created objects */
+  cleanup = (): void => {
+    // Destroy all control buttons
+    this.controlButtons.forEach((button) => {
+      button.destroy();
+    });
+
+    this.nextStateButtons.forEach((button) => {
+      button.destroy();
+    });
+
+    // Destroy all dummy buttons
+    Object.values(this.dummyButtons).forEach((buttonImg) => {
+      buttonImg.destroy();
+    });
+
+    // Destroy other created objects if any
+    // 예: this.someOtherObject.destroy();
+
+    // Optionally, clear arrays or other data structures
+    this.controlButtons = [];
+    this.dummyButtons = {};
+    // 예: this.someOtherArray = [];
+
+    // Additional cleanup actions if required
+    // 예: this.scene.events.off('some-event', this.someEventHandler);
+  };
 }

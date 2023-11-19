@@ -3,6 +3,8 @@ import Stars from '../tasks/Stars';
 import TunnelFinder from '../tasks/TunnelFinder';
 import { StateInput } from '../classes/InputManager';
 import StateCircle from '../classes/StateCircle';
+import Game from './Game';
+import DiagramScene from './DiagramScene';
 
 interface PlaygroundSceneData {
   level: number;
@@ -113,7 +115,7 @@ export default class PlaygroundScene extends Phaser.Scene {
           //     isFromPlaygroundScene: true,
           //   });
           // }
-          this.transitionToNewScene(data.level);
+          this.transitionToNewScene('SubMenuScene', data.level);
         }
       });
     });
@@ -124,6 +126,18 @@ export default class PlaygroundScene extends Phaser.Scene {
     });
     this.iconReset.on('pointerout', () => {
       this.iconReset.setTexture('iconReset');
+    });
+    this.iconReset.on('pointerdown', () => {
+      this.cleanupCurrentScene();
+      // this.transitionToNewScene('InputWindowScene');
+      // this.transitionToNewScene('DiagramScene');
+      // this.transitionToNewScene('PlaygroundScene');
+      // this.scene.launch('InputWindowScene');
+      // this.scene.launch('DiagramScene');
+      // this.scene.launch('PlaygroundScene');
+      // this.scene.launch('GameScene');
+      const gameScene: Phaser.Scene = this.scene.get('GameScene');
+      gameScene.scene.restart();
     });
 
     // Task 생성
@@ -219,6 +233,13 @@ export default class PlaygroundScene extends Phaser.Scene {
     // 다른 활성화된 장면 정리
     if (this.scene.isActive('DiagramScene')) {
       console.log('this.scene.stop(DiagramScene)');
+      const diagramScene = this.scene.get('DiagramScene') as DiagramScene;
+
+      // Call cleanup on the DiagramScene
+      diagramScene.cleanup();
+
+      // Now stop the scene
+      this.scene.stop('DiagramScene');
       this.scene.stop('DiagramScene');
     }
     if (this.scene.isActive('InputWindowScene')) {
@@ -236,7 +257,7 @@ export default class PlaygroundScene extends Phaser.Scene {
   }
 
   // 새 장면으로 전환하는 메서드
-  transitionToNewScene(selectedLevel: number) {
+  transitionToNewScene(sceneName: string, selectedLevel?: number) {
     console.log('Current Scene Objects:', this); // Log the current state
 
     this.cleanupCurrentScene();
@@ -244,6 +265,9 @@ export default class PlaygroundScene extends Phaser.Scene {
     //   level: selectedLevel,
     //   isFromPlaygroundScene: true,
     // });
-    this.scene.launch('SubMenuScene', { level: selectedLevel });
+    if (selectedLevel) {
+      this.scene.launch(sceneName, { level: selectedLevel });
+    }
+    this.scene.launch(sceneName);
   }
 }

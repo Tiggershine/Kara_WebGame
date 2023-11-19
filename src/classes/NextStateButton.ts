@@ -9,6 +9,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
   private backgroundTexture: string = '';
   private isMenuOpen: boolean = false;
   private buttonContainer: Phaser.GameObjects.Container;
+  // private optionContainer!: Phaser.GameObjects.Container;
   private buttonLabel: Phaser.GameObjects.Text;
   // private label: Phaser.GameObjects.Text;
   private menuItems: Phaser.GameObjects.Container[] = [];
@@ -23,9 +24,13 @@ export class NextStateButton extends Phaser.GameObjects.Container {
     backgroundTexture: string,
     // options: string[], // string으로
     options: { id: number; name: string }[],
-    inputWindow?: InputWindow // Adding a new parameter to store a reference to the InputWindow instance
+    inputWindow: InputWindow // Adding a new parameter to store a reference to the InputWindow instance
   ) {
     super(scene, x, y);
+    if (!scene) {
+      throw new Error('NextStateButton requires a valid Phaser.Scene');
+    }
+
     this.inputWindow = inputWindow; // Storing the reference to the InputWindow instance
 
     this.buttonId = buttonId;
@@ -63,7 +68,10 @@ export class NextStateButton extends Phaser.GameObjects.Container {
       .setDepth(1);
     this.buttonContainer.on('pointerdown', this.toggleMenu, this);
     this.add(this.buttonContainer);
-    this.unfoldOptions();
+    // this.unfoldOptions();
+    this.scene.events.once('create', () => {
+      this.unfoldOptions();
+    });
     scene.add.existing(this);
     this.scene.input.on('pointerdown', this.handleOutsideClick, this);
   }
@@ -77,7 +85,12 @@ export class NextStateButton extends Phaser.GameObjects.Container {
 
     // 새로운 options에 대해 요소를 생성
     this.options.forEach((option: { id: number; name: string }, index) => {
-      const optionContainer = this.scene.add.container(0, 0);
+      if (!this.scene) {
+        // console.error('Scene is not available in NextStateButton');
+        return;
+      }
+      const optionContainer: Phaser.GameObjects.Container =
+        this.scene.add.container(0, 0);
       const menuItemRectangle = this.scene.add
         .rectangle(0, 0, 73, 26, 142140)
         .setOrigin(0.5, 0.5);
@@ -97,6 +110,11 @@ export class NextStateButton extends Phaser.GameObjects.Container {
         // .setDepth(10)
         .on('pointerdown', (pointer: Phaser.Input.Pointer) => {
           pointer.event.stopPropagation();
+          if (this.inputWindow) {
+            this.inputWindow.updateNextStateInput(this.buttonId, option.id);
+          } else {
+            console.error('InputWindow is not available in NextStateButton');
+          }
           this.selectedHighlight(menuItemRectangle);
           this.inputWindow?.updateNextStateInput(this.buttonId, option.id);
           console.log('(MextStateButton.ts) option.id: ', option.id);
