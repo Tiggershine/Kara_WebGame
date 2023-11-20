@@ -20,7 +20,7 @@ export default class MenuScene extends Phaser.Scene {
     super({ key: 'MenuScene' });
 
     this.isSwiping = false;
-    this.isSwipe = false;
+    // this.isSwipe = false;
   }
 
   preload() {
@@ -47,13 +47,13 @@ export default class MenuScene extends Phaser.Scene {
     this.endPoint = new Phaser.Geom.Point();
 
     this.isSwiping = false;
-    this.isSwipe = false;
+    // this.isSwipe = false;
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       this.startPoint.setTo(pointer.x, pointer.y);
       this.isSwiping = true;
 
-      this.isSwipe = false;
+      // this.isSwipe = false;
     });
 
     this.input.on('pointerup', (pointer: Phaser.Input.Pointer) => {
@@ -71,7 +71,7 @@ export default class MenuScene extends Phaser.Scene {
         // this.isSwipe = true;
         this.handleSwipe();
         this.isSwiping = false;
-        this.isSwipe = true;
+        // this.isSwipe = true;
         return;
       }
 
@@ -80,6 +80,23 @@ export default class MenuScene extends Phaser.Scene {
 
     this.cameras.main.fadeIn(500, 0, 0, 0);
   }
+
+  setupImageClickEvents = (image: Phaser.GameObjects.Image): void => {
+    let downTime = 0;
+
+    image
+      .setInteractive()
+      .on('pointerdown', () => {
+        downTime = this.time.now; // Capture the time when the pointer is down
+      })
+      .on('pointerup', () => {
+        const upTime = this.time.now; // Capture the time when the pointer is up
+        if (upTime - downTime < 200) {
+          // Check if the duration is less than 0.3 second
+          this.handleImageClick();
+        }
+      });
+  };
 
   // Set inital images according to level (considering back from subMenu)
   setupInitialImages = (level?: number): void => {
@@ -113,27 +130,6 @@ export default class MenuScene extends Phaser.Scene {
           .setScale(0.5);
         break;
     }
-  };
-
-  setupImageClickEvents = (image: Phaser.GameObjects.Image): void => {
-    let downTime = 0;
-
-    image
-      .setInteractive()
-      .on('pointerdown', () => {
-        downTime = this.time.now; // Capture the time when the pointer is down
-      })
-      .on('pointerup', () => {
-        const upTime = this.time.now; // Capture the time when the pointer is up
-        if (upTime - downTime < 200) {
-          // Check if the duration is less than 0.3 second
-          if (!this.isSwipe) {
-            this.handleImageClick();
-          } else {
-            return;
-          }
-        }
-      });
   };
 
   handleImageClick() {
