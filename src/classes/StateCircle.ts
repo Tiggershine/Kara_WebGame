@@ -85,7 +85,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
     // Set to handle pointerdown event
     this.on('pointerdown', () => {
-      console.log('pointerdown event', this.label);
+      // console.log('pointerdown event', this.label);
       if (this.isSelected) {
         return;
       } else {
@@ -128,7 +128,6 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
         // Check if this is a self-edge
         if (startCircle === this && endCircle === this) {
-          console.log('Into SelfEdge');
           // Handle the self-edge update
           if (edge) {
             edge.destroy(); // Destroy the old self-edge
@@ -138,7 +137,6 @@ export default class StateCircle extends Phaser.GameObjects.Container {
           const newSelfEdge = this.edgeManager.createSelfEdge(this); // Assuming you have a method to create self-edges
           newEdges.push(newSelfEdge);
         } else {
-          console.log('Not into SelfEdge');
           // Handle the regular edge update
           const otherCircle = startCircle === this ? endCircle : startCircle;
 
@@ -165,6 +163,15 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.edges = newEdges;
   };
 
+  cleanUpEdges = () => {
+    this.edges.forEach((edge) => {
+      if (edge) {
+        edge.destroy();
+      }
+    });
+    this.edges = [];
+  };
+
   // 새로운 StateInput을 DiagramScene의 StateCircles 배열에 업데이트
   addStateInputs = (newStateInputs: StateInput[]): void => {
     // Filter out the elements based on the given conditions
@@ -177,12 +184,12 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
     this.stateInputs = filteredStateInputs;
 
-    console.log(
-      '(StateCircle.ts) id: ',
-      this.id,
-      '업데이트 된 StateInputs',
-      this.stateInputs
-    );
+    // console.log(
+    //   '(StateCircle.ts) id: ',
+    //   this.id,
+    //   '업데이트 된 StateInputs',
+    //   this.stateInputs
+    // );
 
     // DiagramScene에 StateInputs 상태 변경을 알리기 위한 이벤트 발생
     this.scene.events.emit('stateInputsChanged', this.id, this.stateInputs);
@@ -204,11 +211,11 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
     if (this.inputWindow) {
       // TODO: DELETE TEST CODE
-      console.log(this.getId, 'select() triggered');
+      // console.log(this.getId, 'select() triggered');
       this.inputWindow.setInputWindowActive(true);
 
       // TODO: DELETE TEST CODE
-      console.log(this.inputWindow.getInputwindowActive());
+      // console.log(this.inputWindow.getInputwindowActive());
       this.inputWindow.setVisible(true); // Show the InputWindow
     }
   };
@@ -218,17 +225,17 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
     if (this.inputWindow) {
       // TODO: DELETE TEST CODE
-      console.log(this.getId, 'deselect() treiggered');
+      // console.log(this.getId, 'deselect() treiggered');
       this.inputWindow.setInputWindowActive(false);
 
       // TODO: DELETE TEST CODE
-      console.log(this.inputWindow.getInputwindowActive());
+      // console.log(this.inputWindow.getInputwindowActive());
       // this.inputWindow.setVisible(false); // Hide the InputWindow
     }
   };
 
   setIsSelected(selected: boolean): void {
-    console.log('setIsSelected called', selected, this.label);
+    // console.log('setIsSelected called', selected, this.label);
     this.isSelected = selected;
     if (this.label) {
       this.label.setColor(this.isSelected ? '#FCF6F5' : '#1B1C1D');
@@ -284,7 +291,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.name = newName;
     this.label.text = newName;
     // this.inputLabel.setLabelText = newName;
-    console.log('StateCircle.ts', 'name: ', this.name);
+    // console.log('StateCircle.ts', 'name: ', this.name);
 
     this.scene.events.emit('updateStateCircleName', this.id, this.name);
   };
@@ -297,41 +304,4 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   getInputWindow(): InputWindow | undefined {
     return this.inputWindow;
   }
-
-  // destroy 메소드 오버라이드 - StateCircle의 객체가 파괴되면, InputLabel
-  // destroy(fromScene?: boolean): void {
-  //   // inputLabel이 존재하면 파괴
-  //   if (this.inputLabel) {
-  //     this.inputLabel.destroy();
-  //   }
-
-  //   // StateCircle의 나머지 부분을 파괴
-  //   super.destroy(fromScene);
-  // }
-
-  /** Edge */
-  // updateEdges = (): void => {
-  //   for (const edge of this.edges) {
-  //     edge.clear();
-  //     const otherCircle = this.getOtherCircleConnectedByEdge(edge);
-  //     if (otherCircle) {
-  //       const diagramScene = this.scene.scene.get(
-  //         'DiagramScene'
-  //       ) as DiagramScene;
-  //       diagramScene.createEdge(this, otherCircle);
-  //     }
-  //   }
-  // };
-
-  // getOtherCircleConnectedByEdge(
-  //   edge: Phaser.GameObjects.Graphics
-  // ): StateCircle | null {
-  //   const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
-  //   for (const circle of diagramScene.getStateCircles) {
-  //     if (circle !== this && circle.edges.includes(edge)) {
-  //       return circle;
-  //     }
-  //   }
-  //   return null;
-  // }
 }

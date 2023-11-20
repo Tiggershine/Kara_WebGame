@@ -133,4 +133,20 @@ export default class EdgeManager {
 
     return edge; // Return the edge so it can be stored
   }
+
+  destroyAllEdges() {
+    // Iterate through all StateCircles in the DiagramScene
+    this.diagramScene.getStateCircles.forEach((stateCircle: StateCircle) => {
+      // Iterate through each edge in the StateCircle's edges array
+      stateCircle.edges.forEach((edge: Phaser.GameObjects.Graphics) => {
+        // Destroy the edge
+        if (edge) {
+          edge.destroy();
+        }
+      });
+
+      // Clear the edges array after destroying all edges
+      stateCircle.edges = [];
+    });
+  }
 }

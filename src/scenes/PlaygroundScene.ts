@@ -21,11 +21,12 @@ export default class PlaygroundScene extends Phaser.Scene {
   private isSimulationPlaying: boolean = false;
   containerGraphics!: Phaser.GameObjects.Graphics;
   tileGraphics!: Phaser.GameObjects.Graphics;
-  private highlightSelected: boolean = false;
+  private highlightOn: boolean = false;
   private selectedLevel: number = 0;
   private selectedMission: number = 0;
   private iconBack!: Phaser.GameObjects.Image;
   private iconReset!: Phaser.GameObjects.Image;
+  private isMissionInitiated: boolean = false;
 
   constructor() {
     super('PlaygroundScene');
@@ -43,6 +44,10 @@ export default class PlaygroundScene extends Phaser.Scene {
     lineColor: 0x2bae66,
     lineColorAlpha: 128 / 255,
   };
+
+  preload() {
+    this.load.image('pauseButton', 'pauseButton');
+  }
 
   create(data: PlaygroundSceneData) {
     this.selectedLevel = data.level;
@@ -115,6 +120,7 @@ export default class PlaygroundScene extends Phaser.Scene {
           //     isFromPlaygroundScene: true,
           //   });
           // }
+          this.cleanupCurrentScene();
           this.transitionToNewScene('SubMenuScene', data.level);
         }
       });
@@ -129,46 +135,72 @@ export default class PlaygroundScene extends Phaser.Scene {
     });
     this.iconReset.on('pointerdown', () => {
       this.cleanupCurrentScene();
-      // this.transitionToNewScene('InputWindowScene');
-      // this.transitionToNewScene('DiagramScene');
-      // this.transitionToNewScene('PlaygroundScene');
-      // this.scene.launch('InputWindowScene');
-      // this.scene.launch('DiagramScene');
-      // this.scene.launch('PlaygroundScene');
-      // this.scene.launch('GameScene');
+
       const gameScene: Phaser.Scene = this.scene.get('GameScene');
       gameScene.scene.restart();
     });
 
-    // Task 생성
+    // Load Task - 미션을 위한 파일 로드 feats. 객체들
     this.gameLoader(this.selectedLevel, this.selectedMission);
-    // this.taskStars = new Stars(this, 30, 90);
-    // this.tunnelFinder = new TunnelFinder(this, 60, 180);
 
-    // Play Button
+    // Simulation Play Button
     this.playButton = this.add.sprite(65, 645, 'playButton').setInteractive();
     this.load.image('playButton', 'playButton');
-    this.load.image('pauseButton', 'pauseButton');
+
+    this.events.on('simulationEnd', () => {
+      this.playButton.setTexture('playButton');
+      this.isSimulationPlaying = false;
+    });
 
     this.playButton.on('pointerdown', () => {
+      // 시뮬 중, 멈춤 버튼 누르면 시뮬 초기화 되면서 play버튼 나타나기
       if (this.isSimulationPlaying) {
-        this.isSimulationPlaying = false;
         this.playButton.setTexture('playButton');
+        this.isSimulationPlaying = false;
       } else {
+        // 시뮬 중이 아니면, 정지 버튼으로 바뀌면서 시뮬 시작
+        this.playButton.setTexture('stopButton');
         this.isSimulationPlaying = true;
-        this.playButton.setTexture('pauseButton');
 
         const stateInputData = this.stateInputData;
-        if (this.taskStars) {
-          this.taskStars.processStateInputData(
-            stateInputData,
-            this.highlightSelected
-          );
-        } else if (this.tunnelFinder) {
-          this.tunnelFinder.processStateInputData(
-            stateInputData,
-            this.highlightSelected
-          );
+        const level = data.level;
+        const mission = data.mission;
+
+        switch (level) {
+          case 1:
+            switch (mission) {
+              case 1:
+                if (this.taskStars) {
+                  if (this.isMissionInitiated) {
+                    this.taskStars.restartSimulation(
+                      stateInputData,
+                      this.highlightOn
+                    );
+                    // this.scene.restart();
+                    // this.taskStars.processStateInputData(stateInputData);
+                  } else {
+                    this.taskStars.processStateInputData(
+                      stateInputData,
+                      this.highlightOn
+                    );
+                    this.isMissionInitiated = true;
+                  }
+                } else {
+                  console.log('Mission is not loaded yet.');
+                }
+            }
+          case 2:
+            switch (mission) {
+              case 2:
+                if (this.tunnelFinder) {
+                  this.tunnelFinder.processStateInputData(
+                    stateInputData,
+                    this.highlightOn
+                  );
+                } else {
+                  console.log('Mission is not loaded yet.');
+                }
+            }
         }
       }
     });
@@ -177,12 +209,12 @@ export default class PlaygroundScene extends Phaser.Scene {
     this.highlightToggle = this.add.image(64, 689, 'hightlightToggleOff');
     this.highlightToggle.setInteractive();
     this.highlightToggle.on('pointerdown', () => {
-      if (!this.highlightSelected) {
+      if (!this.highlightOn) {
         this.highlightToggle.setTexture('hightlightToggleOn');
-        this.highlightSelected = true;
+        this.highlightOn = true;
       } else {
         this.highlightToggle.setTexture('hightlightToggleOff');
-        this.highlightSelected = false;
+        this.highlightOn = false;
       }
     });
   }
@@ -197,13 +229,13 @@ export default class PlaygroundScene extends Phaser.Scene {
     }));
 
     for (const inputData of this.stateInputData) {
-      console.log(
-        '(PlaygroundScene.ts)',
-        'stateId: ',
-        inputData.id,
-        'stateInputs: ',
-        inputData.stateInputs
-      );
+      // console.log(
+      //   '(PlaygroundScene.ts)',
+      //   'stateId: ',
+      //   inputData.id,
+      //   'stateInputs: ',
+      //   inputData.stateInputs
+      // );
     }
   }
 
@@ -227,14 +259,9 @@ export default class PlaygroundScene extends Phaser.Scene {
   };
 
   cleanupCurrentScene() {
-    // 현재 장면에서 사용 중인 리소스 정리
-    // 예: 이벤트 리스너 제거, 타이머 정지 등
-
     // 다른 활성화된 장면 정리
     if (this.scene.isActive('DiagramScene')) {
-      console.log('this.scene.stop(DiagramScene)');
       const diagramScene = this.scene.get('DiagramScene') as DiagramScene;
-
       // Call cleanup on the DiagramScene
       diagramScene.cleanup();
 
@@ -243,28 +270,23 @@ export default class PlaygroundScene extends Phaser.Scene {
       this.scene.stop('DiagramScene');
     }
     if (this.scene.isActive('InputWindowScene')) {
-      console.log('this.scene.stop(InputWindowScene)');
+      // console.log('this.scene.stop(InputWindowScene)');
       this.scene.stop('InputWindowScene');
     }
     if (this.scene.isActive('PlaygroundScene')) {
-      console.log('this.scene.stop(PlaygroundScene)');
+      // console.log('this.scene.stop(PlaygroundScene)');
       this.scene.stop('PlaygroundScene');
     }
     if (this.scene.isActive('GameScene')) {
-      console.log('this.scene.stop(GameScene)');
+      // console.log('this.scene.stop(GameScene)');
       this.scene.stop('GameScene');
     }
   }
 
   // 새 장면으로 전환하는 메서드
   transitionToNewScene(sceneName: string, selectedLevel?: number) {
-    console.log('Current Scene Objects:', this); // Log the current state
-
     this.cleanupCurrentScene();
-    // this.scene.start('GameScene', {
-    //   level: selectedLevel,
-    //   isFromPlaygroundScene: true,
-    // });
+
     if (selectedLevel) {
       this.scene.launch(sceneName, { level: selectedLevel });
     }

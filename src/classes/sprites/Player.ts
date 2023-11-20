@@ -6,12 +6,15 @@ import Monster from './Monster';
 export default class Player extends BaseSprite {
   stars: Star[] = [];
   playerHighlight!: Phaser.GameObjects.Image;
+  playerHighlightChecked: boolean;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player');
 
     this.setDisplaySize(45, 45).setAngle(90);
     this.setDepth(5);
+
+    this.playerHighlightChecked = false;
 
     this.playerHighlight = this.scene.add.image(
       this.x,
@@ -20,6 +23,28 @@ export default class Player extends BaseSprite {
     );
     this.playerHighlight.setVisible(false).setDepth(10);
   }
+  get getPlayerHighlight(): Phaser.GameObjects.Image {
+    return this.playerHighlight;
+  }
+
+  cleanUpStars = (): void => {
+    this.stars.forEach((star) => {
+      if (star && star instanceof Star) {
+        star.destroy();
+      }
+    });
+  };
+
+  playerHighlightOn = (): void => {
+    this.playerHighlight.setVisible(true);
+  };
+  playerHighlightOff = (): void => {
+    this.playerHighlight.setVisible(false);
+  };
+
+  cleanUpPlayerHighlight = (): void => {
+    this.playerHighlight.destroy();
+  };
 
   delay = (ms: number) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -27,9 +52,9 @@ export default class Player extends BaseSprite {
 
   /** Methods for Moves */
   moveForward = async () => {
-    console.log('moveForward 함수 실행');
-    this.playerHighlight.setVisible(true);
-    this.scene.add.existing(this.playerHighlight);
+    // console.log('moveForward 함수 실행');
+    // hightlightSelected && this.playerHighlight.setVisible(true);
+    // this.scene.add.existing(this.playerHighlight);
     const angle = this.angle % 360;
 
     switch (angle) {
@@ -79,6 +104,7 @@ export default class Player extends BaseSprite {
     const star = new Star(this.scene, this.x, this.y);
     this.scene.add.existing(star);
     star.depth = this.depth - 1;
+    this.stars.push(star);
   };
 
   pickStar = async () => {

@@ -68,7 +68,7 @@ const nextStatePoints = [
 
 export default class TaskHelper {
   // private stateInputData: any;
-  private inputDataChecked: boolean;
+  // private inputDataChecked: boolean;
   private simulationHighlight!: SimulationHighlight;
   private scene!: Phaser.Scene;
   private player: Player;
@@ -81,7 +81,7 @@ export default class TaskHelper {
     // this.stateInputData = diagramScene.getSelectedCircle();
     this.simulationHighlight = new SimulationHighlight(scene, 'inputHighlight');
     this.simulationHighlight.setDepth(1000);
-    this.inputDataChecked = false;
+    // this.inputDataChecked = false;
   }
 
   // To simulate ths mission based on user input
@@ -90,119 +90,129 @@ export default class TaskHelper {
     hightlightSelected: boolean,
     callbackFunction?: () => void
   ) => {
-    this.player.playerHighlight.setVisible(true);
-    if (!this.inputDataChecked) {
-      const startState = stateInputData.find((state: State) => state.id === 0);
+    // Set PlayerHighlight
+    if (!hightlightSelected && this.player.getPlayerHighlight) {
+      this.player.playerHighlightOff();
+    } else if (hightlightSelected) {
+      this.player.playerHighlightOn();
+    }
 
-      let currentStateId = startState.stateInputs[0].nextState; // Start의 NextState로 Init (1번 State)
-      console.log('currentStateId', currentStateId);
+    const startState = stateInputData.find((state: State) => state.id === 0);
 
-      while (currentStateId !== 100) {
-        const currentState: State = stateInputData.find(
-          (state: State) => state.id === currentStateId
-        );
+    let currentStateId = startState.stateInputs[0].nextState; // Start의 NextState로 Init (1번 State)
+    // console.log('currentStateId', currentStateId);
 
-        if (!currentState) {
-          console.error('Invalid state id:', currentStateId);
-          break;
+    while (currentStateId !== 100) {
+      const currentState: State = stateInputData.find(
+        (state: State) => state.id === currentStateId
+      );
+
+      if (!currentState) {
+        // console.error('Invalid state id:', currentStateId);
+        break;
+      }
+
+      this.findStateCircleByIdSelect(this.scene, currentStateId); // pointerdown the found StateCircle
+
+      // let nextStateId = null;
+      let sensorCheckPassed: boolean = false;
+
+      // for (const stateInput of currentState.stateInputs) {
+      for (let i = 0; i < currentState.stateInputs.length; i++) {
+        const stateInput = currentState.stateInputs[i];
+        const simulationPrefix = (i + 1).toString(); // simulation 좌표 앞자리
+        // console.log('simulationPrefix: ', simulationPrefix);
+
+        // sensorChecks 요소들이 현재 모두 만족하는지 검사 (만족하면 moves, nextState 실행하지)
+        sensorCheckPassed = true;
+        for (let j = 0; j < stateInput.sensorChecks.length; j++) {
+          const simulationKey = simulationPrefix + (j + 1).toString(); // simulation 좌표 앞자리 + 뒷자리
+          // console.log('simulationKey: ', simulationKey);
+          const simulationPoint = conditionInputPoints.find(
+            (p) => p.key === simulationKey
+          );
+
+          const sensorValue = this.sensorCheck(
+            this.player,
+            stateInput.sensorChecks[j].sensor
+          );
+          if (stateInput.sensorChecks[j].condition === 0 && !sensorValue) {
+            sensorCheckPassed = false;
+            break;
+          } else if (
+            stateInput.sensorChecks[j].condition === 1 &&
+            sensorValue
+          ) {
+            sensorCheckPassed = false;
+            break;
+          }
+
+          if (hightlightSelected && simulationPoint) {
+            // console.log(
+            //   'Condition Point: ',
+            //   simulationPoint.x,
+            //   simulationPoint.y
+            // );
+            this.simulationHighlight.simulationHighlightOn();
+            await this.simulationHighlight.moveImageTo(
+              simulationPoint.x,
+              simulationPoint.y
+            );
+          }
         }
 
-        this.findStateCircleByIdSelect(this.scene, currentStateId); // pointerdown the found StateCircle
+        // console.log('sensorCheckPassed: ', sensorCheckPassed);
 
-        // let nextStateId = null;
-        let sensorCheckPassed: boolean = false;
+        if (sensorCheckPassed) {
+          for (let j = 0; j < stateInput.move.length; j++) {
+            const move = stateInput.move[j];
+            // console.log('move: ', move);
 
-        // for (const stateInput of currentState.stateInputs) {
-        for (let i = 0; i < currentState.stateInputs.length; i++) {
-          const stateInput = currentState.stateInputs[i];
-          const simulationPrefix = (i + 1).toString(); // simulation 좌표 앞자리
-          console.log('simulationPrefix: ', simulationPrefix);
-
-          // sensorChecks 요소들이 현재 모두 만족하는지 검사 (만족하면 moves, nextState 실행하지)
-          sensorCheckPassed = true;
-          for (let j = 0; j < stateInput.sensorChecks.length; j++) {
-            const simulationKey = simulationPrefix + (j + 1).toString(); // simulation 좌표 앞자리 + 뒷자리
-            console.log('simulationKey: ', simulationKey);
-            const simulationPoint = conditionInputPoints.find(
+            const simulationKey = simulationPrefix + (j + 5).toString();
+            const simulationPoint = moveInputPoints.find(
               (p) => p.key === simulationKey
             );
 
-            const sensorValue = this.sensorCheck(
-              this.player,
-              stateInput.sensorChecks[j].sensor
-            );
-            if (stateInput.sensorChecks[j].condition === 0 && !sensorValue) {
-              sensorCheckPassed = false;
-              break;
-            } else if (
-              stateInput.sensorChecks[j].condition === 1 &&
-              sensorValue
-            ) {
-              sensorCheckPassed = false;
-              break;
-            }
-
             if (hightlightSelected && simulationPoint) {
-              console.log(
-                'Condition Point: ',
-                simulationPoint.x,
-                simulationPoint.y
-              );
               await this.simulationHighlight.moveImageTo(
                 simulationPoint.x,
                 simulationPoint.y
               );
             }
+            await this.executeMove(this.player, move);
           }
 
-          console.log('sensorCheckPassed: ', sensorCheckPassed);
-
-          if (sensorCheckPassed) {
-            for (let j = 0; j < stateInput.move.length; j++) {
-              const move = stateInput.move[j];
-              console.log('move: ', move);
-
-              const simulationKey = simulationPrefix + (j + 5).toString();
-              const simulationPoint = moveInputPoints.find(
-                (p) => p.key === simulationKey
-              );
-
-              if (hightlightSelected && simulationPoint) {
-                await this.simulationHighlight.moveImageTo(
-                  simulationPoint.x,
-                  simulationPoint.y
-                );
-              }
-              await this.executeMove(this.player, move);
-            }
-
-            const nextStateSimulationKey = simulationPrefix + '9';
-            const nextStateSimulationPoint = nextStatePoints.find(
-              (p) => p.key === nextStateSimulationKey
+          const nextStateSimulationKey = simulationPrefix + '9';
+          const nextStateSimulationPoint = nextStatePoints.find(
+            (p) => p.key === nextStateSimulationKey
+          );
+          if (hightlightSelected && nextStateSimulationPoint) {
+            await this.simulationHighlight.moveImageTo(
+              nextStateSimulationPoint.x,
+              nextStateSimulationPoint.y
             );
-            if (hightlightSelected && nextStateSimulationPoint) {
-              await this.simulationHighlight.moveImageTo(
-                nextStateSimulationPoint.x,
-                nextStateSimulationPoint.y
-              );
-            }
-
-            // nextStateId = stateInput.nextStateId;
-            currentStateId = stateInput.nextState;
-            console.log('새로운 currentStateId: ', currentStateId);
-
-            break;
           }
+
+          // nextStateId = stateInput.nextStateId;
+          currentStateId = stateInput.nextState;
+          // console.log('새로운 currentStateId: ', currentStateId);
+
+          break;
         }
       }
-
-      if (callbackFunction) {
-        callbackFunction();
-      }
-
-      this.inputDataChecked = true;
-      return;
     }
+
+    if (callbackFunction) {
+      callbackFunction();
+    }
+
+    this.player.playerHighlightOff();
+    this.simulationHighlight.simulationHighlightOff();
+
+    this.scene.events.emit('simulationEnd');
+
+    return;
+    // }
   };
 
   // To find a StateCircle by id and to pointerdown the found StateCircle (by emit event)
@@ -218,19 +228,6 @@ export default class TaskHelper {
 
     return;
   }
-
-  // Handler for the 'stateInputDataUpdated' event
-  // handleStateInputDataUpdated = (id: number, newInputs: StateInput[]) => {
-  //   // Find the state with the matching id and update its inputs
-  //   const stateIndex = this.stateInputData.findIndex(
-  //     (state: State) => state.id === id
-  //   );
-  //   if (stateIndex !== -1) {
-  //     this.stateInputData[stateIndex].stateInputs = newInputs;
-  //     console.log('(Stars.ts) stateInputData: ', this.stateInputData);
-  //   }
-  //   console.log('(Stars.ts) stateInputData: ', this.stateInputData);
-  // };
 
   // Sensor Check (0 - 4)
   sensorCheck(player: Player, sensorId: number): boolean {

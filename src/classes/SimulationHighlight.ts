@@ -104,17 +104,23 @@ class SimulationHighlight extends Phaser.GameObjects.Image {
     this.setDepth(100);
   }
 
+  simulationHighlightOn = (): void => {
+    this.setVisible(true);
+  };
+
+  simulationHighlightOff = (): void => {
+    this.setVisible(false);
+  };
+
   async processStateInputData() {
     for (const stateInput of stateInputData) {
       for (let i = 0; i < stateInput.stateInputs.length; i++) {
         const input = stateInput.stateInputs[i];
-        // const prefix = stateInput.id.toString();
         const prefix = (i + 1).toString();
         console.log('input: ', input, 'prefix: ', prefix);
 
         // Process sensorChecks
         for (let j = 0; j < input.sensorChecks.length; j++) {
-          // const sensorCheck = input.sensorChecks[j];
           const key = prefix + (j + 1).toString();
           const point = conditionInputPoints.find((p) => p.key === key);
           if (point) {

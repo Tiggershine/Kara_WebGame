@@ -512,17 +512,13 @@ export default class DiagramScene extends Phaser.Scene {
 
   // Call this function before stopping the scene
   cleanup() {
+    this.edgeManager.destroyAllEdges();
+
     // Destroy all state circles and their associated edges
     this.stateCircles.forEach((circle) => {
-      // Destroy edges associated with each circle
-      circle.edges.forEach((edge) => {
-        if (edge) {
-          edge.destroy();
-        }
-        const circleInputWindow = circle.getInputWindow();
-        circleInputWindow?.cleanup();
-        circleInputWindow?.destroy();
-      });
+      const circleInputWindow = circle.getInputWindow();
+      circleInputWindow?.cleanup();
+      circleInputWindow?.destroy();
 
       // Destroy the circle itself
       circle.destroy();

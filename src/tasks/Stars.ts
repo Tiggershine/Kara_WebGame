@@ -13,25 +13,24 @@ type State = {
 };
 
 export default class Stars extends Phaser.GameObjects.Container {
-  private taskHelper: TaskHelper;
+  private taskHelper!: TaskHelper;
   private player!: Player;
   private star1!: Star;
   private star2!: Star;
   private wall!: Wall;
-  isPaused: boolean = false;
+  // private highlightOn: boolean = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
 
-    // const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
-
     this.player = new Player(this.scene, 155, 315);
     this.player.setAngle(90);
-    this.star1 = new Star(this.scene, 205, 315);
-    this.star2 = new Star(this.scene, 305, 315);
+    this.taskHelper = new TaskHelper(scene, this.player);
+
     this.wall = new Wall(this.scene, 405, 315);
 
-    this.taskHelper = new TaskHelper(scene, this.player);
+    this.star1 = new Star(this.scene, 205, 315);
+    this.star2 = new Star(this.scene, 305, 315);
 
     scene.add.existing(this.player);
     scene.add.existing(this.star1);
@@ -39,18 +38,26 @@ export default class Stars extends Phaser.GameObjects.Container {
     scene.add.existing(this.wall);
   }
 
-  processStateInputData = (
-    stateInputData: any,
-    hightlightSelected: boolean
-  ) => {
-    this.taskHelper.processStateInputData(
-      stateInputData,
-      hightlightSelected,
-      () => {
-        const positionsCorrect = this.checkObjectPositions();
-        console.log(positionsCorrect ? 'Success' : 'Fail');
-      }
-    );
+  restartSimulation = (stateInputData: any, highlightOn: boolean) => {
+    this.player.cleanUpStars();
+    this.player.setPosition(155, 315);
+    this.player.playerHighlight.setPosition(155, 315);
+
+    this.star1 = new Star(this.scene, 205, 315);
+    this.star2 = new Star(this.scene, 305, 315);
+    this.scene.add.existing(this.star1);
+    this.scene.add.existing(this.star2);
+
+    this.processStateInputData(stateInputData, highlightOn);
+  };
+
+  processStateInputData = (stateInputData: any, highlightOn: boolean) => {
+    console.log('processStateInputData 실행', stateInputData);
+
+    this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
+      const positionsCorrect = this.checkObjectPositions();
+      console.log(positionsCorrect ? 'Success' : 'Fail');
+    });
   };
 
   private checkObjectPositions(): boolean {
@@ -92,67 +99,4 @@ export default class Stars extends Phaser.GameObjects.Container {
       !isOtherObjectsExist
     );
   }
-
-  pauseSimulation() {
-    this.isPaused = true;
-  }
-
-  resumeSimulation() {
-    this.isPaused = false;
-    // this.processStateInputData(this.stateInputData);
-  }
 }
-
-const conditionInputPoints = [
-  { key: '11', x: 580, y: 490 },
-  { key: '12', x: 630, y: 490 },
-  { key: '13', x: 680, y: 490 },
-  { key: '14', x: 730, y: 490 },
-  { key: '21', x: 580, y: 555 },
-  { key: '22', x: 630, y: 555 },
-  { key: '23', x: 680, y: 555 },
-  { key: '24', x: 730, y: 555 },
-  { key: '31', x: 580, y: 620 },
-  { key: '32', x: 630, y: 620 },
-  { key: '33', x: 680, y: 620 },
-  { key: '34', x: 730, y: 620 },
-  { key: '41', x: 580, y: 685 },
-  { key: '42', x: 630, y: 685 },
-  { key: '43', x: 680, y: 685 },
-  { key: '44', x: 730, y: 685 },
-  { key: '51', x: 580, y: 750 },
-  { key: '52', x: 630, y: 750 },
-  { key: '53', x: 680, y: 750 },
-  { key: '54', x: 730, y: 750 },
-];
-
-const moveInputPoints = [
-  { key: '15', x: 785, y: 490 },
-  { key: '16', x: 835, y: 490 },
-  { key: '17', x: 885, y: 490 },
-  { key: '18', x: 935, y: 490 },
-  { key: '25', x: 785, y: 555 },
-  { key: '26', x: 835, y: 555 },
-  { key: '27', x: 885, y: 555 },
-  { key: '28', x: 935, y: 555 },
-  { key: '35', x: 785, y: 620 },
-  { key: '36', x: 835, y: 620 },
-  { key: '37', x: 885, y: 620 },
-  { key: '38', x: 935, y: 620 },
-  { key: '45', x: 785, y: 685 },
-  { key: '46', x: 835, y: 685 },
-  { key: '47', x: 885, y: 685 },
-  { key: '48', x: 935, y: 685 },
-  { key: '55', x: 785, y: 750 },
-  { key: '56', x: 835, y: 750 },
-  { key: '57', x: 885, y: 750 },
-  { key: '58', x: 935, y: 750 },
-];
-
-const nextStatePoints = [
-  { key: '19', x: 1005, y: 488 },
-  { key: '29', x: 1005, y: 553 },
-  { key: '39', x: 1005, y: 618 },
-  { key: '49', x: 1005, y: 683 },
-  { key: '59', x: 1005, y: 748 },
-];
