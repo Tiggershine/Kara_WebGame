@@ -72,6 +72,7 @@ export default class MenuScene extends Phaser.Scene {
         this.handleSwipe();
         this.isSwiping = false;
         this.isSwipe = true;
+        return;
       }
 
       this.isSwiping = false;
@@ -128,6 +129,8 @@ export default class MenuScene extends Phaser.Scene {
           // Check if the duration is less than 0.3 second
           if (!this.isSwipe) {
             this.handleImageClick();
+          } else {
+            return;
           }
         }
       });
