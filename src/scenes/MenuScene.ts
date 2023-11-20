@@ -70,6 +70,8 @@ export default class MenuScene extends Phaser.Scene {
       if (swipeDistance > this.swipeThreshold) {
         // this.isSwipe = true;
         this.handleSwipe();
+        this.isSwiping = false;
+        this.isSwipe = true;
       }
 
       this.isSwiping = false;
@@ -124,9 +126,9 @@ export default class MenuScene extends Phaser.Scene {
         const upTime = this.time.now; // Capture the time when the pointer is up
         if (upTime - downTime < 200) {
           // Check if the duration is less than 0.3 second
-          // if (!this.isSwipe && !this.isSwiping) {
-          this.handleImageClick();
-          // }
+          if (!this.isSwipe) {
+            this.handleImageClick();
+          }
         }
       });
   };
