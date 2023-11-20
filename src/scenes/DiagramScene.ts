@@ -369,14 +369,21 @@ export default class DiagramScene extends Phaser.Scene {
 
     const startStateCircle = new StateCircle(
       this,
-      625,
-      211,
+      600,
+      150,
       stateId,
       stateName,
       newStateInput,
       this.edgeManager,
       inputLabel
     );
+
+    // Deselect all other circles
+    this.stateCircles.forEach((circle) => {
+      circle.deselect();
+    });
+    // Ensure the newStateCircle is selected upon creation
+    startStateCircle.select();
 
     startStateCircle.setDepth(1);
     this.stateCircles.push(startStateCircle); // stateCircles 배열에 추가
@@ -414,7 +421,7 @@ export default class DiagramScene extends Phaser.Scene {
     const endStateCircle = new StateCircle(
       this,
       1000,
-      211,
+      280,
       stateId,
       stateName,
       newStateInput,
@@ -423,7 +430,7 @@ export default class DiagramScene extends Phaser.Scene {
     );
 
     endStateCircle.deselect();
-    endStateCircle.setDepth(1);
+    endStateCircle.setDepth(50);
 
     // Add the endStateCircle to the stateCircles array
     this.stateCircles.push(endStateCircle);

@@ -194,23 +194,6 @@ export class InputLabel extends Phaser.GameObjects.Container {
     // DiagramScene 참조
     const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
     diagramScene.deleteStateCircleById(this.stateId);
-
-    // // 해당 StateCircle 찾아서 삭제
-    // const stateCircle = diagramScene.getStateCircles.find(
-    //   (circle) => circle.getId === this.stateId
-    // );
-
-    // if (stateCircle) {
-    //   // StateCircle 삭제
-    //   diagramScene.deleteStateCircleById(this.stateId);
-    //   // stateCircle.destroy(); // StateCircle 객체 파괴
-
-    //   // Emit an event to update labels
-    //   diagramScene.events.emit('updateLabels');
-    // }
-
-    // InputLabel 객체 파괴
-    // this.destroy();
   };
 
   private handleShortPress = (): void => {

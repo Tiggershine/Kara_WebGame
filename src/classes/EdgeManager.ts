@@ -15,7 +15,7 @@ export default class EdgeManager {
     baseYOffset: number = 15
   ): Phaser.GameObjects.Graphics {
     const edge = this.diagramScene.add.graphics();
-    edge.lineStyle(2, 0x000000).setDepth(1); // Set line style
+    edge.lineStyle(2, 0x000000); // Set line style
 
     // Calculate the angle between the two circles
     const angle = Math.atan2(circleB.y - circleA.y, circleB.x - circleA.x);
@@ -56,7 +56,7 @@ export default class EdgeManager {
     );
 
     edge.strokePath(); // Draw the line and arrowhead
-
+    edge.setDepth(1);
     // Initialize the data manager for the edge if it doesn't exist
     edge.setDataEnabled();
 
@@ -72,7 +72,7 @@ export default class EdgeManager {
   }
 
   createSelfEdge(circle: StateCircle) {
-    const edge = this.diagramScene.add.graphics(); // 여기서 this는 DiagramScene을 참조합니다.
+    const edge = this.diagramScene.add.graphics();
     edge.lineStyle(2, 0x000000); // Set line style
 
     const radius = circle.circle.width / 2;
@@ -82,7 +82,7 @@ export default class EdgeManager {
 
     // Calculate the center of the self edge circle
     const selfEdgeCenterX = circle.x + radius * Math.cos(startAngle);
-    const selfEdgeCenterY = circle.y - selfEdgeRadius - 33; // Move up by 2/3 of the radius
+    const selfEdgeCenterY = circle.y - selfEdgeRadius - 36; // Move up by 2/3 of the radius
 
     // Draw the self edge circle
     edge.beginPath();
@@ -123,6 +123,7 @@ export default class EdgeManager {
     edge.lineTo(arrowRightX, arrowRightY);
     edge.closePath();
     edge.fillPath();
+    edge.setDepth(1);
 
     // Set the data for the self-edge
     edge.setData('startCircle', circle);
@@ -135,11 +136,8 @@ export default class EdgeManager {
   }
 
   destroyAllEdges() {
-    // Iterate through all StateCircles in the DiagramScene
     this.diagramScene.getStateCircles.forEach((stateCircle: StateCircle) => {
-      // Iterate through each edge in the StateCircle's edges array
       stateCircle.edges.forEach((edge: Phaser.GameObjects.Graphics) => {
-        // Destroy the edge
         if (edge) {
           edge.destroy();
         }
