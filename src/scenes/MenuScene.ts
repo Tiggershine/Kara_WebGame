@@ -91,7 +91,7 @@ export default class MenuScene extends Phaser.Scene {
       })
       .on('pointerup', () => {
         const upTime = this.time.now; // Capture the time when the pointer is up
-        if (upTime - downTime < 200) {
+        if (upTime - downTime < 100) {
           // Check if the duration is less than 0.3 second
           this.handleImageClick();
         }
