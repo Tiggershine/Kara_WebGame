@@ -52,8 +52,6 @@ export default class Stars extends Phaser.GameObjects.Container {
   };
 
   processStateInputData = (stateInputData: any, highlightOn: boolean) => {
-    console.log('processStateInputData 실행', stateInputData);
-
     this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
       const positionsCorrect = this.checkObjectPositions();
       console.log(positionsCorrect ? 'Success' : 'Fail');

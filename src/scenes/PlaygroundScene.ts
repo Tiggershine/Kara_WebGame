@@ -176,8 +176,6 @@ export default class PlaygroundScene extends Phaser.Scene {
                       stateInputData,
                       this.highlightOn
                     );
-                    // this.scene.restart();
-                    // this.taskStars.processStateInputData(stateInputData);
                   } else {
                     this.taskStars.processStateInputData(
                       stateInputData,
@@ -191,12 +189,20 @@ export default class PlaygroundScene extends Phaser.Scene {
             }
           case 2:
             switch (mission) {
-              case 2:
+              case 1:
                 if (this.tunnelFinder) {
-                  this.tunnelFinder.processStateInputData(
-                    stateInputData,
-                    this.highlightOn
-                  );
+                  if (this.isMissionInitiated) {
+                    this.tunnelFinder.restartSimulation(
+                      stateInputData,
+                      this.highlightOn
+                    );
+                  } else {
+                    this.tunnelFinder.processStateInputData(
+                      stateInputData,
+                      this.highlightOn
+                    );
+                    this.isMissionInitiated = true;
+                  }
                 } else {
                   console.log('Mission is not loaded yet.');
                 }

@@ -158,18 +158,18 @@ export default class TunnelFinder extends Phaser.GameObjects.Container {
     // this.stateInputData = stateInputData;
   }
 
-  processStateInputData = (
-    stateInputData: any,
-    hightlightSelected: boolean
-  ) => {
-    this.taskHelper.processStateInputData(
-      stateInputData,
-      hightlightSelected,
-      () => {
-        const positionsCorrect = this.checkObjectPositions();
-        console.log(positionsCorrect ? 'Success' : 'Fail');
-      }
-    );
+  restartSimulation = (stateInputData: any, highlightOn: boolean) => {
+    this.player.cleanUpStars();
+    this.player.setPosition(55, 315);
+
+    this.processStateInputData(stateInputData, highlightOn);
+  };
+
+  processStateInputData = (stateInputData: any, highlightOn: boolean) => {
+    this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
+      const positionsCorrect = this.checkObjectPositions();
+      console.log(positionsCorrect ? 'Success' : 'Fail');
+    });
   };
 
   private checkObjectPositions(): boolean {
