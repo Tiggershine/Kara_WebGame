@@ -238,8 +238,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     // console.log('setIsSelected called', selected, this.label);
     this.isSelected = selected;
     if (this.label) {
-      // this.label.setColor(this.isSelected ? '#FCF6F5' : '#1B1C1D');
-      // this.label.setColor(this.isSelected ? '#000000' : '#1B1C1D');
+      this.label.setColor(this.isSelected ? '#000000' : '#1B1C1D');
       this.label.setFontStyle('bold');
     } else {
       console.error('Label is null in setIsSelected');

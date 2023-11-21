@@ -53,6 +53,8 @@ export default class PlaygroundScene extends Phaser.Scene {
     this.selectedLevel = data.level;
     this.selectedMission = data.mission;
 
+    // this.cameras.main.fadeIn(1000, 0, 0, 0);
+
     this.events.on(
       'stateInputDataUpdated',
       this.handleStateCirclesUpdated,
@@ -223,6 +225,8 @@ export default class PlaygroundScene extends Phaser.Scene {
         this.highlightOn = false;
       }
     });
+
+    this.events.emit('playgroundSceneReady');
   }
 
   update() {}

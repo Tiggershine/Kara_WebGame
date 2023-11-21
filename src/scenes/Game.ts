@@ -91,51 +91,24 @@ export default class Game extends Phaser.Scene {
       this.scene.start('SubMenuScene', { level: data.level });
     }
 
-    this.cameras.main.fadeIn(500, 0, 0, 0);
-
     this.add.image(0, 0, 'backgroundImg').setOrigin(0, 0);
-    // this.iconBack = this.add.image(50, 50, 'iconBack').setInteractive();
-    // this.iconBack.on('pointerover', () => {
-    //   this.iconBack.setTexture('iconBackClick');
-    // });
-    // this.iconBack.on('pointerout', () => {
-    //   this.iconBack.setTexture('iconBack');
-    // });
-    // this.iconBack.on('pointerdown', () => {
-    //   const scene = this;
-    //   this.cameras.main.fadeOut(500, 0, 0, 0, (_: any, progress: number) => {
-    //     if (progress === 1) {
-    //       //   // 다른 장면들이 활성 상태인지 확인하고 종료
-    //       //   if (this.scene.isActive('DiagramScene')) {
-    //       //     this.scene.stop('DiagramScene');
-    //       //   }
-    //       //   if (this.scene.isActive('InputWindowScene')) {
-    //       //     this.scene.stop('InputWindowScene');
-    //       //   }
 
-    //       //   // 페이드 아웃이 완료되면 새 장면 시작
-    //       //   this.scene.start('GameScene', {
-    //       //     level: this.selectedLevel,
-    //       //     mission: this.selectedMission,
-    //       //     isFromPlaygroundScene: true,
-    //       //   });
-    //       // }
-    //       this.transitionToNewScene(data.level);
-    //     }
-    //   });
+    // this.scene.launch('PlaygroundScene', {
+    //   level: data.level,
+    //   mission: data.mission,
     // });
-
-    console.log('(Game.ts', {
-      level: data.level,
-      mission: data.mission,
-    });
-
-    this.scene.launch('DiagramScene');
-    this.scene.launch('InputWindowScene');
+    // this.scene.get('PlaygroundScene').events.on('playgroundSceneReady', () => {
+    //   this.scene.launch('DiagramScene');
+    //   this.scene.launch('InputWindowScene');
+    // });
     this.scene.launch('PlaygroundScene', {
       level: data.level,
       mission: data.mission,
     });
+    setTimeout(() => {
+      this.scene.launch('DiagramScene');
+      this.scene.launch('InputWindowScene');
+    }, 10);
   }
 
   update() {}
@@ -146,6 +119,6 @@ export default class Game extends Phaser.Scene {
     // this.cleanupCurrentScene();
     this.scene.start('SubMenuScene', {
       level: selectedLevel,
-    }); // 'NewScene'을 새 장면의 키로 교체
+    });
   }
 }

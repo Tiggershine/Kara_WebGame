@@ -28,7 +28,7 @@ export class InputLabel extends Phaser.GameObjects.Container {
     this.isSelected = isSelected;
 
     const backgroundColor = this.isSelected ? 0xfcf6f5 : 6710886;
-    const textColor = this.isSelected ? '#666666' : '#FCF6F5';
+    const textColor = this.isSelected ? '#142140' : '#FCF6F5';
 
     // Label Graphic
     this.graphic = scene.add
@@ -44,6 +44,7 @@ export class InputLabel extends Phaser.GameObjects.Container {
         color: textColor,
         align: 'center',
       })
+      .setFontStyle('bold')
       .setOrigin(0.5)
       .setPosition(80 / 2, 43 / 2);
 

@@ -362,7 +362,7 @@ export default class DiagramScene extends Phaser.Scene {
 
   createStartStateCircle(): void {
     const stateId = 0;
-    const stateName = 'Start';
+    const stateName = 'START';
     const newStateInput: StateInput[] = [];
     const inputLabel = new InputLabel(this, stateId, 0, 0, stateName, false);
     this.inputLabels.push(inputLabel);
@@ -406,7 +406,7 @@ export default class DiagramScene extends Phaser.Scene {
 
   createEndStateCircle(): void {
     const stateId = 100;
-    const stateName = 'End';
+    const stateName = 'STOP';
     const newStateInput: StateInput[] = [];
     const inputLabel = new InputLabel(
       this,
