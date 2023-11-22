@@ -75,6 +75,8 @@ export default class DiagramScene extends Phaser.Scene {
 
     this.scene.moveAbove('InputWindowScene', 'DiagramScene');
     this.scene.moveAbove('DiagramScene', 'PlaygroundScene');
+
+    // this.events.emit('diagramSceneReady');
   }
 
   ///////** Getter *//////////////////////////////////////////////////////////////////////////////////////////////////////

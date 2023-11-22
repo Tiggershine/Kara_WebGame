@@ -19,13 +19,14 @@ export default class PlaygroundScene extends Phaser.Scene {
   private playButton!: Phaser.GameObjects.Sprite;
   private highlightToggle!: Phaser.GameObjects.Image;
   private isSimulationPlaying: boolean = false;
-  containerGraphics!: Phaser.GameObjects.Graphics;
-  tileGraphics!: Phaser.GameObjects.Graphics;
+  private containerGraphics!: Phaser.GameObjects.Graphics;
+  private tileGraphics!: Phaser.GameObjects.Graphics;
+  private iconBack!: Phaser.GameObjects.Image;
+  private iconReset!: Phaser.GameObjects.Image;
+  private stageLabel!: Phaser.GameObjects.Text;
   private highlightOn: boolean = false;
   private selectedLevel: number = 0;
   private selectedMission: number = 0;
-  private iconBack!: Phaser.GameObjects.Image;
-  private iconReset!: Phaser.GameObjects.Image;
   private isMissionInitiated: boolean = false;
 
   constructor() {
@@ -95,6 +96,17 @@ export default class PlaygroundScene extends Phaser.Scene {
         i * this.tileStyle.size + 90
       ); // Horizontal line
     }
+
+    this.stageLabel = this.stageLabel = this.add.text(
+      460,
+      48,
+      `Stage ${data.level ? data.level : 0}-${data.mission ? data.mission : 0}`,
+      {
+        fontSize: '16px',
+        fontFamily: 'Roboto Condensed',
+        color: '#FCF6F5',
+      }
+    );
 
     this.iconBack = this.add.image(50, 50, 'iconBack').setInteractive();
     this.iconBack.on('pointerover', () => {
@@ -226,7 +238,7 @@ export default class PlaygroundScene extends Phaser.Scene {
       }
     });
 
-    this.events.emit('playgroundSceneReady');
+    // this.events.emit('playgroundSceneReady');
   }
 
   update() {}

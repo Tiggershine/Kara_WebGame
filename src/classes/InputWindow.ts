@@ -98,7 +98,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
     );
 
     /** Label Images (Move, NextState) */
-    const moveLabel = this.scene.add.image(862.5, 431, 'moveLabel');
+    const moveLabel = this.scene.add.image(861, 431, 'moveLabel');
     const nextStateLabel = this.scene.add.image(1000, 431, 'nextStateLabel');
 
     // Add objects into Scene

@@ -313,6 +313,8 @@ export default class InputWindowScene extends Phaser.Scene {
     buttonConfigurations.forEach((config) => {
       this.createControlButton(config.x, config.y, config.texture, config.type);
     });
+
+    // this.events.emit('inputWindowSceneReady');
   }
 
   ///////** METHODS *//////////////////////////////////////////////////////////////////////////////////////////////////////
