@@ -30,6 +30,8 @@ export default class Game extends Phaser.Scene {
       iconBackClick: 'assets/IconBackClick.png',
       iconReset: 'assets/IconReset.png',
       iconResetClick: 'assets/IconResetClick.png',
+      iconInfo: 'assets/IconInfo.png',
+      iconInfoClick: 'assets/IconInfoClick.png',
       // Images for ControlButtons
       addButton: 'assets/AddButton.png',
       addButtonSelected: 'assets/AddButtonSelected.png',
@@ -77,6 +79,8 @@ export default class Game extends Phaser.Scene {
       stopButton: 'assets/StopButton.png',
       hightlightToggleOff: 'assets/HightlightToggleOff.png',
       hightlightToggleOn: 'assets/HightlightToggleOn.png',
+      // Images for Mission Infos
+      missionInfo11: 'assets/MissionInfo11.png',
     };
 
     for (let key in imageSources) {

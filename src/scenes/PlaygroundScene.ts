@@ -24,10 +24,14 @@ export default class PlaygroundScene extends Phaser.Scene {
   private iconBack!: Phaser.GameObjects.Image;
   private iconReset!: Phaser.GameObjects.Image;
   private stageLabel!: Phaser.GameObjects.Text;
+  private iconInfo!: Phaser.GameObjects.Image;
   private highlightOn: boolean = false;
   private selectedLevel: number = 0;
   private selectedMission: number = 0;
   private isMissionInitiated: boolean = false;
+  private missionInfoContainer!: Phaser.GameObjects.Container;
+  private missionInfo11Image!: Phaser.GameObjects.Image;
+  private mimissionInfo11ImageCliked: boolean = false;
 
   constructor() {
     super('PlaygroundScene');
@@ -99,14 +103,43 @@ export default class PlaygroundScene extends Phaser.Scene {
 
     this.stageLabel = this.stageLabel = this.add.text(
       460,
-      48,
-      `Stage ${data.level ? data.level : 0}-${data.mission ? data.mission : 0}`,
+      45,
+      `Stage ${data.level ? data.level : ''}-${
+        data.mission ? data.mission : ''
+      }`,
       {
         fontSize: '16px',
         fontFamily: 'Roboto Condensed',
         color: '#FCF6F5',
       }
     );
+    this.stageLabel.setFontStyle('bold');
+
+    // this.createMissonInfoContainer(data);
+    this.missionInfo11Image = this.add.image(
+      this.cameras.main.centerX,
+      this.cameras.main.centerY,
+      'missionInfo11'
+    );
+    this.missionInfo11Image.setDepth(10);
+    this.missionInfo11Image.setVisible(false);
+
+    this.iconInfo = this.add.image(1023, 55, 'iconInfo').setInteractive();
+    this.iconInfo.on('pointerover', () => {
+      this.iconInfo.setTexture('iconInfoClick');
+    });
+    this.iconInfo.on('pointerout', () => {
+      this.iconInfo.setTexture('iconInfo');
+    });
+    this.iconInfo.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      if (!this.mimissionInfo11ImageCliked) {
+        this.missionInfo11Image.setVisible(true);
+        this.mimissionInfo11ImageCliked = true;
+      } else {
+        this.missionInfo11Image.setVisible(false);
+        this.mimissionInfo11ImageCliked = false;
+      }
+    });
 
     this.iconBack = this.add.image(50, 50, 'iconBack').setInteractive();
     this.iconBack.on('pointerover', () => {
@@ -314,4 +347,59 @@ export default class PlaygroundScene extends Phaser.Scene {
     }
     this.scene.launch(sceneName);
   }
+
+  // createMissonInfoContainer = (data: PlaygroundSceneData) => {
+  //   this.missionInfoContainer = this.add.container(
+  //     this.cameras.main.centerX,
+  //     this.cameras.main.centerY
+  //   );
+
+  //   this.missionInfoContainer.setDepth(10);
+
+  //   let missionInfoImageTexture: string;
+
+  //   switch (data.level) {
+  //     case 1:
+  //       switch (data.mission) {
+  //         case 1:
+  //           missionInfoImageTexture = 'missionInfo11';
+  //       }
+  //     case 2:
+  //       switch (data.mission) {
+  //         case 1:
+  //           missionInfoImageTexture = 'missionInfo21';
+  //       }
+  //     default:
+  //       missionInfoImageTexture = 'missionInfo11';
+  //   }
+
+  //   const missionInfoImage: Phaser.GameObjects.Image = this.add.image(
+  //     0,
+  //     0,
+  //     missionInfoImageTexture
+  //   );
+  //   this.missionInfoContainer.add(missionInfoImage);
+
+  //   this.missionInfoContainer.setVisible(false);
+
+  //   // this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+  //   //   console.log('함수 안에 들어옴');
+  //   //   if (
+  //   //     // this.missionInfoContainer.visible &&
+  //   //     !this.isPointerInsideContainer(pointer.x, pointer.y)
+  //   //   ) {
+  //   //     this.missionInfoContainer.setVisible(false);
+  //   //   }
+  //   // });
+  // };
+
+  // isPointerInsideContainer(x: number, y: number): boolean {
+  //   let bounds = this.missionInfoContainer.getBounds();
+  //   return (
+  //     x >= bounds.x &&
+  //     x <= bounds.x + bounds.width &&
+  //     y >= bounds.y &&
+  //     y <= bounds.y + bounds.height
+  //   );
+  // }
 }

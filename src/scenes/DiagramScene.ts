@@ -267,6 +267,13 @@ export default class DiagramScene extends Phaser.Scene {
     // let newStateCircle: StateCircle = this.createStateCircle(0, 0);
     // newStateCircle.setVisible(false);
 
+    addButton.on('pointerover', () => {
+      addButton.setTexture('addButtonSelected');
+    });
+    addButton.on('pointerout', () => {
+      addButton.setTexture('addButton');
+    });
+
     addButton.on('dragstart', (pointer: Phaser.Input.Pointer) => {
       addButton.setTexture('addButtonSelected');
     });
