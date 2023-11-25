@@ -72,14 +72,21 @@ export const playButtonConfig = {
   x: 65,
   y: 645,
   texture: 'playButton',
-  selectedTexture: ' stopButton',
+  selectedTexture: 'stopButton',
 };
 
 export const highligtToggleConfig = {
   x: 64,
   y: 689,
-  texture: 'hightlightToggleOff',
-  selectedTexture: ' hightlightToggleOn',
+  texture: 'highlightToggleOff',
+  selectedTexture: 'highlightToggleOn',
+};
+
+export const infoButtonConfig = {
+  x: 1023,
+  y: 55,
+  texture: 'iconInfo',
+  selectedTexture: 'iconInfoClick',
 };
 
 /** DropdownMenu Options */

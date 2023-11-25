@@ -10,6 +10,7 @@ import {
   backButtonConfig,
   resetButtonConfig,
   stageLabelConfig,
+  infoButtonConfig,
   playButtonConfig,
   highligtToggleConfig,
 } from '../configurations';
@@ -437,6 +438,73 @@ export default class UIManager {
     );
     stageLabel.setFontStyle('bold');
   };
+  //////////  INFO BUTTON FOR MISSON (PLAYGROUND)  //////////
+  createInfoButton = (): void => {
+    const infoButton = this.diagramScene.add
+      .image(infoButtonConfig.x, infoButtonConfig.y, infoButtonConfig.texture)
+      .setInteractive();
+    infoButton.on('pointerover', () => {
+      infoButton.setTexture(infoButtonConfig.selectedTexture);
+    });
+    infoButton.on('pointerout', () => {
+      infoButton.setTexture(infoButtonConfig.texture);
+    });
+
+    infoButton.on('pointerdown', (): void => {
+      if (!this.diagramScene.getIsMissionInfoOn) {
+        // this.diagramScene.missionInfoImage.setVisible(true);
+        this.fadeInMissionInfo();
+        this.diagramScene.setIsMissionInfoOn = true;
+      } else {
+        // this.diagramScene.missionInfoImage.setVisible(false);
+        this.fadeOutMissionInfo();
+        this.diagramScene.setIsMissionInfoOn = false;
+      }
+    });
+  };
+  //////////  INFO IMAGE FOR MISSON (PLAYGROUND)  //////////
+  createMissionInfo = (
+    level: number,
+    mission: number
+  ): Phaser.GameObjects.Image => {
+    const infoImageTexture: string = `missionInfo${level}${mission}`;
+
+    const missionInfoImg: Phaser.GameObjects.Image = this.diagramScene.add
+      .image(
+        this.diagramScene.cameras.main.centerX,
+        this.diagramScene.cameras.main.centerY,
+        infoImageTexture
+      )
+      .setInteractive();
+    missionInfoImg.setDepth(3).setVisible(false);
+
+    return missionInfoImg;
+  };
+  // FadeIn Effect for MissionInfo Image
+  fadeInMissionInfo = (): void => {
+    this.diagramScene.tweens.add({
+      targets: this.diagramScene.missionInfoImage,
+      alpha: { from: 0, to: 1 },
+      duration: 300,
+      ease: 'Sine.easeInOut',
+      onStart: () => {
+        this.diagramScene.missionInfoImage.setVisible(true);
+      },
+    });
+  };
+  // FadeOut Effect for MissionInfo Image
+  fadeOutMissionInfo = (): void => {
+    this.diagramScene.tweens.add({
+      targets: this.diagramScene.missionInfoImage,
+      alpha: { from: 1, to: 0 },
+      duration: 300,
+      ease: 'Sine.easeInOut',
+      onComplete: () => {
+        this.diagramScene.missionInfoImage.setVisible(false);
+      },
+    });
+  };
+
   //////////  PLAY BUTTON FOR SIMULATION (PLAYGROUND)  //////////
   createPlayButton = (level: number, mission: number): void => {
     const playButton = this.diagramScene.add
@@ -459,6 +527,7 @@ export default class UIManager {
 
       const stateInputData =
         this.diagramScene.stateCircleManager.extractIdAndStateInputStateCircles();
+
       this.diagramScene.missionManager.simulationLoader(
         level,
         mission,
@@ -475,12 +544,15 @@ export default class UIManager {
         highligtToggleConfig.texture
       )
       .setInteractive();
+    this.diagramScene.setIsHighlightOn = false;
 
     highlightToggle.on('pointerdown', () => {
-      if (this.diagramScene.getIsHighlightOn) {
+      if (!this.diagramScene.getIsHighlightOn) {
+        console.log('on', this.diagramScene.getIsHighlightOn);
         highlightToggle.setTexture(highligtToggleConfig.selectedTexture);
         this.diagramScene.setIsHighlightOn = true;
       } else {
+        console.log('on', this.diagramScene.getIsHighlightOn);
         highlightToggle.setTexture(highligtToggleConfig.texture);
         this.diagramScene.setIsHighlightOn = false;
       }

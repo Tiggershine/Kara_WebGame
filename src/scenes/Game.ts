@@ -77,8 +77,8 @@ export default class Game extends Phaser.Scene {
       // Images for Simulation Buttons
       playButton: 'assets/PlayButton.png',
       stopButton: 'assets/StopButton.png',
-      hightlightToggleOff: 'assets/HightlightToggleOff.png',
-      hightlightToggleOn: 'assets/HightlightToggleOn.png',
+      highlightToggleOff: 'assets/HighlightToggleOff.png',
+      highlightToggleOn: 'assets/HighlightToggleOn.png',
       // Images for Mission Infos
       missionInfo11: 'assets/MissionInfo11.png',
     };

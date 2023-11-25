@@ -60,11 +60,11 @@ export default class PlaygroundScene extends Phaser.Scene {
 
     // this.cameras.main.fadeIn(1000, 0, 0, 0);
 
-    this.events.on(
-      'stateInputDataUpdated',
-      this.handleStateCirclesUpdated,
-      this
-    );
+    // this.events.on(
+    //   'stateInputDataUpdated',
+    //   this.handleStateCirclesUpdated,
+    //   this
+    // );
 
     // Container Object
     // this.containerGraphics = this.add.graphics({
@@ -276,78 +276,78 @@ export default class PlaygroundScene extends Phaser.Scene {
   }
 
   update() {}
-  private handleStateCirclesUpdated(stateCircles: StateCircle[]) {
-    this.stateCircles = stateCircles;
+  // private handleStateCirclesUpdated(stateCircles: StateCircle[]) {
+  //   this.stateCircles = stateCircles;
 
-    this.stateInputData = stateCircles.map((stateCircle) => ({
-      id: stateCircle.id,
-      stateInputs: stateCircle.stateInputs,
-    }));
+  //   this.stateInputData = stateCircles.map((stateCircle) => ({
+  //     id: stateCircle.id,
+  //     stateInputs: stateCircle.stateInputs,
+  //   }));
 
-    for (const inputData of this.stateInputData) {
-      // console.log(
-      //   '(PlaygroundScene.ts)',
-      //   'stateId: ',
-      //   inputData.id,
-      //   'stateInputs: ',
-      //   inputData.stateInputs
-      // );
-    }
-  }
+  //   for (const inputData of this.stateInputData) {
+  //     // console.log(
+  //     //   '(PlaygroundScene.ts)',
+  //     //   'stateId: ',
+  //     //   inputData.id,
+  //     //   'stateInputs: ',
+  //     //   inputData.stateInputs
+  //     // );
+  //   }
+  // }
 
-  gameLoader = (level: number, mission: number) => {
-    switch (level) {
-      case 1:
-        switch (mission) {
-          case 1:
-            this.taskStars = new Stars(this, 30, 90);
-            break;
-        }
-        break;
-      case 2:
-        switch (mission) {
-          case 1:
-            this.tunnelFinder = new TunnelFinder(this, 30, 90);
-            break;
-        }
-        break;
-    }
-  };
+  // gameLoader = (level: number, mission: number) => {
+  //   switch (level) {
+  //     case 1:
+  //       switch (mission) {
+  //         case 1:
+  //           this.taskStars = new Stars(this, 30, 90);
+  //           break;
+  //       }
+  //       break;
+  //     case 2:
+  //       switch (mission) {
+  //         case 1:
+  //           this.tunnelFinder = new TunnelFinder(this, 30, 90);
+  //           break;
+  //       }
+  //       break;
+  //   }
+  // };
 
-  cleanupCurrentScene() {
-    // 다른 활성화된 장면 정리
-    if (this.scene.isActive('DiagramScene')) {
-      const diagramScene = this.scene.get('DiagramScene') as DiagramScene;
-      // Call cleanup on the DiagramScene
-      diagramScene.cleanup();
+  // cleanupCurrentScene() {
+  //   // 다른 활성화된 장면 정리
+  //   if (this.scene.isActive('DiagramScene')) {
+  //     const diagramScene = this.scene.get('DiagramScene') as DiagramScene;
+  //     // Call cleanup on the DiagramScene
+  //     diagramScene.cleanup();
 
-      // Now stop the scene
-      this.scene.stop('DiagramScene');
-      this.scene.stop('DiagramScene');
-    }
-    if (this.scene.isActive('InputWindowScene')) {
-      // console.log('this.scene.stop(InputWindowScene)');
-      this.scene.stop('InputWindowScene');
-    }
-    if (this.scene.isActive('PlaygroundScene')) {
-      // console.log('this.scene.stop(PlaygroundScene)');
-      this.scene.stop('PlaygroundScene');
-    }
-    if (this.scene.isActive('GameScene')) {
-      // console.log('this.scene.stop(GameScene)');
-      this.scene.stop('GameScene');
-    }
-  }
+  //     // Now stop the scene
+  //     this.scene.stop('DiagramScene');
+  //     this.scene.stop('DiagramScene');
+  //   }
+  //   if (this.scene.isActive('InputWindowScene')) {
+  //     // console.log('this.scene.stop(InputWindowScene)');
+  //     this.scene.stop('InputWindowScene');
+  //   }
+  //   if (this.scene.isActive('PlaygroundScene')) {
+  //     // console.log('this.scene.stop(PlaygroundScene)');
+  //     this.scene.stop('PlaygroundScene');
+  //   }
+  //   if (this.scene.isActive('GameScene')) {
+  //     // console.log('this.scene.stop(GameScene)');
+  //     this.scene.stop('GameScene');
+  //   }
+  // }
 
-  // 새 장면으로 전환하는 메서드
-  transitionToNewScene(sceneName: string, selectedLevel?: number) {
-    this.cleanupCurrentScene();
+  // // 새 장면으로 전환하는 메서드
+  // transitionToNewScene(sceneName: string, selectedLevel?: number) {
+  //   this.cleanupCurrentScene();
 
-    if (selectedLevel) {
-      this.scene.launch(sceneName, { level: selectedLevel });
-    }
-    this.scene.launch(sceneName);
-  }
+  //   if (selectedLevel) {
+  //     this.scene.launch(sceneName, { level: selectedLevel });
+  //   }
+  //   this.scene.launch(sceneName);
+  // }
 
   // createMissonInfoContainer = (data: PlaygroundSceneData) => {
   //   this.missionInfoContainer = this.add.container(

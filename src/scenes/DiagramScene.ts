@@ -13,7 +13,6 @@ interface MissionData {
 }
 
 export default class DiagramScene extends Phaser.Scene {
-  diagramValidArea!: Phaser.GameObjects.Rectangle;
   uiManager: UIManager = new UIManager(this);
   edgeManager: EdgeManager = new EdgeManager(this);
   stateCircleManager: StateCircleManager = new StateCircleManager(this);
@@ -21,12 +20,15 @@ export default class DiagramScene extends Phaser.Scene {
   inputManager: InputManager = new InputManager();
   stateCircles: StateCircle[] = [];
   inputLabels: InputLabel[] = [];
-  idCount: number = 1;
+  diagramValidArea!: Phaser.GameObjects.Rectangle;
+  missionInfoImage!: Phaser.GameObjects.Image;
+  private idCount: number = 1;
   level: number = 0;
   mission: number = 0;
   private isSimulationPlaying: boolean = false;
   private isMissionInitiated: boolean = false;
   private isHighlightOn: boolean = false;
+  private isMissionInfoOn: boolean = false;
 
   constructor() {
     super('DiagramScene');
@@ -61,6 +63,11 @@ export default class DiagramScene extends Phaser.Scene {
     this.uiManager.createBackButton(this.level); // Back Button
     this.uiManager.createResetButton(); // Reset Button
     this.uiManager.createStageLabel(this.level, this.mission);
+    this.missionInfoImage = this.uiManager.createMissionInfo(
+      this.level,
+      this.mission
+    );
+    this.uiManager.createInfoButton();
     this.uiManager.createPlayButton(this.level, this.mission);
     this.uiManager.createHighlightToggleButton();
 
@@ -68,7 +75,7 @@ export default class DiagramScene extends Phaser.Scene {
     this.missionManager.missionLoader(missionData.level, missionData.mission);
   }
 
-  ///////** Getter *//////////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////// ** GETTER & SETTER **////////////////////
   get getStateCircles(): StateCircle[] {
     return this.stateCircles;
   }
@@ -96,7 +103,14 @@ export default class DiagramScene extends Phaser.Scene {
   set setIsHighlightOn(updatedIsHighlightOn: boolean) {
     this.isHighlightOn = updatedIsHighlightOn;
   }
+  get getIsMissionInfoOn(): boolean {
+    return this.isMissionInfoOn;
+  }
+  set setIsMissionInfoOn(updatedIsMissionInfoOn: boolean) {
+    this.isMissionInfoOn = updatedIsMissionInfoOn;
+  }
 
+  //isMissionInfoOn
   getSelectedCircle = (): StateCircle => {
     const selectedCircle = this.stateCircles.find(
       (circle) => circle.isSelected
