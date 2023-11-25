@@ -110,7 +110,6 @@ export default class DiagramScene extends Phaser.Scene {
     this.isMissionInfoOn = updatedIsMissionInfoOn;
   }
 
-  //isMissionInfoOn
   getSelectedCircle = (): StateCircle => {
     const selectedCircle = this.stateCircles.find(
       (circle) => circle.isSelected

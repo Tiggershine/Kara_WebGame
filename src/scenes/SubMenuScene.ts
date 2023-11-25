@@ -71,11 +71,6 @@ export default class SubMenuScene extends Phaser.Scene {
       this.missionBtn1.setTexture('missionBtn1Hover');
       this.cameras.main.fadeOut(500, 0, 0, 0, (_: any, progress: number) => {
         this.handleImageClick(data.level);
-
-        // if (progress === 1) {
-        //   // 페이드 아웃이 완료되면 새 장면 시작
-        //   this.scene.start('GameScene');
-        // }
       });
     });
     this.missionBtn1.on('pointerover', () => {

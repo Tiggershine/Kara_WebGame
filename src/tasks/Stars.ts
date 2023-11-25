@@ -2,10 +2,10 @@ import Phaser from 'phaser';
 import Player from '../classes/sprites/Player';
 import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
-import SimulationHighlight from '../classes/SimulationHighlight';
-import DiagramScene from '../scenes/DiagramScene';
+// import SimulationHighlight from '../classes/SimulationHighlight';
+// import DiagramScene from '../scenes/DiagramScene';
 import { StateInput } from '../classes/InputManager';
-import TaskHelper from './\bTaskHelper';
+import TaskHelper from './TaskHelper';
 
 type State = {
   id: number;
@@ -13,12 +13,12 @@ type State = {
 };
 
 export default class Stars extends Phaser.GameObjects.Container {
-  private taskHelper!: TaskHelper;
   private player!: Player;
   private star1!: Star;
   private star2!: Star;
   private wall!: Wall;
-  private missionInfoContainer!: Phaser.GameObjects.Container;
+  private taskHelper!: TaskHelper;
+  // private missionInfoContainer!: Phaser.GameObjects.Container;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
@@ -98,10 +98,10 @@ export default class Stars extends Phaser.GameObjects.Container {
     );
   }
 
-  createMissonInfoContainer = () => {
-    this.missionInfoContainer = this.scene.add.container(
-      this.scene.cameras.main.centerX,
-      this.scene.cameras.main.centerY
-    );
-  };
+  // createMissonInfoContainer = () => {
+  //   this.missionInfoContainer = this.scene.add.container(
+  //     this.scene.cameras.main.centerX,
+  //     this.scene.cameras.main.centerY
+  //   );
+  // };
 }

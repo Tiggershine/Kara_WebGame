@@ -1,12 +1,14 @@
-import Phaser from 'phaser';
 import DiagramScene from '../scenes/DiagramScene';
 import Stars from '../tasks/Stars';
+import StarFindInForest from '../tasks/StarFindInForest';
 import TunnelFinder from '../tasks/TunnelFinder';
 import { StateInput } from './InputManager';
+import { playButtonConfig } from '../configurations';
 
 export default class MissionManager {
   private diagramScene: DiagramScene;
   private missionStars!: Stars;
+  private missionStarFindInForest!: StarFindInForest;
   private minssionTunnelFinder!: TunnelFinder;
 
   constructor(diagaramScene: DiagramScene) {
@@ -18,9 +20,26 @@ export default class MissionManager {
     switch (level) {
       case 1:
         switch (mission) {
+          // case 1:
+          //   this.missionStars = new Stars(
+          //     this.diagramScene,
+          //     playButtonConfig.x,
+          //     playButtonConfig.y
+          //   );
+          //   break;
           case 1:
-            this.missionStars = new Stars(this.diagramScene, 30, 90);
+            this.missionStarFindInForest = new StarFindInForest(
+              this.diagramScene,
+              playButtonConfig.x,
+              playButtonConfig.y
+            );
             break;
+          case 2:
+            this.missionStarFindInForest = new StarFindInForest(
+              this.diagramScene,
+              playButtonConfig.x,
+              playButtonConfig.y
+            );
         }
         break;
       case 2:
@@ -28,11 +47,18 @@ export default class MissionManager {
           case 1:
             this.minssionTunnelFinder = new TunnelFinder(
               this.diagramScene,
-              30,
-              90
+              playButtonConfig.x,
+              playButtonConfig.y
             );
             break;
         }
+        break;
+      default:
+        this.missionStarFindInForest = new StarFindInForest(
+          this.diagramScene,
+          playButtonConfig.x,
+          playButtonConfig.y
+        );
         break;
     }
   };

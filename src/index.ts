@@ -11,10 +11,10 @@ import DiagramScene from './scenes/DiagramScene';
 new Phaser.Game(
   Object.assign(config, {
     scene: [
+      GameScene,
       StateScene,
       MenuScene,
       SubMenuScene,
-      GameScene,
       PlaygroundScene,
       DiagramScene,
       // InputWindowScene,
