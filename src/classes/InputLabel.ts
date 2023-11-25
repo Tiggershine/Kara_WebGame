@@ -194,7 +194,7 @@ export class InputLabel extends Phaser.GameObjects.Container {
 
     // DiagramScene 참조
     const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
-    diagramScene.deleteStateCircleById(this.stateId);
+    diagramScene.stateCircleManager.deleteStateCircleById(this.stateId);
   };
 
   private handleShortPress = (): void => {

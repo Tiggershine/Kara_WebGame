@@ -12,6 +12,7 @@ import PlaygroundScene from '../scenes/PlaygroundScene';
 import StateCircle from './StateCircle';
 import { NextStateButton } from './NextStateButton';
 import {
+  inputContainerConfig,
   options,
   buttonConfigurations,
   conditionInputPoints,
@@ -19,8 +20,10 @@ import {
   nextStatePoints,
   guidelinePositions,
 } from '../configurations';
+import StateCircleManager from './StateCircleManager';
 
 export class InputWindow extends Phaser.GameObjects.Container {
+  private diagramScene: DiagramScene;
   private stateCircleId: number = -1;
   private controlButtons: ControlButton[] = [];
   private dropdownButtons: DropdownMenu[] = [];
@@ -54,9 +57,8 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
     this.stateCircleId = stateCircleId;
 
-    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
-    //
-    diagramScene.events.on(
+    this.diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+    this.diagramScene.events.on(
       'updatedStateCircles',
       this.updateRegisteredStates,
       this
@@ -70,14 +72,14 @@ export class InputWindow extends Phaser.GameObjects.Container {
       backgroundColor: 0xfcf6f5,
     };
     this.containerGraphic = this.scene.add.graphics({
-      fillStyle: { color: containerStyle.backgroundColor },
+      fillStyle: { color: inputContainerConfig.backgroundColor },
     });
     this.containerGraphic.fillRoundedRect(
-      550,
-      400,
-      containerStyle.width,
-      containerStyle.height,
-      containerStyle.borderRadius
+      inputContainerConfig.x,
+      inputContainerConfig.y,
+      inputContainerConfig.width,
+      inputContainerConfig.height,
+      inputContainerConfig.borderRadius
     );
     /** Continaer Graphic (Control) */
     const controllerContainerStyle = {
@@ -199,15 +201,18 @@ export class InputWindow extends Phaser.GameObjects.Container {
 
   // 이 InputWindow 객체가 소속된 StateCircle 객체 반환
   getStateCircleById(): StateCircle {
-    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+    // const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
 
-    return diagramScene.getStateCircleById(this.stateCircleId);
+    return this.diagramScene.stateCircleManager.getStateCircleById(
+      this.stateCircleId
+    );
   }
 
   updateStateCircleStateInput = () => {
     const stateCircle = this.getStateCircleById();
 
     if (stateCircle) {
+      console.log('(Inputwindow.ts) updateStateCircleStateInput함수 ');
       const tempStateInputs = this.tempStateInputs;
       stateCircle.addStateInputs(tempStateInputs);
     }
@@ -310,6 +315,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
     this.tempStateInputs[stateInputIndex].nextState = nextStateId;
 
     // StateCircle의 StateInputs 업데이트
+    console.log('(InputWindow.ts) updateNextStateInput 함수');
     this.updateStateCircleStateInput();
   }
 

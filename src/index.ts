@@ -6,7 +6,7 @@ import SubMenuScene from './scenes/SubMenuScene';
 import GameScene from './scenes/Game';
 import PlaygroundScene from './scenes/PlaygroundScene';
 import DiagramScene from './scenes/DiagramScene';
-import InputWindowScene from './scenes/InputWindowScene';
+// import InputWindowScene from './scenes/InputWindowScene';
 
 new Phaser.Game(
   Object.assign(config, {
@@ -17,7 +17,7 @@ new Phaser.Game(
       GameScene,
       PlaygroundScene,
       DiagramScene,
-      InputWindowScene,
+      // InputWindowScene,
     ],
   })
 );

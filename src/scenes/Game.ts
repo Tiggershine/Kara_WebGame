@@ -3,7 +3,7 @@ import Phaser from 'phaser';
 interface GameSceneData {
   level: number;
   mission: number;
-  isFromPlaygroundScene: boolean;
+  isFromDiagramScene: boolean;
 }
 
 export default class Game extends Phaser.Scene {
@@ -91,8 +91,10 @@ export default class Game extends Phaser.Scene {
   }
 
   async create(data: GameSceneData) {
-    if (data.isFromPlaygroundScene) {
+    if (data.isFromDiagramScene) {
       this.scene.start('SubMenuScene', { level: data.level });
+
+      return;
     }
 
     this.add.image(0, 0, 'backgroundImg').setOrigin(0, 0);
@@ -131,14 +133,19 @@ export default class Game extends Phaser.Scene {
     //   this.scene.launch('InputWindowScene');
     // }
 
-    this.scene.launch('PlaygroundScene', {
+    this.scene.launch('DiagramScene', {
       level: data.level,
       mission: data.mission,
     });
-    setTimeout(() => {
-      this.scene.launch('DiagramScene');
-      this.scene.launch('InputWindowScene');
-    }, 10);
+
+    // this.scene.launch('PlaygroundScene', {
+    //   level: data.level,
+    //   mission: data.mission,
+    // });
+    // setTimeout(() => {
+    //   this.scene.launch('DiagramScene');
+    //   // this.scene.launch('InputWindowScene');
+    // }, 10);
 
     // await Promise.all([
     //   this.waitForSceneReady('PlaygroundScene', 'playgroundSceneReady'),

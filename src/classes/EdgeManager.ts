@@ -14,6 +14,7 @@ export default class EdgeManager {
     circleB: StateCircle,
     baseYOffset: number = 15
   ): Phaser.GameObjects.Graphics {
+    console.log('Crate Edge btw ', circleA, ' and ', circleB);
     const edge = this.diagramScene.add.graphics();
     edge.lineStyle(2, 0x000000); // Set line style
 

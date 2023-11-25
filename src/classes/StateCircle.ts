@@ -5,6 +5,7 @@ import InputWindowScene from '../scenes/InputWindowScene';
 import { InputWindow } from './InputWindow';
 import EdgeManager from './EdgeManager';
 import { InputLabel } from './InputLabel';
+import UIManager from './UIManager';
 
 interface StateCircleType {
   id: number;
@@ -28,9 +29,11 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   inputWindowScene?: InputWindowScene;
   edges: Phaser.GameObjects.Graphics[] = [];
   private inputWindow?: InputWindow;
+  uiManager: UIManager;
+  diagramScene: DiagramScene;
 
   constructor(
-    scene: Phaser.Scene,
+    diagramScene: DiagramScene,
     x: number,
     y: number,
     id: number,
@@ -39,7 +42,8 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     edgeManager: EdgeManager, // EdgeManager 인스턴스를 생성자로 전달
     inputLabel: InputLabel
   ) {
-    super(scene, x, y);
+    super(diagramScene, x, y);
+    this.diagramScene = diagramScene;
 
     this.id = id;
     this.name = name;
@@ -48,16 +52,28 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.edges = [];
     this.edgeManager = edgeManager;
     this.inputLabel = inputLabel;
+    this.uiManager = new UIManager(this.scene as DiagramScene);
 
-    this.circle = new Phaser.GameObjects.Image(scene, 0, 0, 'stateCircle');
+    this.circle = new Phaser.GameObjects.Image(
+      this.diagramScene,
+      0,
+      0,
+      'stateCircle'
+    );
     this.add(this.circle);
 
     // Create Text on Circle
-    this.label = new Phaser.GameObjects.Text(scene, 0, 0, this.name, {
-      fontSize: '16px',
-      fontFamily: 'Roboto Condensed',
-      color: '#1B1C1D',
-    });
+    this.label = new Phaser.GameObjects.Text(
+      this.diagramScene,
+      0,
+      0,
+      this.name,
+      {
+        fontSize: '16px',
+        fontFamily: 'Roboto Condensed',
+        color: '#1B1C1D',
+      }
+    );
     this.label.setOrigin(0.5);
     this.add(this.label);
 
@@ -66,14 +82,16 @@ export default class StateCircle extends Phaser.GameObjects.Container {
       new Phaser.Geom.Circle(0, 0, 35),
       Phaser.Geom.Circle.Contains
     );
-    scene.input.setDraggable(this);
+    this.diagramScene.input.setDraggable(this);
 
     // Set to handle drag event
     this.on(
       'drag',
       (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
         if (
-          (scene as DiagramScene).validArea.getBounds().contains(dragX, dragY)
+          (this.diagramScene as DiagramScene).diagramValidArea
+            .getBounds()
+            .contains(dragX, dragY)
         ) {
           this.x = dragX;
           this.y = dragY;
@@ -107,7 +125,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.add(this.circle);
     this.add(this.label);
 
-    scene.add.existing(this);
+    this.diagramScene.add.existing(this);
 
     this.inputWindow = new InputWindow(this.scene, 0, 0, id);
     // this.inputWindow.setVisible(false);
@@ -115,7 +133,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
   updateEdges = (): void => {
     // Get a reference to the DiagramScene
-    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+    // const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
 
     // Create a temporary array to hold the new edges
     const newEdges: Phaser.GameObjects.Graphics[] = [];
@@ -184,15 +202,20 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
     this.stateInputs = filteredStateInputs;
 
-    // console.log(
-    //   '(StateCircle.ts) id: ',
-    //   this.id,
-    //   '업데이트 된 StateInputs',
-    //   this.stateInputs
-    // );
+    console.log(
+      '(StateCircle.ts) id: ',
+      this.id,
+      '업데이트 된 StateInputs',
+      this.stateInputs
+    );
 
     // DiagramScene에 StateInputs 상태 변경을 알리기 위한 이벤트 발생
-    this.scene.events.emit('stateInputsChanged', this.id, this.stateInputs);
+    const diagramScene = this.scene as DiagramScene;
+    // diagramScene.events.emit('stateInputsChanged', this.id, this.stateInputs);
+    diagramScene.stateCircleManager.updateStateCircleInputs(
+      this.id,
+      this.stateInputs
+    );
   };
 
   setLabelText(text: string): string {
@@ -250,9 +273,10 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
   // Call function in InputWindowScene to render InputLabels
   setLabel = (): void => {
-    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+    // const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
 
-    diagramScene.addLabels();
+    // diagramScene.addLabels();
+    this.uiManager.addLabels();
   };
 
   get getId(): number {

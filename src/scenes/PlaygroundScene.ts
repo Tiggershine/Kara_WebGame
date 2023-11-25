@@ -38,17 +38,17 @@ export default class PlaygroundScene extends Phaser.Scene {
   }
 
   // Values for Style
-  private containerStyle = {
-    size: 500,
-    borderRadius: 10,
-    backgroundColor: 0xfcf6f5,
-  };
-  private tileStyle = {
-    size: 50,
-    lineWidth: 1,
-    lineColor: 0x2bae66,
-    lineColorAlpha: 128 / 255,
-  };
+  // private containerStyle = {
+  //   size: 500,
+  //   borderRadius: 10,
+  //   backgroundColor: 0xfcf6f5,
+  // };
+  // private tileStyle = {
+  //   size: 50,
+  //   lineWidth: 1,
+  //   lineColor: 0x2bae66,
+  //   lineColorAlpha: 128 / 255,
+  // };
 
   preload() {
     this.load.image('pauseButton', 'pauseButton');
@@ -67,53 +67,53 @@ export default class PlaygroundScene extends Phaser.Scene {
     );
 
     // Container Object
-    this.containerGraphics = this.add.graphics({
-      fillStyle: { color: this.containerStyle.backgroundColor },
-    });
-    this.containerGraphics.fillRoundedRect(
-      30,
-      90,
-      this.containerStyle.size,
-      this.containerStyle.size,
-      this.containerStyle.borderRadius
-    );
+    // this.containerGraphics = this.add.graphics({
+    //   fillStyle: { color: this.containerStyle.backgroundColor },
+    // });
+    // this.containerGraphics.fillRoundedRect(
+    //   30,
+    //   90,
+    //   this.containerStyle.size,
+    //   this.containerStyle.size,
+    //   this.containerStyle.borderRadius
+    // );
 
-    // Tile Object
-    this.tileGraphics = this.add.graphics({
-      lineStyle: {
-        width: this.tileStyle.lineWidth,
-        color: this.tileStyle.lineColor,
-        alpha: this.tileStyle.lineColorAlpha,
-      },
-    });
-    for (let i = 1; i < 10; i++) {
-      this.tileGraphics.lineBetween(
-        i * this.tileStyle.size + 30,
-        90,
-        i * this.tileStyle.size + 30,
-        this.containerStyle.size + 90
-      ); // Vertical line
-      this.tileGraphics.lineBetween(
-        30,
-        i * this.tileStyle.size + 90,
-        this.containerStyle.size + 30,
-        i * this.tileStyle.size + 90
-      ); // Horizontal line
-    }
+    // // Tile Object
+    // this.tileGraphics = this.add.graphics({
+    //   lineStyle: {
+    //     width: this.tileStyle.lineWidth,
+    //     color: this.tileStyle.lineColor,
+    //     alpha: this.tileStyle.lineColorAlpha,
+    //   },
+    // });
+    // for (let i = 1; i < 10; i++) {
+    //   this.tileGraphics.lineBetween(
+    //     i * this.tileStyle.size + 30,
+    //     90,
+    //     i * this.tileStyle.size + 30,
+    //     this.containerStyle.size + 90
+    //   ); // Vertical line
+    //   this.tileGraphics.lineBetween(
+    //     30,
+    //     i * this.tileStyle.size + 90,
+    //     this.containerStyle.size + 30,
+    //     i * this.tileStyle.size + 90
+    //   ); // Horizontal line
+    // }
 
-    this.stageLabel = this.stageLabel = this.add.text(
-      460,
-      45,
-      `Stage ${data.level ? data.level : ''}-${
-        data.mission ? data.mission : ''
-      }`,
-      {
-        fontSize: '16px',
-        fontFamily: 'Roboto Condensed',
-        color: '#FCF6F5',
-      }
-    );
-    this.stageLabel.setFontStyle('bold');
+    // this.stageLabel = this.stageLabel = this.add.text(
+    //   460,
+    //   45,
+    //   `Stage ${data.level ? data.level : ''}-${
+    //     data.mission ? data.mission : ''
+    //   }`,
+    //   {
+    //     fontSize: '16px',
+    //     fontFamily: 'Roboto Condensed',
+    //     color: '#FCF6F5',
+    //   }
+    // );
+    // this.stageLabel.setFontStyle('bold');
 
     // this.createMissonInfoContainer(data);
     this.missionInfo11Image = this.add.image(
@@ -141,135 +141,136 @@ export default class PlaygroundScene extends Phaser.Scene {
       }
     });
 
-    this.iconBack = this.add.image(50, 50, 'iconBack').setInteractive();
-    this.iconBack.on('pointerover', () => {
-      this.iconBack.setTexture('iconBackClick');
-    });
-    this.iconBack.on('pointerout', () => {
-      this.iconBack.setTexture('iconBack');
-    });
-    this.iconBack.on('pointerdown', () => {
-      const scene = this;
-      this.cameras.main.fadeOut(500, 0, 0, 0, (_: any, progress: number) => {
-        if (progress === 1) {
-          //   // 다른 장면들이 활성 상태인지 확인하고 종료
-          //   if (this.scene.isActive('DiagramScene')) {
-          //     this.scene.stop('DiagramScene');
-          //   }
-          //   if (this.scene.isActive('InputWindowScene')) {
-          //     this.scene.stop('InputWindowScene');
-          //   }
+    // this.iconBack = this.add.image(50, 50, 'iconBack').setInteractive();
+    // this.iconBack.on('pointerover', () => {
+    //   this.iconBack.setTexture('iconBackClick');
+    // });
+    // this.iconBack.on('pointerout', () => {
+    //   this.iconBack.setTexture('iconBack');
+    // });
+    // this.iconBack.on('pointerdown', () => {
+    //   const scene = this;
+    //   this.cameras.main.fadeOut(500, 0, 0, 0, (_: any, progress: number) => {
+    //     if (progress === 1) {
+    //       //   // 다른 장면들이 활성 상태인지 확인하고 종료
+    //       //   if (this.scene.isActive('DiagramScene')) {
+    //       //     this.scene.stop('DiagramScene');
+    //       //   }
+    //       //   if (this.scene.isActive('InputWindowScene')) {
+    //       //     this.scene.stop('InputWindowScene');
+    //       //   }
 
-          //   // 페이드 아웃이 완료되면 새 장면 시작
-          //   this.scene.start('GameScene', {
-          //     level: this.selectedLevel,
-          //     mission: this.selectedMission,
-          //     isFromPlaygroundScene: true,
-          //   });
-          // }
-          this.cleanupCurrentScene();
-          this.transitionToNewScene('SubMenuScene', data.level);
-        }
-      });
-    });
+    //       //   // 페이드 아웃이 완료되면 새 장면 시작
+    //       //   this.scene.start('GameScene', {
+    //       //     level: this.selectedLevel,
+    //       //     mission: this.selectedMission,
+    //       //     isFromPlaygroundScene: true,
+    //       //   });
+    //       // }
+    //       this.cleanupCurrentScene();
+    // TODO: backButton에 화면 전환 기능 추가할 것!!!
+    //       this.transitionToNewScene('SubMenuScene', data.level);
+    //     }
+    //   });
+    // });
 
-    this.iconReset = this.add.image(100, 50, 'iconReset').setInteractive();
-    this.iconReset.on('pointerover', () => {
-      this.iconReset.setTexture('iconResetClick');
-    });
-    this.iconReset.on('pointerout', () => {
-      this.iconReset.setTexture('iconReset');
-    });
-    this.iconReset.on('pointerdown', () => {
-      this.cleanupCurrentScene();
+    // this.iconReset = this.add.image(100, 50, 'iconReset').setInteractive();
+    // this.iconReset.on('pointerover', () => {
+    //   this.iconReset.setTexture('iconResetClick');
+    // });
+    // this.iconReset.on('pointerout', () => {
+    //   this.iconReset.setTexture('iconReset');
+    // });
+    // this.iconReset.on('pointerdown', () => {
+    //   this.cleanupCurrentScene();
 
-      const gameScene: Phaser.Scene = this.scene.get('GameScene');
-      gameScene.scene.restart();
-    });
+    //   const gameScene: Phaser.Scene = this.scene.get('GameScene');
+    //   gameScene.scene.restart();
+    // });
 
     // Load Task - 미션을 위한 파일 로드 feats. 객체들
-    this.gameLoader(this.selectedLevel, this.selectedMission);
+    // this.gameLoader(this.selectedLevel, this.selectedMission);
 
     // Simulation Play Button
-    this.playButton = this.add.sprite(65, 645, 'playButton').setInteractive();
-    this.load.image('playButton', 'playButton');
+    // this.playButton = this.add.sprite(65, 645, 'playButton').setInteractive();
+    // this.load.image('playButton', 'playButton');
 
-    this.events.on('simulationEnd', () => {
-      this.playButton.setTexture('playButton');
-      this.isSimulationPlaying = false;
-    });
+    // this.events.on('simulationEnd', () => {
+    //   this.playButton.setTexture('playButton');
+    //   this.isSimulationPlaying = false;
+    // });
 
-    this.playButton.on('pointerdown', () => {
-      // 시뮬 중, 멈춤 버튼 누르면 시뮬 초기화 되면서 play버튼 나타나기
-      if (this.isSimulationPlaying) {
-        this.playButton.setTexture('playButton');
-        this.isSimulationPlaying = false;
-      } else {
-        // 시뮬 중이 아니면, 정지 버튼으로 바뀌면서 시뮬 시작
-        this.playButton.setTexture('stopButton');
-        this.isSimulationPlaying = true;
+    // this.playButton.on('pointerdown', () => {
+    //   // 시뮬 중, 멈춤 버튼 누르면 시뮬 초기화 되면서 play버튼 나타나기
+    //   if (this.isSimulationPlaying) {
+    //     this.playButton.setTexture('playButton');
+    //     this.isSimulationPlaying = false;
+    //   } else {
+    //     // 시뮬 중이 아니면, 정지 버튼으로 바뀌면서 시뮬 시작
+    //     this.playButton.setTexture('stopButton');
+    //     this.isSimulationPlaying = true;
 
-        const stateInputData = this.stateInputData;
-        const level = data.level;
-        const mission = data.mission;
+    //     const stateInputData = this.stateInputData;
+    //     const level = data.level;
+    //     const mission = data.mission;
 
-        switch (level) {
-          case 1:
-            switch (mission) {
-              case 1:
-                if (this.taskStars) {
-                  if (this.isMissionInitiated) {
-                    this.taskStars.restartSimulation(
-                      stateInputData,
-                      this.highlightOn
-                    );
-                  } else {
-                    this.taskStars.processStateInputData(
-                      stateInputData,
-                      this.highlightOn
-                    );
-                    this.isMissionInitiated = true;
-                  }
-                } else {
-                  console.log('Mission is not loaded yet.');
-                }
-            }
-          case 2:
-            switch (mission) {
-              case 1:
-                if (this.tunnelFinder) {
-                  if (this.isMissionInitiated) {
-                    this.tunnelFinder.restartSimulation(
-                      stateInputData,
-                      this.highlightOn
-                    );
-                  } else {
-                    this.tunnelFinder.processStateInputData(
-                      stateInputData,
-                      this.highlightOn
-                    );
-                    this.isMissionInitiated = true;
-                  }
-                } else {
-                  console.log('Mission is not loaded yet.');
-                }
-            }
-        }
-      }
-    });
+    //     switch (level) {
+    //       case 1:
+    //         switch (mission) {
+    //           case 1:
+    //             if (this.taskStars) {
+    //               if (this.isMissionInitiated) {
+    //                 this.taskStars.restartSimulation(
+    //                   stateInputData,
+    //                   this.highlightOn
+    //                 );
+    //               } else {
+    //                 this.taskStars.processStateInputData(
+    //                   stateInputData,
+    //                   this.highlightOn
+    //                 );
+    //                 this.isMissionInitiated = true;
+    //               }
+    //             } else {
+    //               console.log('Mission is not loaded yet.');
+    //             }
+    //         }
+    //       case 2:
+    //         switch (mission) {
+    //           case 1:
+    //             if (this.tunnelFinder) {
+    //               if (this.isMissionInitiated) {
+    //                 this.tunnelFinder.restartSimulation(
+    //                   stateInputData,
+    //                   this.highlightOn
+    //                 );
+    //               } else {
+    //                 this.tunnelFinder.processStateInputData(
+    //                   stateInputData,
+    //                   this.highlightOn
+    //                 );
+    //                 this.isMissionInitiated = true;
+    //               }
+    //             } else {
+    //               console.log('Mission is not loaded yet.');
+    //             }
+    //         }
+    //     }
+    //   }
+    // });
 
-    // Hightlight On/Off Button
-    this.highlightToggle = this.add.image(64, 689, 'hightlightToggleOff');
-    this.highlightToggle.setInteractive();
-    this.highlightToggle.on('pointerdown', () => {
-      if (!this.highlightOn) {
-        this.highlightToggle.setTexture('hightlightToggleOn');
-        this.highlightOn = true;
-      } else {
-        this.highlightToggle.setTexture('hightlightToggleOff');
-        this.highlightOn = false;
-      }
-    });
+    // // Hightlight On/Off Button
+    // this.highlightToggle = this.add.image(64, 689, 'hightlightToggleOff');
+    // this.highlightToggle.setInteractive();
+    // this.highlightToggle.on('pointerdown', () => {
+    //   if (!this.highlightOn) {
+    //     this.highlightToggle.setTexture('hightlightToggleOn');
+    //     this.highlightOn = true;
+    //   } else {
+    //     this.highlightToggle.setTexture('hightlightToggleOff');
+    //     this.highlightOn = false;
+    //   }
+    // });
 
     // this.events.emit('playgroundSceneReady');
   }

@@ -5,6 +5,83 @@ import {
 } from './classes/DropdownMenu';
 import ControlButton, { ButtonType } from './classes/ControlButton';
 
+export const diagramContainerConfig = {
+  x: 550,
+  y: 90,
+  width: 500,
+  height: 250,
+  borderRadius: 10,
+  backgroundColor: 0xfcf6f5,
+};
+
+export const inputContainerConfig = {
+  x: 550,
+  y: 400,
+  width: 500,
+  height: 380,
+  borderRadius: 10,
+  backgroundColor: 0xfcf6f5,
+};
+
+export const controllerContainerConfig = {
+  x: 210,
+  y: 620,
+  width: 320,
+  height: 160,
+  borderRadius: 10,
+  backgroundColor: 0xfcf6f5,
+};
+
+export const playgroundContainerConfig = {
+  x: 30,
+  y: 90,
+  size: 500,
+  borderRadius: 10,
+  backgroundColor: 0xfcf6f5,
+};
+
+export const playgroundTileConfig = {
+  size: 50,
+  lineWidth: 1,
+  lineColor: 0x2bae66,
+  lineColorAlpha: 128 / 255,
+};
+
+export const backButtonConfig = {
+  x: 50,
+  y: 50,
+  texture: 'iconBack',
+  selectedTexture: 'iconBackClick',
+};
+export const resetButtonConfig = {
+  x: 100,
+  y: 50,
+  texture: 'iconReset',
+  selectedTexture: 'iconResetClick',
+};
+
+export const stageLabelConfig = {
+  x: 460,
+  y: 45,
+  fontSize: '16px',
+  fontFamily: 'Roboto Condensed',
+  color: '#FCF6F5',
+};
+
+export const playButtonConfig = {
+  x: 65,
+  y: 645,
+  texture: 'playButton',
+  selectedTexture: ' stopButton',
+};
+
+export const highligtToggleConfig = {
+  x: 64,
+  y: 689,
+  texture: 'hightlightToggleOff',
+  selectedTexture: ' hightlightToggleOn',
+};
+
 /** DropdownMenu Options */
 export const options: DropdownOption[] = [
   {
