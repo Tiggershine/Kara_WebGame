@@ -31,6 +31,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
   private tempSensorInputs: SensorType[] = []; // Store selected sensor button
   private inputRowCount: number = 1; // 줄 순서대로 입력을 강제하기 위한 인수
   private inputGuideline!: InputGuideline;
+  private inputGuidelines: InputGuideline[] = [];
   private isActive!: boolean;
   private dummyButtons: { [key: string]: Phaser.GameObjects.Image } = {};
   [key: string]: any;
@@ -39,11 +40,18 @@ export class InputWindow extends Phaser.GameObjects.Container {
     .fill(null)
     .map(() => ({ sensorChecks: [], move: [], nextState: -1 }));
   private registeredStates: { id: number; name: string }[] = [];
-  private registeredRow1: boolean = false;
-  private registeredRow2: boolean = false;
-  private registeredRow3: boolean = false;
-  private registeredRow4: boolean = false;
-  private registeredRow5: boolean = false;
+  private rowActiveCheck = [
+    { id: 1, active: true },
+    { id: 2, active: false },
+    { id: 3, active: false },
+    { id: 4, active: false },
+    { id: 5, active: false },
+  ];
+  private activatedRow1: boolean = true;
+  private activatedRow2: boolean = false;
+  private activatedRow3: boolean = false;
+  private activatedRow4: boolean = false;
+  private activatedRow5: boolean = false;
   private containerGraphic!: Phaser.GameObjects.Graphics;
   // Add a new property to keep track of ControlButton objects
 
@@ -158,7 +166,8 @@ export class InputWindow extends Phaser.GameObjects.Container {
     scene.add.existing(this);
 
     /** Guideline */
-    this.inputGuideline = this.addGuildeline();
+    // this.inputGuideline = this.addGuildeline();
+    this.createGuideline();
     // Control Buttons (Condition buttons, Move buttons)
     this.addControlButtons();
     // Dropddown buttons (Sensors)
@@ -356,12 +365,13 @@ export class InputWindow extends Phaser.GameObjects.Container {
   registerInputRow = (rowNumber: number) => {
     switch (rowNumber) {
       case 1:
+        this.rowActiveCheck[1].active = true;
         this.registeredRow1 = true;
         this.inputRowCount++;
         break;
       case 2:
+        this.rowActiveCheck[2].active = true;
         this.registeredRow2 = true;
-
         this.inputRowCount++;
         this.nextStateButtons[1].setVisible(true);
         // for (let i = 0; i < this.inputRowCount; i++) {
@@ -369,16 +379,19 @@ export class InputWindow extends Phaser.GameObjects.Container {
         // }
         break;
       case 3:
+        this.rowActiveCheck[3].active = true;
         this.registeredRow3 = true;
         this.inputRowCount++;
         this.nextStateButtons[2].setVisible(true);
         break;
       case 4:
+        this.rowActiveCheck[4].active = true;
         this.registeredRow4 = true;
         this.inputRowCount++;
         this.nextStateButtons[3].setVisible(true);
         break;
       case 5:
+        // this.activatedRow2 = true;
         this.registeredRow5 = true;
         this.inputRowCount++;
         this.nextStateButtons[4].setVisible(true);
@@ -567,27 +580,15 @@ export class InputWindow extends Phaser.GameObjects.Container {
           newButton.setPosition(dragX, dragY);
           newButton.setDepth(100);
 
-          if (
-            this.tempSensorInputs.length > 0 &&
-            (newButton.getType === ButtonType.YesButton ||
-              newButton.getType === ButtonType.NoButton ||
-              newButton.getType === ButtonType.YesNoButton)
-          ) {
-            for (let i = 0; i < this.inputRowCount; i++) {
-              guideline.setGuidelineVisible(true, i);
+          this.inputGuidelines.forEach((guideline, index) => {
+            const rowCheck = this.rowActiveCheck.find(
+              (rc) => rc.id === index + 1
+            );
+            if (rowCheck && rowCheck.active) {
+              console.log(`row${index + 1} active: `, rowCheck.active);
+              guideline.setGuidelineVisible();
             }
-          } else if (
-            this.tempSensorInputs.length > 0 &&
-            (newButton.getType === ButtonType.ForwardButton ||
-              newButton.getType === ButtonType.LeftButton ||
-              newButton.getType === ButtonType.RightButton ||
-              newButton.getType === ButtonType.PickButton ||
-              newButton.getType === ButtonType.PutButton)
-          ) {
-            for (let i = 0; i < this.inputRowCount - 1; i++) {
-              guideline.setGuidelineVisible(true, i);
-            }
-          }
+          });
         }
       }
     );
@@ -615,7 +616,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
               const targetSensorIndex: number = parseInt(
                 point.key.split('_')[1][1]
               ); // 입력 sensor 번호
-              const rowNumber: number = parseInt(point.key.split('_')[1][0]); // 입력 줄 번호
+              const rowNumber: number = parseInt(point.key.split('_')[1][0]); // 입력 row 번호
 
               if (
                 registedSensorCount === 0 ||
@@ -678,7 +679,9 @@ export class InputWindow extends Phaser.GameObjects.Container {
         }
       }
 
-      guideline.setAllGuidelinesVisible(false);
+      this.inputGuidelines.forEach((guideline) => {
+        guideline.setGuidelineInvisible();
+      });
     });
   };
 
@@ -790,15 +793,21 @@ export class InputWindow extends Phaser.GameObjects.Container {
   };
 
   /** Guideline */
-  addGuildeline = (): InputGuideline => {
-    const inputGutideline = new InputGuideline(
-      this.scene,
-      guidelinePositions,
-      'inputGuideline'
-    );
+  // addGuildeline = (): InputGuideline => {
+  //   const inputGutideline = new InputGuideline(
+  //     this.scene,
+  //     guidelinePositions
+  //     // 'inputGuideline'
+  //   );
 
-    this.scene.add.existing(inputGutideline);
-    return inputGutideline;
+  //   this.scene.add.existing(inputGutideline);
+  //   return inputGutideline;
+  // };
+  createGuideline = (): void => {
+    guidelinePositions.forEach((posision) => {
+      const guideline = new InputGuideline(this.scene, posision.x, posision.y);
+      this.inputGuidelines.push(guideline);
+    });
   };
 
   /** Cleanup function to destroy all created objects */
