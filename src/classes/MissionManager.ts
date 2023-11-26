@@ -20,15 +20,8 @@ export default class MissionManager {
     switch (level) {
       case 1:
         switch (mission) {
-          // case 1:
-          //   this.missionStars = new Stars(
-          //     this.diagramScene,
-          //     playButtonConfig.x,
-          //     playButtonConfig.y
-          //   );
-          //   break;
           case 1:
-            this.missionStarFindInForest = new StarFindInForest(
+            this.missionStars = new Stars(
               this.diagramScene,
               playButtonConfig.x,
               playButtonConfig.y
@@ -40,6 +33,7 @@ export default class MissionManager {
               playButtonConfig.x,
               playButtonConfig.y
             );
+            break;
         }
         break;
       case 2:
@@ -85,8 +79,29 @@ export default class MissionManager {
                 );
                 this.diagramScene.setIsMissionInitiated = true;
               }
+              break;
             } else {
               console.log('Mission is not loaded yet.');
+              break;
+            }
+          case 2:
+            if (this.missionStarFindInForest) {
+              if (this.diagramScene.getIsMissionInitiated) {
+                this.missionStarFindInForest.restartSimulation(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+              } else {
+                this.missionStarFindInForest.processStateInputData(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+                this.diagramScene.setIsMissionInitiated = true;
+              }
+              break;
+            } else {
+              console.log('Mission is not loaded yet.');
+              break;
             }
         }
       case 2:
@@ -105,8 +120,10 @@ export default class MissionManager {
                 );
                 this.diagramScene.setIsMissionInitiated = true;
               }
+              break;
             } else {
               console.log('Mission is not loaded yet.');
+              break;
             }
         }
     }

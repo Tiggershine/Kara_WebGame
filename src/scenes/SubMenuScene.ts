@@ -5,13 +5,44 @@ interface SubMenuSceneData {
   mission: number;
 }
 
+interface MissionLog {
+  mission: number;
+  isSuccess: boolean;
+}
+
+const missionButtonConfig = [
+  { id: 1, x: 255, y: 543, texture: 'missionBtn1' },
+  { id: 2, x: 429, y: 543, texture: 'missionBtn2' },
+  { id: 3, x: 603, y: 543, texture: 'missionBtn3' },
+  { id: 4, x: 777, y: 543, texture: 'missionBtn4' },
+];
+
 export default class SubMenuScene extends Phaser.Scene {
   private iconBack!: Phaser.GameObjects.Image;
   private missionBtn1!: Phaser.GameObjects.Image;
   private missionBtn2!: Phaser.GameObjects.Image;
   private missionBtn3!: Phaser.GameObjects.Image;
   private missionBtn4!: Phaser.GameObjects.Image;
+  private selectedLevel: number = 0;
   private selectedMission: number = 0;
+  static MissionLog1: MissionLog[] = [
+    { mission: 1, isSuccess: true },
+    { mission: 2, isSuccess: true },
+    { mission: 3, isSuccess: false },
+    { mission: 4, isSuccess: false },
+  ];
+  static MissionLog2: MissionLog[] = [
+    { mission: 1, isSuccess: true },
+    { mission: 2, isSuccess: false },
+    { mission: 3, isSuccess: false },
+    { mission: 4, isSuccess: false },
+  ];
+  static MissionLog3: MissionLog[] = [
+    { mission: 1, isSuccess: true },
+    { mission: 2, isSuccess: false },
+    { mission: 3, isSuccess: false },
+    { mission: 4, isSuccess: false },
+  ];
 
   constructor() {
     super({ key: 'SubMenuScene' });
@@ -61,74 +92,100 @@ export default class SubMenuScene extends Phaser.Scene {
       this.iconBack.setTexture('iconBack');
     });
 
-    this.missionBtn1 = this.add.image(255, 543, 'missionBtn1');
-    this.add.image(429, 543, 'missionBtnLock');
-    this.add.image(603, 543, 'missionBtnLock');
-    this.add.image(777, 543, 'missionBtnLock');
-
-    this.missionBtn1.setInteractive().on('pointerdown', () => {
-      this.selectedMission = 1;
-      this.missionBtn1.setTexture('missionBtn1Hover');
-      this.cameras.main.fadeOut(500, 0, 0, 0, (_: any, progress: number) => {
-        this.handleImageClick(data.level);
-      });
-    });
-    this.missionBtn1.on('pointerover', () => {
-      this.missionBtn1.setTexture('missionBtn1Hover');
-    });
-    this.missionBtn1.on('pointerout', () => {
-      this.missionBtn1.setTexture('missionBtn1');
-    });
-
+    this.selectedLevel = data.level;
+    // 배경 이미지 Init (Level에 따라서)
     if (data.level) {
       console.log('data.level: ', data.level);
       this.setupInitialImg(data.level);
     }
   }
 
+  // Level에 따른 배경 이미지 (Level1 / Level2 / Level3)
   setupInitialImg = (level: number): void => {
     console.log('setupInitialImg 실행 - level: ', level);
     switch (level) {
       case 1:
         this.add.image(540, 243, 'subMenuImg1');
+        this.setupMissionImgList('MissionLog1');
         break;
       case 2:
         this.add.image(540, 243, 'subMenuImg2');
+        this.setupMissionImgList('MissionLog2');
         break;
       case 3:
         this.add.image(540, 243, 'subMenuImg3');
+        this.setupMissionImgList('MissionLog3');
         break;
       default:
         console.log('Mission must be selected!');
     }
   };
 
-  handleImageClick(selectedLevel: number) {
-    const level = selectedLevel;
+  setupMissionImgList = (missionLogName: string) => {
+    const missionLogs =
+      SubMenuScene[missionLogName as keyof typeof SubMenuScene];
+    console.log(missionLogs);
 
-    let mission: number;
-    switch (this.selectedMission) {
-      case 1:
-        mission = 1;
-        break;
-      case 2:
-        mission = 2;
-        break;
-      case 3:
-        mission = 3;
-        break;
-      case 4:
-        mission = 4;
-        break;
-      default:
-        console.log('Unknown image');
-        return;
+    if (!Array.isArray(missionLogs)) {
+      console.log('Invalid mission log name or not an array');
+      return;
     }
+
+    missionLogs.forEach((missionLog, index) => {
+      console.log('missionLogs forEach 시작');
+      if (missionLog.isSuccess) {
+        console.log('missionLogs forEach isSuccess');
+        this.createMissionButtons(
+          missionButtonConfig[index].x,
+          missionButtonConfig[index].y,
+          missionButtonConfig[index].texture,
+          index + 1
+        );
+      } else {
+        console.log('missionLogs forEach isNotSuccess');
+        this.createMissionButtons(
+          missionButtonConfig[index].x,
+          missionButtonConfig[index].y,
+          'missionBtnLock'
+        );
+      }
+    });
+  };
+
+  createMissionButtons = (
+    // isSuccess: boolean,
+    x: number,
+    y: number,
+    texture: string,
+    mission?: number
+  ) => {
+    console.log(x, y, texture, mission);
+    const missionBtn = this.add.image(x, y, texture).setInteractive();
+    this.scene.scene.add.existing(missionBtn);
+    const selectedTexture: string = texture + 'Hover';
+    console.log(selectedTexture);
+    missionBtn.on('pointerover', () => {
+      console.log('pointerover');
+      missionBtn.setTexture(selectedTexture);
+    });
+    missionBtn.on('pointerout', () => {
+      missionBtn.setTexture(texture);
+    });
+    missionBtn.on('pointerdown', () => {
+      if (mission) this.handleImageClick(mission);
+    });
+  };
+
+  handleImageClick(mission: number) {
+    const level = this.selectedLevel;
 
     this.cameras.main.fadeOut(500, 0, 0, 0, (_: any, progress: number) => {
       if (progress === 1) {
         // 페이드 아웃이 완료되면 새 장면 시작
-        this.scene.start('GameScene', { level: level, mission: mission });
+        this.scene.start('GameScene', {
+          level: level,
+          mission: mission,
+        });
       }
     });
   }

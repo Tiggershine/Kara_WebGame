@@ -39,16 +39,35 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
 
     this.createGuidelineGraphic();
   }
+  restartSimulation = (stateInputData: any, highlightOn: boolean) => {
+    this.player.cleanUpStars();
+    this.player.setPosition(105, 315).setAngle(90);
+    this.player.playerHighlight.setPosition(105, 315);
+
+    this.star = new Star(this.scene, 455, 315);
+    this.scene.add.existing(this.star);
+
+    this.processStateInputData(stateInputData, highlightOn);
+  };
+
+  processStateInputData = (stateInputData: any, highlightOn: boolean) => {
+    console.log('StarFindInforest Simulation 시작');
+    this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
+      // const positionsCorrect = this.checkObjectPositions();
+      // console.log(positionsCorrect ? 'Success' : 'Fail');
+      console.log('END');
+    });
+  };
 
   createGuidelineGraphic = () => {
     const guidelineGraphic = this.scene.add.graphics({
       lineStyle: {
-        width: 2, // 선의 두께
-        color: 0xef3d38, // 선의 색상, 여기서는 흰색
+        width: 2, //  line tickness
+        color: 0xef3d38, // line color
       },
     });
 
-    // 좌표 배열
+    // Coordinate of guideline
     const points = [
       { x: 105, y: 290 },
       { x: 105, y: 265 },
@@ -64,7 +83,7 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
       { x: 455, y: 290 },
     ];
 
-    // 점선 그리기
+    // making dotted line
     const drawDottedLine = (
       from: { x: number; y: number },
       to: { x: number; y: number },
@@ -91,23 +110,23 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
       }
     };
 
-    // 점선 그리기
+    // drawingdotted line
     for (let i = 0; i < points.length - 1; i++) {
       drawDottedLine(points[i], points[i + 1]);
     }
 
-    // 화살표 그리기
+    // making arrow
     const arrowSize = 10; // 화살표 크기
     const lastPoint = points[points.length - 1];
     const secondLastPoint = points[points.length - 2];
 
-    // 화살표 방향 계산
+    // calculating direction of arrow
     const angle = Math.atan2(
       lastPoint.y - secondLastPoint.y,
       lastPoint.x - secondLastPoint.x
     );
 
-    // 화살표 끝점 계산
+    // calculating end point of arrow
     const arrowEnd1 = {
       x: lastPoint.x - arrowSize * Math.cos(angle - Math.PI / 4),
       y: lastPoint.y - arrowSize * Math.sin(angle - Math.PI / 4),
@@ -117,7 +136,7 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
       y: lastPoint.y - arrowSize * Math.sin(angle + Math.PI / 4),
     };
 
-    // 화살표 그리기
+    // drawing arrow
     guidelineGraphic.lineBetween(
       lastPoint.x,
       lastPoint.y,

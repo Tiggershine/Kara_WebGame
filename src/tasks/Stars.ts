@@ -40,7 +40,7 @@ export default class Stars extends Phaser.GameObjects.Container {
 
   restartSimulation = (stateInputData: any, highlightOn: boolean) => {
     this.player.cleanUpStars();
-    this.player.setPosition(155, 315);
+    this.player.setPosition(155, 315).setAngle(90);
     this.player.playerHighlight.setPosition(155, 315);
 
     this.star1 = new Star(this.scene, 205, 315);

@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 
-export default class StateScene extends Phaser.Scene {
+export default class StartScene extends Phaser.Scene {
   private startBtn!: Phaser.GameObjects.Image;
 
   constructor() {
