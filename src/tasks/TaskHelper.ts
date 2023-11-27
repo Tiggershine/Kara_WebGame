@@ -179,7 +179,14 @@ export default class TaskHelper {
                 simulationPoint.y
               );
             }
-            await this.executeMove(this.player, move);
+            let moveSuccessful: boolean = await this.executeMove(
+              this.player,
+              move
+            );
+            if (!moveSuccessful) {
+              console.log('경계선을 넘어갈 수 없음');
+              return;
+            }
           }
 
           const nextStateSimulationKey = simulationPrefix + '9';
@@ -267,33 +274,53 @@ export default class TaskHelper {
     }
   }
 
+  // executeMove = async (
+  //   player: Player,
+  //   moveId: number | null
+  // ): Promise<boolean> => {
+  //   switch (moveId) {
+  //     case 3:
+  //       await player.moveForward();
+  //       console.log('moveForward');
+  //       break;
+  //     case 4:
+  //       await player.turnLeft();
+  //       console.log('turnLeft');
+  //       break;
+  //     case 5:
+  //       await player.turnRight();
+  //       console.log('turnRight');
+  //       break;
+  //     case 6:
+  //       await player.putStar();
+  //       console.log('putStar');
+  //       break;
+  //     case 7:
+  //       await player.pickStar();
+  //       console.log('pickStar');
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // };
   executeMove = async (
     player: Player,
     moveId: number | null
-  ): Promise<void> => {
+  ): Promise<boolean> => {
     switch (moveId) {
       case 3:
-        await player.moveForward();
-        console.log('moveForward');
-        break;
+        return await player.moveForward();
       case 4:
-        await player.turnLeft();
-        console.log('turnLeft');
-        break;
+        return await player.turnLeft();
       case 5:
-        await player.turnRight();
-        console.log('turnRight');
-        break;
+        return await player.turnRight();
       case 6:
-        await player.putStar();
-        console.log('putStar');
-        break;
+        return await player.putStar();
       case 7:
-        await player.pickStar();
-        console.log('pickStar');
-        break;
+        return await player.pickStar();
       default:
-        break;
+        console.log('Invalid move');
+        return false; // No valid moveId was provided
     }
   };
 }

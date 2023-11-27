@@ -2,13 +2,7 @@ import Phaser from 'phaser';
 import Player from '../classes/sprites/Player';
 import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
-import { StateInput } from '../classes/InputManager';
 import TaskHelper from './TaskHelper';
-
-type State = {
-  id: number;
-  stateInputs: StateInput[];
-};
 
 export default class StarFindInForest extends Phaser.GameObjects.Container {
   private player!: Player;
@@ -17,8 +11,6 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
   private star3!: Star;
   private star4!: Star;
   private star5!: Star;
-  private star6!: Star;
-  private star7!: Star;
   private wall1!: Wall;
   private wall2!: Wall;
   private wall3!: Wall;
@@ -43,8 +35,6 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
 
     this.star1 = new Star(this.scene, 155, 315);
     this.star2 = new Star(this.scene, 205, 315);
-    // this.star3 = new Star(this.scene, 255, 315);
-    // this.star4 = new Star(this.scene, 305, 315);
     this.star3 = new Star(this.scene, 355, 315);
     this.star4 = new Star(this.scene, 405, 315);
     this.star5 = new Star(this.scene, 455, 315);
@@ -95,9 +85,6 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
     const isStarAt155315 = this.scene.children.list.some(
       (child) => child instanceof Star && child.x === 155 && child.y === 315
     );
-    // const isStarAt255315 = this.scene.children.list.some(
-    //   (child) => child instanceof Star && child.x === 255 && child.y === 315
-    // );
     const isStarAt355315 = this.scene.children.list.some(
       (child) => child instanceof Star && child.x === 355 && child.y === 315
     );
@@ -130,7 +117,6 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
           child instanceof Wall) &&
         !(
           (child.x === 155 && child.y === 315) ||
-          // (child.x === 255 && child.y === 315) ||
           (child.x === 355 && child.y === 315) ||
           (child.x === 455 && child.y === 315) ||
           (child.x === 205 && child.y === 265) ||
@@ -144,7 +130,6 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
 
     return (
       isStarAt155315 &&
-      // isStarAt255315 &&
       isStarAt355315 &&
       isPlayerAt455315 &&
       isWallAt205265 &&

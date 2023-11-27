@@ -2,13 +2,7 @@ import Phaser from 'phaser';
 import Player from '../classes/sprites/Player';
 import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
-import { StateInput } from '../classes/InputManager';
 import TaskHelper from './TaskHelper';
-
-type State = {
-  id: number;
-  stateInputs: StateInput[];
-};
 
 export default class StarFindInForest extends Phaser.GameObjects.Container {
   private player!: Player;
