@@ -54,7 +54,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
 
     this.buttonLabel = this.scene.add.text(-30, -7, 'SELECT', {
       fontSize: '14px',
-      fontFamily: 'Roboto Flex',
+      fontFamily: 'Roboto Condensed',
       color: '#1B1C1D',
     });
     this.buttonContainer.add(buttonRectangle);
@@ -96,7 +96,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
         .setOrigin(0.5, 0.5);
       const menuItemText = this.scene.add.text(-20, -7, option.name, {
         fontSize: '14px',
-        fontFamily: 'Roboto Flex',
+        fontFamily: 'Roboto Condensed',
         color: '#FCF6F5',
       });
       optionContainer.add(menuItemRectangle);

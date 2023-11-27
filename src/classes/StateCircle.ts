@@ -70,7 +70,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
       this.name,
       {
         fontSize: '16px',
-        fontFamily: 'Roboto Flex',
+        fontFamily: 'Roboto Condensed',
         color: '#1B1C1D',
       }
     );
