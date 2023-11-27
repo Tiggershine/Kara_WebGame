@@ -64,7 +64,7 @@ export const stageLabelConfig = {
   x: 460,
   y: 45,
   fontSize: '16px',
-  fontFamily: 'Roboto Condensed',
+  fontFamily: 'Roboto Flex',
   color: '#FCF6F5',
 };
 

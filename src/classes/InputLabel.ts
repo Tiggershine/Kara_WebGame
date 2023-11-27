@@ -40,7 +40,7 @@ export class InputLabel extends Phaser.GameObjects.Container {
     this.label = scene.add
       .text(0, 0, this.labelText, {
         fontSize: '14px',
-        fontFamily: 'RobotoFlex',
+        fontFamily: 'Roboto Flex',
         color: textColor,
         align: 'center',
       })

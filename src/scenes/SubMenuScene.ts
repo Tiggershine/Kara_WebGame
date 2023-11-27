@@ -28,7 +28,7 @@ export default class SubMenuScene extends Phaser.Scene {
   static MissionLog1: MissionLog[] = [
     { mission: 1, isSuccess: true },
     { mission: 2, isSuccess: true },
-    { mission: 3, isSuccess: false },
+    { mission: 3, isSuccess: true },
     { mission: 4, isSuccess: false },
   ];
   static MissionLog2: MissionLog[] = [

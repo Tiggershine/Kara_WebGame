@@ -1,6 +1,7 @@
 import DiagramScene from '../scenes/DiagramScene';
 import Stars from '../tasks/Stars';
 import StarFindInForest from '../tasks/StarFindInForest';
+import BetweenWall from '../tasks/BetweenWall';
 import TunnelFinder from '../tasks/TunnelFinder';
 import { StateInput } from './InputManager';
 import { playButtonConfig } from '../configurations';
@@ -9,6 +10,7 @@ export default class MissionManager {
   private diagramScene: DiagramScene;
   private missionStars!: Stars;
   private missionStarFindInForest!: StarFindInForest;
+  private missionBetweenWall!: BetweenWall;
   private minssionTunnelFinder!: TunnelFinder;
 
   constructor(diagaramScene: DiagramScene) {
@@ -29,6 +31,13 @@ export default class MissionManager {
             break;
           case 2:
             this.missionStarFindInForest = new StarFindInForest(
+              this.diagramScene,
+              playButtonConfig.x,
+              playButtonConfig.y
+            );
+            break;
+          case 3:
+            this.missionBetweenWall = new BetweenWall(
               this.diagramScene,
               playButtonConfig.x,
               playButtonConfig.y
@@ -93,6 +102,25 @@ export default class MissionManager {
                 );
               } else {
                 this.missionStarFindInForest.processStateInputData(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+                this.diagramScene.setIsMissionInitiated = true;
+              }
+              break;
+            } else {
+              console.log('Mission is not loaded yet.');
+              break;
+            }
+          case 3:
+            if (this.missionBetweenWall) {
+              if (this.diagramScene.getIsMissionInitiated) {
+                this.missionBetweenWall.restartSimulation(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+              } else {
+                this.missionBetweenWall.processStateInputData(
                   stateInputData,
                   this.diagramScene.getIsHighlightOn
                 );
