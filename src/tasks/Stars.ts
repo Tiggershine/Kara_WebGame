@@ -2,10 +2,10 @@ import Phaser from 'phaser';
 import Player from '../classes/sprites/Player';
 import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
-// import SimulationHighlight from '../classes/SimulationHighlight';
-// import DiagramScene from '../scenes/DiagramScene';
 import { StateInput } from '../classes/InputManager';
 import TaskHelper from './TaskHelper';
+import PopupWindow from '../classes/PopupWindow';
+import DiagramScene from '../scenes/DiagramScene';
 
 type State = {
   id: number;
@@ -18,7 +18,7 @@ export default class Stars extends Phaser.GameObjects.Container {
   private star2!: Star;
   private wall!: Wall;
   private taskHelper!: TaskHelper;
-  // private missionInfoContainer!: Phaser.GameObjects.Container;
+  private isSuccessPopupShowed: boolean = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
@@ -54,6 +54,39 @@ export default class Stars extends Phaser.GameObjects.Container {
   processStateInputData = (stateInputData: any, highlightOn: boolean) => {
     this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
       const positionsCorrect = this.checkObjectPositions();
+
+      console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
+      if (positionsCorrect && !this.isSuccessPopupShowed) {
+        const diagramScene = this.scene.scene.get(
+          'DiagramScene'
+        ) as DiagramScene;
+
+        diagramScene.popupWindow = new PopupWindow(
+          diagramScene,
+          'smBack',
+          `" Great job! \n  Let's take on the next mission. "`,
+          false
+        );
+        diagramScene.popupWindow.create();
+        diagramScene.add.existing(diagramScene.popupWindow);
+
+        this.isSuccessPopupShowed = true;
+      } else {
+        const diagramScene = this.scene.scene.get(
+          'DiagramScene'
+        ) as DiagramScene;
+
+        diagramScene.popupWindow = new PopupWindow(
+          diagramScene,
+          'smBack',
+          `" So close! \n  Would you like to try again? "`,
+          false
+        );
+        diagramScene.popupWindow.create();
+        diagramScene.add.existing(diagramScene.popupWindow);
+
+        this.isSuccessPopupShowed = true;
+      }
       console.log(positionsCorrect ? 'Success' : 'Fail');
     });
   };

@@ -124,7 +124,6 @@ export default class TaskHelper {
         sensorCheckPassed = true;
         for (let j = 0; j < stateInput.sensorChecks.length; j++) {
           const simulationKey = simulationPrefix + (j + 1).toString(); // simulation 좌표 앞자리 + 뒷자리
-          // console.log('simulationKey: ', simulationKey);
           const simulationPoint = conditionInputPoints.find(
             (p) => p.key === simulationKey
           );
@@ -145,11 +144,6 @@ export default class TaskHelper {
           }
 
           if (hightlightSelected && simulationPoint) {
-            // console.log(
-            //   'Condition Point: ',
-            //   simulationPoint.x,
-            //   simulationPoint.y
-            // );
             this.simulationHighlight.simulationHighlightOn();
             await this.simulationHighlight.moveImageTo(
               simulationPoint.x,
@@ -157,8 +151,6 @@ export default class TaskHelper {
             );
           }
         }
-
-        // console.log('sensorCheckPassed: ', sensorCheckPassed);
 
         if (sensorCheckPassed) {
           for (let j = 0; j < stateInput.move.length; j++) {
@@ -210,10 +202,10 @@ export default class TaskHelper {
       callbackFunction();
     }
 
+    this.scene.events.emit('simulationEnd');
+
     this.player.playerHighlightOff();
     this.simulationHighlight.simulationHighlightOff();
-
-    this.scene.events.emit('simulationEnd');
 
     return;
     // }

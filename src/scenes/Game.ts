@@ -92,6 +92,8 @@ export default class Game extends Phaser.Scene {
       popupYesBtnHover: 'assets/PopupYesHover.png',
       popupNoBtn: 'assets/PopupNo.png',
       popupNoBtnHover: 'assets/PopupNoHover.png',
+      popupOKBtn: 'assets/PopupOK.png',
+      popupOKBtnHover: 'assets/PopupOKHover.png',
     };
 
     for (let key in imageSources) {

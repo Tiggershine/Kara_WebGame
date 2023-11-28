@@ -117,6 +117,26 @@ export default class PopupWindow extends Phaser.GameObjects.Container {
       text.setFontStyle('bold');
       this.scene.add.existing(text);
       this.popupWindow.add(text);
+
+      const okBtn = this.scene.add.image(0, 50, 'popupOKBtn').setInteractive();
+      okBtn.on('pointerover', () => {
+        okBtn.setTexture('popupOKBtnHover');
+      });
+      okBtn.on('pointerout', () => {
+        okBtn.setTexture('popupOKBtn');
+      });
+      okBtn.on('pointerdown', () => {
+        this.scene.tweens.add({
+          targets: this.popupWindow,
+          alpha: 0,
+          duration: 500,
+          onComplete: () => {
+            this.popupWindow.setVisible(false);
+          },
+        });
+      });
+      this.scene.add.existing(okBtn);
+      this.popupWindow.add(okBtn);
     }
 
     this.popupWindow.setSize(popupImage.width, popupImage.height);
