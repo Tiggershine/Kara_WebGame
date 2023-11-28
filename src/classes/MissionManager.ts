@@ -196,11 +196,14 @@ export default class MissionManager {
   };
 
   // Clean up the Diagram Scene(destroy all changed elements) used for Back button or Reset button
-  cleanUpDiagramScene = (): void => {
-    this.diagramScene.cleanup();
+  cleanUpDiagramScene(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.diagramScene.cleanup();
 
-    if (this.diagramScene.scene.isActive('DiagramScene')) {
-      this.diagramScene.scene.stop('DiagramScene');
-    }
-  };
+      if (this.diagramScene.scene.isActive('DiagramScene')) {
+        this.diagramScene.scene.stop('DiagramScene');
+      }
+      resolve();
+    });
+  }
 }

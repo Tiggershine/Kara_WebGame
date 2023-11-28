@@ -13,12 +13,6 @@ export default class StartScene extends Phaser.Scene {
       startBtn: 'assets/StartBtn.png',
       startBtnHover: 'assets/StartBtnHover.png',
       backgroundImg: 'assets/BackgroundImg.png',
-      // Images for Popup Window
-      defaultPopup: 'assets/PopupMd.png',
-      popupSm: 'assets/PopupSm.png',
-      popupSmAlert: 'assets/PopupSmAlert.png',
-      popupMd: 'assets/PopupMd.png',
-      popupMdAlert: 'assets/PopupMdAlert.png',
     };
     for (let key in imageSources) {
       if (imageSources.hasOwnProperty(key)) {

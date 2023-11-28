@@ -39,18 +39,18 @@ export default class DiagramScene extends Phaser.Scene {
   create(missionData: MissionData) {
     this.cameras.main.fadeIn(500, 0, 0, 0);
 
-    this.popupWindow = new PopupWindow(
-      this,
-      'sm',
-      `" All inputs will be reset.\n  Do you want to keep going? "`
-    );
-    this.popupWindow.create();
+    // this.popupWindow = new PopupWindow(
+    //   this,
+    //   'smBack',
+    //   `" All inputs will be reset.\n  Do you want to keep going? "`
+    // );
+    // this.popupWindow.create();
 
     // Add PopupWindow to the scene
-    this.add.existing(this.popupWindow);
+    // this.add.existing(this.popupWindow);
 
     // Optionally, set visibility
-    this.popupWindow.setVisible(true);
+    // this.popupWindow.setVisible(true);
 
     this.level = missionData.level;
     this.mission = missionData.mission;

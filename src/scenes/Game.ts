@@ -81,6 +81,17 @@ export default class Game extends Phaser.Scene {
       highlightToggleOn: 'assets/HighlightToggleOn.png',
       // Images for Mission Infos
       missionInfo11: 'assets/MissionInfo11.png',
+      // Images for Popup Window
+      defaultPopup: 'assets/PopupMd.png',
+      popupSmBack: 'assets/PopupSmBack.png',
+      popupSm: 'assets/PopupSm.png',
+      popupSmAlert: 'assets/PopupSmAlert.png',
+      popupMd: 'assets/PopupMd.png',
+      popupMdAlert: 'assets/PopupMdAlert.png',
+      popupYesBtn: 'assets/PopupYes.png',
+      popupYesBtnHover: 'assets/PopupYesHover.png',
+      popupNoBtn: 'assets/PopupNo.png',
+      popupNoBtnHover: 'assets/PopupNoHover.png',
     };
 
     for (let key in imageSources) {

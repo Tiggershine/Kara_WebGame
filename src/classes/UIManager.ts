@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import DiagramScene from '../scenes/DiagramScene';
 import StateCircle from './StateCircle';
+import PopupWindow from './PopupWindow';
 import { StateInput } from './InputManager';
 import { InputLabel } from './InputLabel';
 import {
@@ -176,9 +177,13 @@ export default class UIManager {
     );
 
     // Deselect all other circles
-    this.diagramScene.stateCircles.forEach((circle) => {
-      circle.deselect();
-    });
+
+    this.diagramScene.getStateCircles &&
+      this.diagramScene.getStateCircles.forEach((circle) => {
+        if (circle) {
+          circle.deselect();
+        }
+      });
     // Ensure the newStateCircle is selected upon creation
     startStateCircle.select();
 
@@ -225,7 +230,7 @@ export default class UIManager {
     );
 
     endStateCircle.deselect();
-    endStateCircle.setDepth(50);
+    endStateCircle.setDepth(1);
 
     // Add the endStateCircle to the stateCircles array
     this.diagramScene.stateCircles.push(endStateCircle);
@@ -388,26 +393,41 @@ export default class UIManager {
       backButton.setTexture(backButtonConfig.texture);
     });
     backButton.on('pointerdown', () => {
-      this.diagramScene.cameras.main.fadeOut(
-        500,
-        0,
-        0,
-        0,
-        (_: any, progress: number) => {
-          if (progress === 1) {
-            if (this.diagramScene.scene.isActive('DiagramScene')) {
-              this.diagramScene.scene.stop('DiagramScene');
-            }
-
-            this.diagramScene.missionManager.cleanUpDiagramScene();
-
-            this.diagramScene.scene.launch('GameScene', {
-              level: selectedLevel,
-              isFromDiagramScene: true,
-            });
-          }
-        }
+      this.diagramScene.popupWindow = new PopupWindow(
+        this.diagramScene,
+        'smBack',
+        `" Would you like to return to \n   the menu? "`,
+        true
       );
+      this.diagramScene.popupWindow.create();
+      this.diagramScene.add.existing(this.diagramScene.popupWindow);
+
+      this.diagramScene.events.on('popupResponse', (response: boolean) => {
+        if (response) {
+          this.diagramScene.cameras.main.fadeOut(
+            500,
+            0,
+            0,
+            0,
+            (_: any, progress: number) => {
+              if (progress === 1) {
+                if (this.diagramScene.scene.isActive('DiagramScene')) {
+                  this.diagramScene.scene.stop('DiagramScene');
+                }
+
+                this.diagramScene.missionManager.cleanUpDiagramScene();
+
+                this.diagramScene.scene.launch('GameScene', {
+                  level: selectedLevel,
+                  isFromDiagramScene: true,
+                });
+              }
+            }
+          );
+        } else {
+          return;
+        }
+      });
     });
   };
   //////////  RESET BUTTON (PLAYGROUND)  //////////
@@ -425,12 +445,36 @@ export default class UIManager {
     backButton.on('pointerout', () => {
       backButton.setTexture(resetButtonConfig.texture);
     });
+    // backButton.on('pointerdown', () => {
+    //   this.diagramScene.popupWindow = new PopupWindow(
+    //     this.diagramScene,
+    //     'smBack',
+    //     `" All inputs will be reset.\n  Do you want to keep going? "`
+    //   );
+    //   this.diagramScene.popupWindow.create();
+    //   this.diagramScene.add.existing(this.diagramScene.popupWindow);
+
+    //   // let choice = false;
+
+    //   this.diagramScene.events.on('popupResponse', (response: boolean) => {
+    //     if (response) {
+    //       this.diagramScene.missionManager.cleanUpDiagramScene().then(() => {
+    //         this.diagramScene.scene.restart();
+    //       });
+    //     }
+    //   });
+    // });
     backButton.on('pointerdown', () => {
       this.diagramScene.missionManager.cleanUpDiagramScene();
 
       this.diagramScene.scene.restart();
     });
   };
+
+  private resetDiagramScene(): void {
+    this.diagramScene.missionManager.cleanUpDiagramScene();
+    this.diagramScene.scene.restart();
+  }
   //////////  STAGE LABEL (PLAYGROUND)  //////////
   createStageLabel = (level: number, mission: number): void => {
     const stageLabel = this.diagramScene.add.text(
