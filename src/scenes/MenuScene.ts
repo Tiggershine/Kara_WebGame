@@ -37,6 +37,8 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   create(data: MenuSceneData) {
+    this.cameras.main.fadeIn(500, 0, 0, 0);
+
     this.add
       .graphics({ fillStyle: { color: 0xfcf6f5 } })
       .fillRect(0, 0, 1080, 810);

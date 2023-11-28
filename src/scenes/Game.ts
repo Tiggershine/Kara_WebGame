@@ -99,78 +99,13 @@ export default class Game extends Phaser.Scene {
 
     this.add.image(0, 0, 'backgroundImg').setOrigin(0, 0);
 
-    // let isPlaygroundSceneReady: boolean = false;
-    // let isDiagramSceneReady: boolean = false;
-    // let isInputWindowSceneReady: boolean = false;
-
-    // this.scene.get('PlaygroundScene').events.on('playgroundSceneReady', () => {
-    //   isPlaygroundSceneReady = true;
-    // });
-    // this.scene.get('DiagramScene').events.on('diagramSceneReady', () => {
-    //   isDiagramSceneReady = true;
-    // });
-    // this.scene
-    //   .get('InputWindowScene')
-    //   .events.on('inputWindowSceneReady', () => {
-    //     isInputWindowSceneReady = true;
-    //   });
-
-    // console.log(
-    //   isPlaygroundSceneReady,
-    //   isDiagramSceneReady,
-    //   isInputWindowSceneReady
-    // );
-    // if (
-    //   isPlaygroundSceneReady &&
-    //   isDiagramSceneReady &&
-    //   isInputWindowSceneReady
-    // ) {
-    //   this.scene.launch('PlaygroundScene', {
-    //     level: data.level,
-    //     mission: data.mission,
-    //   });
-    //   this.scene.launch('DiagramScene');
-    //   this.scene.launch('InputWindowScene');
-    // }
-
     this.scene.launch('DiagramScene', {
       level: data.level,
       mission: data.mission,
     });
-
-    // this.scene.launch('PlaygroundScene', {
-    //   level: data.level,
-    //   mission: data.mission,
-    // });
-    // setTimeout(() => {
-    //   this.scene.launch('DiagramScene');
-    //   // this.scene.launch('InputWindowScene');
-    // }, 10);
-
-    // await Promise.all([
-    //   this.waitForSceneReady('PlaygroundScene', 'playgroundSceneReady'),
-    //   this.waitForSceneReady('DiagramScene', 'diagramSceneReady'),
-    //   this.waitForSceneReady('InputWindowScene', 'inputWindowSceneReady'),
-    // ]);
-
-    // // Now that all scenes are ready, launch them
-    // this.scene.launch('PlaygroundScene', {
-    //   level: data.level,
-    //   mission: data.mission,
-    // });
-    // this.scene.launch('DiagramScene');
-    // this.scene.launch('InputWindowScene');
   }
 
   update() {}
-
-  // waitForSceneReady(sceneKey: string, readyEvent: string): Promise<void> {
-  //   return new Promise((resolve) => {
-  //     this.scene.get(sceneKey).events.once(readyEvent, () => {
-  //       resolve();
-  //     });
-  //   });
-  // }
 
   transitionToNewScene(selectedLevel: number) {
     console.log('Current Scene Objects:', this); // Log the current state

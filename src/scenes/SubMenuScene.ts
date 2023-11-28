@@ -75,11 +75,13 @@ export default class SubMenuScene extends Phaser.Scene {
   }
 
   create(data: SubMenuSceneData) {
+    this.cameras.main.fadeIn(500, 0, 0, 0);
+
     this.add.image(0, 0, 'backgroundImg').setOrigin(0, 0);
     this.iconBack = this.add.image(106, 90, 'iconBack');
     this.iconBack.setInteractive();
     this.iconBack.on('pointerdown', () => {
-      this.cameras.main.fadeOut(1000, 0, 0, 0, (_: any, progress: number) => {
+      this.cameras.main.fadeOut(500, 0, 0, 0, (_: any, progress: number) => {
         this.scene.start('MenuScene', {
           level: data.level,
         });

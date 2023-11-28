@@ -35,6 +35,8 @@ export default class DiagramScene extends Phaser.Scene {
   }
 
   create(missionData: MissionData) {
+    this.cameras.main.fadeIn(500, 0, 0, 0);
+
     this.level = missionData.level;
     this.mission = missionData.mission;
 
