@@ -20,23 +20,23 @@ export default class PopupWindow extends Phaser.GameObjects.Container {
     this.popupText = popupText;
   }
 
-  // preload() {
-  //   const imageSources = {
-  //     defaultPopup: 'assets/PopupMd.png',
-  //     popupSm: 'assets/PopupSm.png',
-  //     popupSmAlert: 'assets/PopupSmAlert.png',
-  //     popupMd: 'assets/PopupMd.png',
-  //     popupMdAlert: 'assets/PopupMdAlert.png',
-  //   };
-  //   for (let key in imageSources) {
-  //     if (imageSources.hasOwnProperty(key)) {
-  //       this.scene.load.image(
-  //         key,
-  //         imageSources[key as keyof typeof imageSources]
-  //       );
-  //     }
-  //   }
-  // }
+  preload() {
+    const imageSources = {
+      defaultPopup: 'assets/PopupMd.png',
+      popupSm: 'assets/PopupSm.png',
+      popupSmAlert: 'assets/PopupSmAlert.png',
+      popupMd: 'assets/PopupMd.png',
+      popupMdAlert: 'assets/PopupMdAlert.png',
+    };
+    for (let key in imageSources) {
+      if (imageSources.hasOwnProperty(key)) {
+        this.scene.load.image(
+          key,
+          imageSources[key as keyof typeof imageSources]
+        );
+      }
+    }
+  }
 
   create() {
     this.createPopupWindow(this.popupType, this.popupText);
