@@ -78,10 +78,8 @@ export default class TaskHelper {
     this.player = player;
 
     const diagramScene = scene.scene.get('DiagramScene') as DiagramScene;
-    // this.stateInputData = diagramScene.getSelectedCircle();
     this.simulationHighlight = new SimulationHighlight(scene, 'inputHighlight');
     this.simulationHighlight.setDepth(1000);
-    // this.inputDataChecked = false;
   }
 
   // To simulate ths mission based on user input
@@ -117,7 +115,6 @@ export default class TaskHelper {
       // let nextStateId = null;
       let sensorCheckPassed: boolean = false;
 
-      // for (const stateInput of currentState.stateInputs) {
       for (let i = 0; i < currentState.stateInputs.length; i++) {
         const stateInput = currentState.stateInputs[i];
         const simulationPrefix = (i + 1).toString(); // simulation 좌표 앞자리

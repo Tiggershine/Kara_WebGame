@@ -6,6 +6,7 @@ import StateCircleManager from '../classes/StateCircleManager';
 import InputManager from '../classes/InputManager';
 import MissionManager from '../classes/MissionManager';
 import { InputLabel } from '../classes/InputLabel';
+import PopupWindow from '../classes/PopupWindow';
 
 interface MissionData {
   level: number;
@@ -17,6 +18,7 @@ export default class DiagramScene extends Phaser.Scene {
   edgeManager: EdgeManager = new EdgeManager(this);
   stateCircleManager: StateCircleManager = new StateCircleManager(this);
   missionManager: MissionManager = new MissionManager(this);
+  popupWindow!: PopupWindow;
   inputManager: InputManager = new InputManager();
   stateCircles: StateCircle[] = [];
   inputLabels: InputLabel[] = [];
@@ -36,6 +38,19 @@ export default class DiagramScene extends Phaser.Scene {
 
   create(missionData: MissionData) {
     this.cameras.main.fadeIn(500, 0, 0, 0);
+
+    this.popupWindow = new PopupWindow(
+      this,
+      'sm',
+      `" All inputs will be reset.\n  Do you want to keep going? "`
+    );
+    this.popupWindow.create();
+
+    // Add PopupWindow to the scene
+    this.add.existing(this.popupWindow);
+
+    // Optionally, set visibility
+    this.popupWindow.setVisible(true);
 
     this.level = missionData.level;
     this.mission = missionData.mission;

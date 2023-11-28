@@ -76,7 +76,12 @@ export default class UIManager {
 
   /** Create new StateCircle */
   // Create new stateCircle object
-  createStateCircle(x: number, y: number): StateCircle {
+  createStateCircle(x: number, y: number): StateCircle | null {
+    if (this.diagramScene.getStateCircles.length > 5) {
+      console.log('더 이상 State를 만들지 못합니다.');
+      return null;
+    }
+
     // Before creating a new state, remove the endStateCircle from the array
     const endStateCircle = this.diagramScene.stateCircles.pop();
 
@@ -111,7 +116,9 @@ export default class UIManager {
       circle.deselect();
     });
     // Ensure the newStateCircle is selected upon creation
-    newStateCircle.select();
+    if (newStateCircle) {
+      newStateCircle.select();
+    }
 
     this.diagramScene.stateCircles.push(newStateCircle); // stateCircles 배열에 추가
 
