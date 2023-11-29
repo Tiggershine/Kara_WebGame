@@ -82,6 +82,10 @@ export default class Game extends Phaser.Scene {
       // Images for Mission Infos
       missionInfo11: 'assets/MissionInfo11.png',
       missionInfo12: 'assets/MissionInfo12.png',
+      missionInfo13: 'assets/MissionInfo13.png',
+      missionInfo14: 'assets/MissionInfo14.png',
+      missionInfo21: 'assets/MissionInfo21.png',
+      missionInfo22: 'assets/MissionInfo22.png',
       // Images for Popup Window
       defaultPopup: 'assets/PopupMd.png',
       popupSmBack: 'assets/PopupSmBack.png',

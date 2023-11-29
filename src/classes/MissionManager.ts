@@ -1,19 +1,21 @@
 import DiagramScene from '../scenes/DiagramScene';
-import Stars from '../tasks/Stars';
-import StarFindInForest from '../tasks/StarFindInForest';
-import BetweenWall from '../tasks/BetweenWall';
-import ClimbingUp from '../tasks/ClimbingUp';
+import TestFlight from '../tasks/TestFlight';
 import TunnelFinder from '../tasks/TunnelFinder';
+import ClimbingUp from '../tasks/ClimbingUp';
+import BetweenWall from '../tasks/BetweenWall';
+import Stars from '../tasks/Stars';
+import AroundTheCorner from '../tasks/AroundTheCorner';
 import { StateInput } from './InputManager';
 import { playButtonConfig } from '../configurations';
 
 export default class MissionManager {
   private diagramScene: DiagramScene;
-  private missionStars!: Stars;
-  private missionStarFindInForest!: StarFindInForest;
-  private missionBetweenWall!: BetweenWall;
-  private missionClimbingUp!: ClimbingUp;
+  private missionTestFlight!: TestFlight;
   private minssionTunnelFinder!: TunnelFinder;
+  private missionClimbingUp!: ClimbingUp;
+  private missionBetweenWall!: BetweenWall;
+  private missionStars!: Stars;
+  private missionAroundTheCorner!: AroundTheCorner;
 
   constructor(diagaramScene: DiagramScene) {
     this.diagramScene = diagaramScene;
@@ -25,28 +27,28 @@ export default class MissionManager {
       case 1:
         switch (mission) {
           case 1:
-            this.missionStars = new Stars(
+            this.missionTestFlight = new TestFlight(
               this.diagramScene,
               playButtonConfig.x,
               playButtonConfig.y
             );
             break;
           case 2:
-            this.missionStarFindInForest = new StarFindInForest(
+            this.minssionTunnelFinder = new TunnelFinder(
               this.diagramScene,
               playButtonConfig.x,
               playButtonConfig.y
             );
             break;
           case 3:
-            this.missionBetweenWall = new BetweenWall(
+            this.missionClimbingUp = new ClimbingUp(
               this.diagramScene,
               playButtonConfig.x,
               playButtonConfig.y
             );
             break;
           case 4:
-            this.missionClimbingUp = new ClimbingUp(
+            this.missionBetweenWall = new BetweenWall(
               this.diagramScene,
               playButtonConfig.x,
               playButtonConfig.y
@@ -57,7 +59,14 @@ export default class MissionManager {
       case 2:
         switch (mission) {
           case 1:
-            this.minssionTunnelFinder = new TunnelFinder(
+            this.missionStars = new Stars(
+              this.diagramScene,
+              playButtonConfig.x,
+              playButtonConfig.y
+            );
+            break;
+          case 2:
+            this.missionAroundTheCorner = new AroundTheCorner(
               this.diagramScene,
               playButtonConfig.x,
               playButtonConfig.y
@@ -66,7 +75,7 @@ export default class MissionManager {
         }
         break;
       default:
-        this.missionStarFindInForest = new StarFindInForest(
+        this.missionTestFlight = new TestFlight(
           this.diagramScene,
           playButtonConfig.x,
           playButtonConfig.y
@@ -82,6 +91,86 @@ export default class MissionManager {
   ) => {
     switch (level) {
       case 1:
+        switch (mission) {
+          case 1:
+            if (this.missionTestFlight) {
+              if (this.diagramScene.getIsMissionInitiated) {
+                this.missionTestFlight.restartSimulation(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+              } else {
+                this.missionTestFlight.processStateInputData(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+                this.diagramScene.setIsMissionInitiated = true;
+              }
+              break;
+            } else {
+              console.log('Mission is not loaded yet.');
+              break;
+            }
+          case 2:
+            if (this.minssionTunnelFinder) {
+              if (this.diagramScene.getIsMissionInitiated) {
+                this.minssionTunnelFinder.restartSimulation(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+              } else {
+                this.minssionTunnelFinder.processStateInputData(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+                this.diagramScene.setIsMissionInitiated = true;
+              }
+              break;
+            } else {
+              console.log('Mission is not loaded yet.');
+              break;
+            }
+          case 3:
+            if (this.missionClimbingUp) {
+              if (this.diagramScene.getIsMissionInitiated) {
+                this.missionClimbingUp.restartSimulation(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+              } else {
+                this.missionClimbingUp.processStateInputData(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+                this.diagramScene.setIsMissionInitiated = true;
+              }
+              break;
+            } else {
+              console.log('Mission is not loaded yet.');
+              break;
+            }
+          case 4:
+            if (this.missionBetweenWall) {
+              if (this.diagramScene.getIsMissionInitiated) {
+                this.missionBetweenWall.restartSimulation(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+              } else {
+                this.missionBetweenWall.processStateInputData(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+                this.diagramScene.setIsMissionInitiated = true;
+              }
+              break;
+            } else {
+              console.log('Mission is not loaded yet.');
+              break;
+            }
+          case 4:
+        }
+      case 2:
         switch (mission) {
           case 1:
             if (this.missionStars) {
@@ -103,74 +192,14 @@ export default class MissionManager {
               break;
             }
           case 2:
-            if (this.missionStarFindInForest) {
+            if (this.missionAroundTheCorner) {
               if (this.diagramScene.getIsMissionInitiated) {
-                this.missionStarFindInForest.restartSimulation(
+                this.missionAroundTheCorner.restartSimulation(
                   stateInputData,
                   this.diagramScene.getIsHighlightOn
                 );
               } else {
-                this.missionStarFindInForest.processStateInputData(
-                  stateInputData,
-                  this.diagramScene.getIsHighlightOn
-                );
-                this.diagramScene.setIsMissionInitiated = true;
-              }
-              break;
-            } else {
-              console.log('Mission is not loaded yet.');
-              break;
-            }
-          case 3:
-            if (this.missionBetweenWall) {
-              if (this.diagramScene.getIsMissionInitiated) {
-                this.missionBetweenWall.restartSimulation(
-                  stateInputData,
-                  this.diagramScene.getIsHighlightOn
-                );
-              } else {
-                this.missionBetweenWall.processStateInputData(
-                  stateInputData,
-                  this.diagramScene.getIsHighlightOn
-                );
-                this.diagramScene.setIsMissionInitiated = true;
-              }
-              break;
-            } else {
-              console.log('Mission is not loaded yet.');
-              break;
-            }
-          case 4:
-            if (this.missionClimbingUp) {
-              if (this.diagramScene.getIsMissionInitiated) {
-                this.missionClimbingUp.restartSimulation(
-                  stateInputData,
-                  this.diagramScene.getIsHighlightOn
-                );
-              } else {
-                this.missionClimbingUp.processStateInputData(
-                  stateInputData,
-                  this.diagramScene.getIsHighlightOn
-                );
-                this.diagramScene.setIsMissionInitiated = true;
-              }
-              break;
-            } else {
-              console.log('Mission is not loaded yet.');
-              break;
-            }
-        }
-      case 2:
-        switch (mission) {
-          case 1:
-            if (this.minssionTunnelFinder) {
-              if (this.diagramScene.getIsMissionInitiated) {
-                this.minssionTunnelFinder.restartSimulation(
-                  stateInputData,
-                  this.diagramScene.getIsHighlightOn
-                );
-              } else {
-                this.minssionTunnelFinder.processStateInputData(
+                this.missionAroundTheCorner.processStateInputData(
                   stateInputData,
                   this.diagramScene.getIsHighlightOn
                 );
@@ -195,7 +224,7 @@ export default class MissionManager {
     this.diagramScene.scene.launch('SubMenuScene');
   };
 
-  // Clean up the Diagram Scene(destroy all changed elements) used for Back button or Reset button
+  // Clean up the Diagram Scene(destroy all ch  anged elements) used for Back button or Reset button
   cleanUpDiagramScene(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.diagramScene.cleanup();

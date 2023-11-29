@@ -71,73 +71,6 @@ export default class EdgeManager {
 
     return edge; // Return the edge so it can be stored
   }
-  // createEdge(
-  //   circleA: StateCircle,
-  //   circleB: StateCircle,
-  //   baseYOffset: number = 15
-  // ): Phaser.GameObjects.Graphics {
-  //   const edge = this.diagramScene.add.graphics();
-  //   edge.lineStyle(2, 0x000000); // Set line style
-
-  //   // Calculate the angle between the two circles
-  //   const angle = Math.atan2(circleB.y - circleA.y, circleB.x - circleA.x);
-
-  //   const radiusA = circleA.circle.width / 2;
-  //   const radiusB = circleB.circle.width / 2;
-
-  //   // Check if there's an edge from circleB to circleA
-  //   const isTwoWay = circleB.edges.some(
-  //     (edge) => edge.data.get('endCircle') === circleA
-  //   );
-
-  //   let startX, startY, endX, endY;
-
-  //   if (isTwoWay) {
-  //     // Use existing logic for two-way edges
-  //     startX = circleA.x + (3 / 4) * radiusA * Math.sin(angle);
-  //     startY = circleA.y - (3 / 4) * radiusA * Math.cos(angle);
-  //     endX = circleB.x + (3 / 4) * radiusB * Math.sin(angle + Math.PI);
-  //     endY = circleB.y - (3 / 4) * radiusB * Math.cos(angle + Math.PI);
-  //   } else {
-  //     // Calculate start and end points for one-way edge
-  //     startX = circleA.x + radiusA * Math.cos(angle);
-  //     startY = circleA.y + radiusA * Math.sin(angle);
-  //     endX = circleB.x - radiusB * Math.cos(angle);
-  //     endY = circleB.y - radiusB * Math.sin(angle);
-  //   }
-
-  //   edge.moveTo(startX, startY);
-  //   edge.lineTo(endX, endY);
-
-  //   // Draw arrowhead (화살표 꼭지 그리기)
-  //   const arrowHeadLength = 10; // Adjust arrowhead size if necessary
-  //   const arrowAngle = Math.PI / 8; // Adjust arrowhead angle for a wider arrow
-
-  //   edge.moveTo(
-  //     endX - arrowHeadLength * Math.cos(angle - arrowAngle),
-  //     endY - arrowHeadLength * Math.sin(angle - arrowAngle)
-  //   );
-  //   edge.lineTo(endX, endY);
-  //   edge.lineTo(
-  //     endX - arrowHeadLength * Math.cos(angle + arrowAngle),
-  //     endY - arrowHeadLength * Math.sin(angle + arrowAngle)
-  //   );
-
-  //   edge.strokePath(); // Draw the line and arrowhead
-  //   edge.setDepth(1);
-  //   // Initialize the data manager for the edge if it doesn't exist
-  //   edge.setDataEnabled();
-
-  //   // Store references to the connected circles in the edge's data
-  //   edge.data.set('startCircle', circleA);
-  //   edge.data.set('endCircle', circleB);
-
-  //   // Store the edge in both circles' edges array for updating later
-  //   circleA.edges.push(edge);
-  //   circleB.edges.push(edge);
-
-  //   return edge; // Return the edge so it can be stored
-  // }
 
   createSelfEdge(circle: StateCircle) {
     const edge = this.diagramScene.add.graphics();
@@ -191,7 +124,7 @@ export default class EdgeManager {
     edge.lineTo(arrowRightX, arrowRightY);
     edge.closePath();
     edge.fillPath();
-    edge.setDepth(1);
+    edge.setDepth(10);
 
     // Set the data for the self-edge
     edge.setData('startCircle', circle);

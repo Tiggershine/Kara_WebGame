@@ -3,6 +3,8 @@ import Player from '../classes/sprites/Player';
 import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
 import TaskHelper from '../classes/TaskHelper';
+import DiagramScene from '../scenes/DiagramScene';
+import PopupWindow from '../classes/PopupWindow';
 
 export default class StarFindInForest extends Phaser.GameObjects.Container {
   private player!: Player;
@@ -18,6 +20,7 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
   private wall5!: Wall;
   private wall6!: Wall;
   private taskHelper!: TaskHelper;
+  private isSuccessPopupShowed: boolean = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
@@ -73,11 +76,48 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
   };
 
   processStateInputData = (stateInputData: any, highlightOn: boolean) => {
-    console.log('BetweenWall Simulation 시작');
     this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
       const positionsCorrect = this.checkObjectPositions();
+
+      console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
+      if (!this.isSuccessPopupShowed) {
+        if (positionsCorrect) {
+          const diagramScene = this.scene.scene.get(
+            'DiagramScene'
+          ) as DiagramScene;
+
+          setTimeout(() => {
+            diagramScene.popupWindow = new PopupWindow(
+              diagramScene,
+              'smBack',
+              `" Great job! \n  Let's take on the next mission. "`,
+              false
+            );
+            diagramScene.popupWindow.create();
+            diagramScene.add.existing(diagramScene.popupWindow);
+          }, 800);
+
+          this.isSuccessPopupShowed = true;
+        } else {
+          const diagramScene = this.scene.scene.get(
+            'DiagramScene'
+          ) as DiagramScene;
+
+          setTimeout(() => {
+            diagramScene.popupWindow = new PopupWindow(
+              diagramScene,
+              'smBack',
+              `" So close! \n  Would you like to try again? "`,
+              false
+            );
+            diagramScene.popupWindow.create();
+            diagramScene.add.existing(diagramScene.popupWindow);
+          }, 800);
+
+          this.isSuccessPopupShowed = true;
+        }
+      }
       console.log(positionsCorrect ? 'Success' : 'Fail');
-      console.log('END');
     });
   };
 

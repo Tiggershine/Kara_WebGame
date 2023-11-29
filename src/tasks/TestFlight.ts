@@ -1,15 +1,12 @@
 import Phaser from 'phaser';
 import Player from '../classes/sprites/Player';
-import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
 import TaskHelper from '../classes/TaskHelper';
 import PopupWindow from '../classes/PopupWindow';
 import DiagramScene from '../scenes/DiagramScene';
 
-export default class Stars extends Phaser.GameObjects.Container {
+export default class TestFlight extends Phaser.GameObjects.Container {
   private player!: Player;
-  private star1!: Star;
-  private star2!: Star;
   private wall!: Wall;
   private taskHelper!: TaskHelper;
   private isSuccessPopupShowed: boolean = false;
@@ -23,12 +20,7 @@ export default class Stars extends Phaser.GameObjects.Container {
 
     this.wall = new Wall(this.scene, 405, 315);
 
-    this.star1 = new Star(this.scene, 205, 315);
-    this.star2 = new Star(this.scene, 305, 315);
-
     scene.add.existing(this.player);
-    scene.add.existing(this.star1);
-    scene.add.existing(this.star2);
     scene.add.existing(this.wall);
   }
 
@@ -36,11 +28,6 @@ export default class Stars extends Phaser.GameObjects.Container {
     this.player.cleanUpStars();
     this.player.setPosition(155, 315).setAngle(90);
     this.player.playerHighlight.setPosition(155, 315);
-
-    this.star1 = new Star(this.scene, 205, 315);
-    this.star2 = new Star(this.scene, 305, 315);
-    this.scene.add.existing(this.star1);
-    this.scene.add.existing(this.star2);
 
     this.processStateInputData(stateInputData, highlightOn);
   };
@@ -60,7 +47,7 @@ export default class Stars extends Phaser.GameObjects.Container {
             diagramScene.popupWindow = new PopupWindow(
               diagramScene,
               'smBack',
-              `" Great job! \n  Let's take on the next mission. "`,
+              `" Congratulations on completing \n   your first mission! "`,
               false
             );
             diagramScene.popupWindow.create();
@@ -92,15 +79,6 @@ export default class Stars extends Phaser.GameObjects.Container {
   };
 
   private checkObjectPositions(): boolean {
-    const isStarAt155315 = this.scene.children.list.some(
-      (child) => child instanceof Star && child.x === 155 && child.y === 315
-    );
-    const isStarAt255315 = this.scene.children.list.some(
-      (child) => child instanceof Star && child.x === 255 && child.y === 315
-    );
-    const isStarAt355315 = this.scene.children.list.some(
-      (child) => child instanceof Star && child.x === 355 && child.y === 315
-    );
     const isPlayerAt355315 = this.scene.children.list.some(
       (child) => child instanceof Player && child.x === 355 && child.y === 315
     );
@@ -109,31 +87,13 @@ export default class Stars extends Phaser.GameObjects.Container {
     );
     const isOtherObjectsExist = this.scene.children.list.some(
       (child) =>
-        (child instanceof Star ||
-          child instanceof Player ||
-          child instanceof Wall) &&
+        (child instanceof Player || child instanceof Wall) &&
         !(
-          (child.x === 155 && child.y === 315) ||
-          (child.x === 255 && child.y === 315) ||
           (child.x === 355 && child.y === 315) ||
           (child.x === 405 && child.y === 315)
         )
     );
 
-    return (
-      isStarAt155315 &&
-      isStarAt255315 &&
-      isStarAt355315 &&
-      isPlayerAt355315 &&
-      isWallAt405315 &&
-      !isOtherObjectsExist
-    );
+    return isPlayerAt355315 && isWallAt405315 && !isOtherObjectsExist;
   }
-
-  // createMissonInfoContainer = () => {
-  //   this.missionInfoContainer = this.scene.add.container(
-  //     this.scene.cameras.main.centerX,
-  //     this.scene.cameras.main.centerY
-  //   );
-  // };
 }

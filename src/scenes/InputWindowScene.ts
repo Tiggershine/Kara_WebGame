@@ -1,13 +1,13 @@
 import Phaser from 'phaser';
-import StateCircle from '../classes/StateCircle';
-import InputManager, { SensorCheck, StateInput } from '../classes/InputManager';
+// import StateCircle from '../classes/StateCircle';
+import InputManager from '../classes/InputManager';
 import ControlButton, { ButtonType } from '../classes/ControlButton';
 import {
-  DropdownMenu,
+  // DropdownMenu,
   DropdownOption,
   SensorType,
 } from '../classes/DropdownMenu';
-import { InputGuideline } from '../classes/InputGuideline';
+// import { InputGuideline } from '../classes/InputGuideline';
 // import { InputLabel } from '../classes/InputLabel';
 import DiagramScene from './DiagramScene';
 import { InputWindow } from '../classes/InputWindow';

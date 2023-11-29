@@ -1,7 +1,6 @@
 import Phaser, { Input } from 'phaser';
 import InputManager, { StateInput } from './InputManager';
 import DiagramScene from '../scenes/DiagramScene';
-import InputWindowScene from '../scenes/InputWindowScene';
 import { InputWindow } from './InputWindow';
 import EdgeManager from './EdgeManager';
 import { InputLabel } from './InputLabel';
@@ -26,7 +25,6 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   inputLabel!: InputLabel;
   isSelected: boolean = false;
   inputManager: InputManager = new InputManager();
-  inputWindowScene?: InputWindowScene;
   edges: Phaser.GameObjects.Graphics[] = [];
   private inputWindow?: InputWindow;
   uiManager: UIManager;
@@ -286,6 +284,9 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   get getName(): string {
     return this.name;
   }
+  // set setName(newName: string) {
+  //   this.name = newName
+  // }
 
   get getX(): number {
     return this.x;

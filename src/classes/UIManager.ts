@@ -78,8 +78,8 @@ export default class UIManager {
   /** Create new StateCircle */
   // Create new stateCircle object
   createStateCircle(x: number, y: number): StateCircle | null {
+    // The number of StateCiecle cannot over 5 (includes Start, End)
     if (this.diagramScene.getStateCircles.length > 5) {
-      console.log('더 이상 State를 만들지 못합니다.');
       return null;
     }
 
@@ -113,9 +113,12 @@ export default class UIManager {
     );
 
     // Deselect all other circles
-    this.diagramScene.stateCircles.forEach((circle) => {
-      circle.deselect();
-    });
+    this.diagramScene.getStateCircles &&
+      this.diagramScene.stateCircles.forEach((circle) => {
+        if (circle) {
+          circle.deselect();
+        }
+      });
     // Ensure the newStateCircle is selected upon creation
     if (newStateCircle) {
       newStateCircle.select();
@@ -137,7 +140,7 @@ export default class UIManager {
     // Event emit -> stateCircle: { id, name } emit
     this.diagramScene.events.emit(
       'updatedStateCircles',
-      this.diagramScene.stateCircles.map((stateCircle) => {
+      this.diagramScene.getStateCircles.map((stateCircle) => {
         // TODO: DELETE TEST CODE
         // console.log('(DiagramScene.ts) stateCircles: ', stateCircle);
         return {
@@ -185,7 +188,9 @@ export default class UIManager {
         }
       });
     // Ensure the newStateCircle is selected upon creation
-    startStateCircle.select();
+    if (startStateCircle) {
+      startStateCircle.select();
+    }
 
     startStateCircle.setDepth(1);
     this.diagramScene.stateCircles.push(startStateCircle); // stateCircles 배열에 추가
@@ -195,7 +200,7 @@ export default class UIManager {
     // Event emit -> stateCircle: { id, name } emit
     this.diagramScene.events.emit(
       'updatedStateCircles',
-      this.diagramScene.stateCircles.map((stateCircle) => {
+      this.diagramScene.getStateCircles.map((stateCircle) => {
         return {
           id: stateCircle.getId,
           name: stateCircle.getName,

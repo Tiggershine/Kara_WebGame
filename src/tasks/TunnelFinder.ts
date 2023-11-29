@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 import Player from '../classes/sprites/Player';
 import Wall from '../classes/sprites/Wall';
 import TaskHelper from '../classes/TaskHelper';
+import DiagramScene from '../scenes/DiagramScene';
+import PopupWindow from '../classes/PopupWindow';
 
 type SensorCheck = {
   sensor: number;
@@ -119,6 +121,7 @@ export default class TunnelFinder extends Phaser.GameObjects.Container {
   private wall10!: Wall;
   private wall11!: Wall;
   private wall12!: Wall;
+  private isSuccessPopupShowed: boolean = false;
 
   // private stateInputData: any;
   // private inputDataChecked: boolean = false;
@@ -168,6 +171,45 @@ export default class TunnelFinder extends Phaser.GameObjects.Container {
   processStateInputData = (stateInputData: any, highlightOn: boolean) => {
     this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
       const positionsCorrect = this.checkObjectPositions();
+
+      console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
+      if (!this.isSuccessPopupShowed) {
+        if (positionsCorrect) {
+          const diagramScene = this.scene.scene.get(
+            'DiagramScene'
+          ) as DiagramScene;
+
+          setTimeout(() => {
+            diagramScene.popupWindow = new PopupWindow(
+              diagramScene,
+              'smBack',
+              `" Great job! \n  Let's take on the next mission. "`,
+              false
+            );
+            diagramScene.popupWindow.create();
+            diagramScene.add.existing(diagramScene.popupWindow);
+          }, 800);
+
+          this.isSuccessPopupShowed = true;
+        } else {
+          const diagramScene = this.scene.scene.get(
+            'DiagramScene'
+          ) as DiagramScene;
+
+          setTimeout(() => {
+            diagramScene.popupWindow = new PopupWindow(
+              diagramScene,
+              'smBack',
+              `" So close! \n  Would you like to try again? "`,
+              false
+            );
+            diagramScene.popupWindow.create();
+            diagramScene.add.existing(diagramScene.popupWindow);
+          }, 800);
+
+          this.isSuccessPopupShowed = true;
+        }
+      }
       console.log(positionsCorrect ? 'Success' : 'Fail');
     });
   };

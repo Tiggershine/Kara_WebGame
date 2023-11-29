@@ -3,14 +3,17 @@ import Player from '../classes/sprites/Player';
 import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
 import TaskHelper from '../classes/TaskHelper';
+import DiagramScene from '../scenes/DiagramScene';
+import PopupWindow from '../classes/PopupWindow';
 
-export default class StarFindInForest extends Phaser.GameObjects.Container {
+export default class AroundTheCorner extends Phaser.GameObjects.Container {
   private player!: Player;
   private star!: Star;
   private wall1!: Wall;
   private wall2!: Wall;
   private wall3!: Wall;
   private taskHelper!: TaskHelper;
+  private isSuccessPopupShowed: boolean = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
@@ -45,13 +48,83 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
   };
 
   processStateInputData = (stateInputData: any, highlightOn: boolean) => {
-    console.log('StarFindInforest Simulation 시작');
     this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
-      // const positionsCorrect = this.checkObjectPositions();
-      // console.log(positionsCorrect ? 'Success' : 'Fail');
-      console.log('END');
+      const positionsCorrect = this.checkObjectPositions();
+
+      console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
+      if (!this.isSuccessPopupShowed) {
+        if (positionsCorrect) {
+          const diagramScene = this.scene.scene.get(
+            'DiagramScene'
+          ) as DiagramScene;
+
+          setTimeout(() => {
+            diagramScene.popupWindow = new PopupWindow(
+              diagramScene,
+              'smBack',
+              `" Great job! \n  Let's take on the next mission. "`,
+              false
+            );
+            diagramScene.popupWindow.create();
+            diagramScene.add.existing(diagramScene.popupWindow);
+          }, 800);
+
+          this.isSuccessPopupShowed = true;
+        } else {
+          const diagramScene = this.scene.scene.get(
+            'DiagramScene'
+          ) as DiagramScene;
+
+          setTimeout(() => {
+            diagramScene.popupWindow = new PopupWindow(
+              diagramScene,
+              'smBack',
+              `" So close! \n  Would you like to try again? "`,
+              false
+            );
+            diagramScene.popupWindow.create();
+            diagramScene.add.existing(diagramScene.popupWindow);
+          }, 800);
+
+          this.isSuccessPopupShowed = true;
+        }
+      }
+      console.log(positionsCorrect ? 'Success' : 'Fail');
     });
   };
+
+  private checkObjectPositions(): boolean {
+    const isPlayerAt455315 = this.scene.children.list.some(
+      (child) => child instanceof Player && child.x === 455 && child.y === 315
+    );
+    const isWallAt155315 = this.scene.children.list.some(
+      (child) => child instanceof Wall && child.x === 155 && child.y === 315
+    );
+    const isWallAt255315 = this.scene.children.list.some(
+      (child) => child instanceof Wall && child.x === 255 && child.y === 315
+    );
+    const isWallAt405315 = this.scene.children.list.some(
+      (child) => child instanceof Wall && child.x === 405 && child.y === 315
+    );
+    const isOtherObjectsExist = this.scene.children.list.some(
+      (child) =>
+        (child instanceof Player || child instanceof Wall) &&
+        !(
+          (child.x === 455 && child.y === 315) ||
+          (child.x === 155 && child.y === 315) ||
+          (child.x === 255 && child.y === 315) ||
+          (child.x === 405 && child.y === 315)
+        )
+    );
+
+    return (
+      isPlayerAt455315 &&
+      isWallAt155315 &&
+      isWallAt255315 &&
+      isWallAt405315 &&
+      !isOtherObjectsExist
+    );
+  }
 
   createGuidelineGraphic = () => {
     const guidelineGraphic = this.scene.add.graphics({

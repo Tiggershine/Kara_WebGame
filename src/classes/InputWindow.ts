@@ -837,4 +837,8 @@ export class InputWindow extends Phaser.GameObjects.Container {
     // Additional cleanup actions if required
     // 예: this.scene.events.off('some-event', this.someEventHandler);
   };
+
+  get getDropdownButtons(): DropdownMenu[] {
+    return this.dropdownButtons;
+  }
 }
