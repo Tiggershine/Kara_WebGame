@@ -3,6 +3,8 @@ import Player from '../classes/sprites/Player';
 import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
 import TaskHelper from '../classes/TaskHelper';
+import PopupWindow from '../classes/PopupWindow';
+import DiagramScene from '../scenes/DiagramScene';
 
 const wallPositions = [
   { x: 205, y: 565 },
@@ -41,6 +43,7 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
   private star2!: Star;
   private walls!: Wall[];
   private taskHelper!: TaskHelper;
+  private isSuccessPopupShowed: boolean = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
@@ -57,35 +60,6 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
 
     this.walls = wallPositions.map((pos) => new Wall(this.scene, pos.x, pos.y));
     this.walls.forEach((wall) => scene.add.existing(wall));
-
-    // this.walls.push(new Wall(this.scene, 205, 565));
-    // this.walls.push(new Wall(this.scene, 255, 565));
-    // this.walls.push(new Wall(this.scene, 305, 565));
-    // this.walls.push(new Wall(this.scene, 355, 565));
-    // this.walls.push(new Wall(this.scene, 405, 565));
-    // this.walls.push(new Wall(this.scene, 455, 565));
-    // this.walls.push(new Wall(this.scene, 505, 565));
-    // this.walls.push(new Wall(this.scene, 255, 515));
-    // this.walls.push(new Wall(this.scene, 305, 515));
-    // this.walls.push(new Wall(this.scene, 355, 515));
-    // this.walls.push(new Wall(this.scene, 405, 515));
-    // this.walls.push(new Wall(this.scene, 455, 515));
-    // this.walls.push(new Wall(this.scene, 505, 515));
-    // this.walls.push(new Wall(this.scene, 305, 465));
-    // this.walls.push(new Wall(this.scene, 355, 465));
-    // this.walls.push(new Wall(this.scene, 405, 465));
-    // this.walls.push(new Wall(this.scene, 455, 465));
-    // this.walls.push(new Wall(this.scene, 505, 465));
-    // this.walls.push(new Wall(this.scene, 355, 415));
-    // this.walls.push(new Wall(this.scene, 405, 415));
-    // this.walls.push(new Wall(this.scene, 455, 415));
-    // this.walls.push(new Wall(this.scene, 505, 415));
-    // this.walls.push(new Wall(this.scene, 405, 365));
-    // this.walls.push(new Wall(this.scene, 455, 365));
-    // this.walls.push(new Wall(this.scene, 505, 365));
-    // this.walls.push(new Wall(this.scene, 455, 315));
-    // this.walls.push(new Wall(this.scene, 505, 315));
-    // this.walls.push(new Wall(this.scene, 505, 265));
   }
 
   restartSimulation = (stateInputData: any, highlightOn: boolean) => {
@@ -98,21 +72,64 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
     this.scene.add.existing(this.star1);
     this.scene.add.existing(this.star2);
 
+    // this.scene.children.list.forEach((child) => {
+    //   console.log(child);
+    // });
+
     this.processStateInputData(stateInputData, highlightOn);
   };
 
   processStateInputData = (stateInputData: any, highlightOn: boolean) => {
     console.log('ClimbingUp Simulation 시작');
+
     this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
       const positionsCorrect = this.checkObjectPositions();
+
+      if (!this.isSuccessPopupShowed) {
+        if (positionsCorrect) {
+          const diagramScene = this.scene.scene.get(
+            'DiagramScene'
+          ) as DiagramScene;
+
+          setTimeout(() => {
+            diagramScene.popupWindow = new PopupWindow(
+              diagramScene,
+              'smBack',
+              `" Great job! \n  Let's take on the next mission. "`,
+              false
+            );
+            diagramScene.popupWindow.create();
+            diagramScene.add.existing(diagramScene.popupWindow);
+          }, 800);
+
+          this.isSuccessPopupShowed = true;
+        } else {
+          const diagramScene = this.scene.scene.get(
+            'DiagramScene'
+          ) as DiagramScene;
+
+          setTimeout(() => {
+            diagramScene.popupWindow = new PopupWindow(
+              diagramScene,
+              'smBack',
+              `" So close! \n  Would you like to try again? "`,
+              false
+            );
+            diagramScene.popupWindow.create();
+            diagramScene.add.existing(diagramScene.popupWindow);
+          }, 800);
+
+          this.isSuccessPopupShowed = true;
+        }
+      }
       console.log(positionsCorrect ? 'Success' : 'Fail');
-      console.log('END');
+      // console.log('END');
     });
   };
 
   private checkObjectPositions(): boolean {
-    const isPlayerAt455315 = this.scene.children.list.some(
-      (child) => child instanceof Player && child.x === 455 && child.y === 315
+    const isPlayerAt505215 = this.scene.children.list.some(
+      (child) => child instanceof Player && child.x === 505 && child.y === 215
     );
     const areWallsCorrect = wallPositions.every((pos) =>
       this.scene.children.list.some(
@@ -121,24 +138,34 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
       )
     );
 
-    const isOtherObjectsExist = this.scene.children.list.some(
-      (child) =>
-        (child instanceof Star ||
-          child instanceof Player ||
-          child instanceof Wall) &&
-        !(
-          (child.x === 155 && child.y === 315) ||
-          (child.x === 355 && child.y === 315) ||
-          (child.x === 455 && child.y === 315) ||
-          (child.x === 205 && child.y === 265) ||
-          (child.x === 405 && child.y === 265) ||
-          (child.x === 455 && child.y === 265) ||
-          (child.x === 305 && child.y === 365) ||
-          (child.x === 405 && child.y === 365) ||
-          (child.x === 505 && child.y === 315)
-        )
+    // const isOtherObjectsExist = this.scene.children.list.some(
+    //   (child) =>
+    //     ((child instanceof Star ||
+    //       child instanceof Player ||
+    //       child instanceof Wall) &&
+    //       wallPositions.some(
+    //         (pos) =>
+    //           (child as Phaser.GameObjects.Sprite).x === pos.x &&
+    //           (child as Phaser.GameObjects.Sprite).y === pos.y
+    //       )) ||
+    //     ((child instanceof Star ||
+    //       child instanceof Player ||
+    //       child instanceof Wall) &&
+    //       (child as Phaser.GameObjects.Sprite).x === 505 &&
+    //       (child as Phaser.GameObjects.Sprite).y === 215)
+    // );
+    const isStarOBjectExist = this.scene.children.list.some(
+      (child) => child instanceof Star
     );
 
-    return isPlayerAt455315 && areWallsCorrect && !isOtherObjectsExist;
+    console.log(
+      'isPlayerAt505215',
+      isPlayerAt505215,
+      'areWallsCorrect',
+      areWallsCorrect,
+      'isStarOBjectExist',
+      isStarOBjectExist
+    );
+    return isPlayerAt505215 && areWallsCorrect && !isStarOBjectExist;
   }
 }
