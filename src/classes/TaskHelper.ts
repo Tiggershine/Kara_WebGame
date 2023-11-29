@@ -1,11 +1,11 @@
 import Phaser from 'phaser';
-import Player from '../classes/sprites/Player';
-import Star from '../classes/sprites/Star';
-import Wall from '../classes/sprites/Wall';
-import StateCircle from '../classes/StateCircle';
-import SimulationHighlight from '../classes/SimulationHighlight';
+import Player from './sprites/Player';
+import Star from './sprites/Star';
+import Wall from './sprites/Wall';
+import StateCircle from './StateCircle';
+import SimulationHighlight from './SimulationHighlight';
 import DiagramScene from '../scenes/DiagramScene';
-import { SensorCheck, StateInput } from '../classes/InputManager';
+import { SensorCheck, StateInput } from './InputManager';
 
 type State = {
   id: number;
@@ -202,7 +202,7 @@ export default class TaskHelper {
       callbackFunction();
     }
 
-    this.scene.events.emit('simulationEnd');
+    // this.scene.events.emit('simulationEnd');
 
     this.player.playerHighlightOff();
     this.simulationHighlight.simulationHighlightOff();

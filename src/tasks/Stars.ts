@@ -3,7 +3,7 @@ import Player from '../classes/sprites/Player';
 import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
 import { StateInput } from '../classes/InputManager';
-import TaskHelper from './TaskHelper';
+import TaskHelper from '../classes/TaskHelper';
 import PopupWindow from '../classes/PopupWindow';
 import DiagramScene from '../scenes/DiagramScene';
 
@@ -56,36 +56,42 @@ export default class Stars extends Phaser.GameObjects.Container {
       const positionsCorrect = this.checkObjectPositions();
 
       console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
-      if (positionsCorrect && !this.isSuccessPopupShowed) {
-        const diagramScene = this.scene.scene.get(
-          'DiagramScene'
-        ) as DiagramScene;
+      if (!this.isSuccessPopupShowed) {
+        if (positionsCorrect) {
+          const diagramScene = this.scene.scene.get(
+            'DiagramScene'
+          ) as DiagramScene;
 
-        diagramScene.popupWindow = new PopupWindow(
-          diagramScene,
-          'smBack',
-          `" Great job! \n  Let's take on the next mission. "`,
-          false
-        );
-        diagramScene.popupWindow.create();
-        diagramScene.add.existing(diagramScene.popupWindow);
+          setTimeout(() => {
+            diagramScene.popupWindow = new PopupWindow(
+              diagramScene,
+              'smBack',
+              `" Great job! \n  Let's take on the next mission. "`,
+              false
+            );
+            diagramScene.popupWindow.create();
+            diagramScene.add.existing(diagramScene.popupWindow);
+          }, 800);
 
-        this.isSuccessPopupShowed = true;
-      } else {
-        const diagramScene = this.scene.scene.get(
-          'DiagramScene'
-        ) as DiagramScene;
+          this.isSuccessPopupShowed = true;
+        } else {
+          const diagramScene = this.scene.scene.get(
+            'DiagramScene'
+          ) as DiagramScene;
 
-        diagramScene.popupWindow = new PopupWindow(
-          diagramScene,
-          'smBack',
-          `" So close! \n  Would you like to try again? "`,
-          false
-        );
-        diagramScene.popupWindow.create();
-        diagramScene.add.existing(diagramScene.popupWindow);
+          setTimeout(() => {
+            diagramScene.popupWindow = new PopupWindow(
+              diagramScene,
+              'smBack',
+              `" So close! \n  Would you like to try again? "`,
+              false
+            );
+            diagramScene.popupWindow.create();
+            diagramScene.add.existing(diagramScene.popupWindow);
+          }, 800);
 
-        this.isSuccessPopupShowed = true;
+          this.isSuccessPopupShowed = true;
+        }
       }
       console.log(positionsCorrect ? 'Success' : 'Fail');
     });

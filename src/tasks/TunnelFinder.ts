@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import Player from '../classes/sprites/Player';
 import Wall from '../classes/sprites/Wall';
-import TaskHelper from './TaskHelper';
+import TaskHelper from '../classes/TaskHelper';
 
 type SensorCheck = {
   sensor: number;

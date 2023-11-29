@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import Player from '../classes/sprites/Player';
 import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
-import TaskHelper from './TaskHelper';
+import TaskHelper from '../classes/TaskHelper';
 
 export default class StarFindInForest extends Phaser.GameObjects.Container {
   private player!: Player;
