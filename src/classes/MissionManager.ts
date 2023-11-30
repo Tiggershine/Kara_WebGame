@@ -5,6 +5,7 @@ import ClimbingUp from '../tasks/ClimbingUp';
 import BetweenWall from '../tasks/BetweenWall';
 import Stars from '../tasks/Stars';
 import AroundTheCorner from '../tasks/AroundTheCorner';
+import NazcaLine from '../tasks/NazcaLine';
 import { StateInput } from './InputManager';
 import { playButtonConfig } from '../configurations';
 
@@ -16,6 +17,7 @@ export default class MissionManager {
   private missionBetweenWall!: BetweenWall;
   private missionStars!: Stars;
   private missionAroundTheCorner!: AroundTheCorner;
+  private missionNazcaLine!: NazcaLine;
 
   constructor(diagaramScene: DiagramScene) {
     this.diagramScene = diagaramScene;
@@ -67,6 +69,17 @@ export default class MissionManager {
             break;
           case 2:
             this.missionAroundTheCorner = new AroundTheCorner(
+              this.diagramScene,
+              playButtonConfig.x,
+              playButtonConfig.y
+            );
+            break;
+        }
+        break;
+      case 3:
+        switch (mission) {
+          case 1:
+            this.missionNazcaLine = new NazcaLine(
               this.diagramScene,
               playButtonConfig.x,
               playButtonConfig.y
@@ -168,8 +181,8 @@ export default class MissionManager {
               console.log('Mission is not loaded yet.');
               break;
             }
-          case 4:
         }
+        break;
       case 2:
         switch (mission) {
           case 1:
@@ -211,6 +224,30 @@ export default class MissionManager {
               break;
             }
         }
+        break;
+      case 3:
+        switch (mission) {
+          case 1:
+            if (this.missionNazcaLine) {
+              if (this.diagramScene.getIsMissionInitiated) {
+                this.missionNazcaLine.restartSimulation(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+              } else {
+                this.missionNazcaLine.processStateInputData(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+                this.diagramScene.setIsMissionInitiated = true;
+              }
+              break;
+            } else {
+              console.log('Mission is not loaded yet.');
+              break;
+            }
+        }
+        break;
     }
   };
 

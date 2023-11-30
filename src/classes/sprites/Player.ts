@@ -144,6 +144,7 @@ export default class Player extends BaseSprite {
     let nextX = this.x;
     let nextY = this.y;
     const angle = this.angle % 360;
+    console.log('angle:', this.angle);
 
     switch (angle) {
       case 90:
@@ -159,6 +160,7 @@ export default class Player extends BaseSprite {
         nextX -= 50;
         break;
       case 0:
+      case -360:
         nextY -= 50;
         break;
       default:
@@ -202,7 +204,7 @@ export default class Player extends BaseSprite {
 
   putStar = async () => {
     await this.delay(500);
-    console.log('putStar triggered');
+    console.log('putStar triggered on', this.x, this.y);
     const star = new Star(this.scene, this.x, this.y);
     this.scene.add.existing(star);
     star.depth = this.depth - 1;
@@ -244,15 +246,19 @@ export default class Player extends BaseSprite {
 
     switch (angle) {
       case 90:
+      case -270:
         dx = 50;
         break;
       case 0:
+      case -360:
         dy = -50;
         break;
       case 270:
+      case -90:
         dx = -50;
         break;
       case 180:
+      case -180:
         dy = 50;
         break;
       default:
