@@ -4,6 +4,7 @@ import Star from './sprites/Star';
 import Wall from './sprites/Wall';
 import StateCircle from './StateCircle';
 import SimulationHighlight from './SimulationHighlight';
+import PopupWindow from './PopupWindow';
 import DiagramScene from '../scenes/DiagramScene';
 import { SensorCheck, StateInput } from './InputManager';
 
@@ -72,6 +73,7 @@ export default class TaskHelper {
   private simulationHighlight!: SimulationHighlight;
   private scene!: Phaser.Scene;
   private player: Player;
+  private infiniteLoopDetected: boolean = false;
 
   constructor(scene: Phaser.Scene, player: Player) {
     this.scene = scene;
@@ -88,6 +90,8 @@ export default class TaskHelper {
     hightlightSelected: boolean,
     callbackFunction?: () => void
   ) => {
+    // Reset the flag at the start of the function
+    this.infiniteLoopDetected = false;
     // Set PlayerHighlight
     if (!hightlightSelected && this.player.getPlayerHighlight) {
       this.player.playerHighlightOff();
@@ -100,7 +104,31 @@ export default class TaskHelper {
     let currentStateId = startState.stateInputs[0].nextState; // Start의 NextState로 Init (1번 State)
     // console.log('currentStateId', currentStateId);
 
+    let previousStateId = null;
+    let sameStateCount = 0;
+    const maxSameStateCount = 30; // Threshold for the same state repetition
+
     while (currentStateId !== 100) {
+      if (currentStateId === previousStateId) {
+        sameStateCount++;
+        if (sameStateCount >= maxSameStateCount) {
+          this.infiniteLoopDetected = true; // Set the flag
+          // const diagramScene = this.scene.scene.get(
+          //   'DiagramScene'
+          // ) as DiagramScene;
+          // diagramScene.popupWindow = new PopupWindow(
+          //   diagramScene,
+          //   'popupSmAlert',
+          //   `" Oops! Looks like we're going in circles! \n Check your instructions again."`,
+          //   false
+          // );
+
+          console.error('Infinite loop detected in processStateInputData.');
+          break; // Exit the loop if the threshold is reached
+        }
+      } else {
+        sameStateCount = 0; // Reset the counter if a different state is encountered
+      }
       const currentState: State = stateInputData.find(
         (state: State) => state.id === currentStateId
       );
@@ -196,6 +224,7 @@ export default class TaskHelper {
           break;
         }
       }
+      previousStateId = currentStateId;
     }
 
     if (callbackFunction) {
@@ -209,6 +238,10 @@ export default class TaskHelper {
 
     return;
     // }
+  };
+
+  wasInfiniteLoopDetected = (): boolean => {
+    return this.infiniteLoopDetected;
   };
 
   // To find a StateCircle by id and to pointerdown the found StateCircle (by emit event)

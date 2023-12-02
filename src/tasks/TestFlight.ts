@@ -34,47 +34,62 @@ export default class TestFlight extends Phaser.GameObjects.Container {
 
   processStateInputData = (stateInputData: any, highlightOn: boolean) => {
     this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
-      const positionsCorrect = this.checkObjectPositions();
+      if (this.taskHelper.wasInfiniteLoopDetected()) {
+        // Display infinite loop warning popup
+        const diagramScene = this.scene.scene.get(
+          'DiagramScene'
+        ) as DiagramScene;
+        diagramScene.popupWindow = new PopupWindow(
+          diagramScene,
+          'smBack',
+          `" Oops! \n  Looks like we're going in circles! \n  Check your instructions again.   "`,
+          false
+        );
+        diagramScene.popupWindow.create();
+        diagramScene.add.existing(diagramScene.popupWindow);
+      } else {
+        const positionsCorrect = this.checkObjectPositions();
 
-      console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
-      if (!this.isSuccessPopupShowed) {
-        if (positionsCorrect) {
-          const diagramScene = this.scene.scene.get(
-            'DiagramScene'
-          ) as DiagramScene;
+        console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
+        if (!this.isSuccessPopupShowed) {
+          if (positionsCorrect) {
+            const diagramScene = this.scene.scene.get(
+              'DiagramScene'
+            ) as DiagramScene;
 
-          setTimeout(() => {
-            diagramScene.popupWindow = new PopupWindow(
-              diagramScene,
-              'smBack',
-              `" Congratulations on completing \n   your first mission! "`,
-              false
-            );
-            diagramScene.popupWindow.create();
-            diagramScene.add.existing(diagramScene.popupWindow);
-          }, 800);
+            setTimeout(() => {
+              diagramScene.popupWindow = new PopupWindow(
+                diagramScene,
+                'smBack',
+                `" Congratulations on completing \n   your first mission! "`,
+                false
+              );
+              diagramScene.popupWindow.create();
+              diagramScene.add.existing(diagramScene.popupWindow);
+            }, 800);
 
-          this.isSuccessPopupShowed = true;
-        } else {
-          const diagramScene = this.scene.scene.get(
-            'DiagramScene'
-          ) as DiagramScene;
+            this.isSuccessPopupShowed = true;
+          } else {
+            const diagramScene = this.scene.scene.get(
+              'DiagramScene'
+            ) as DiagramScene;
 
-          setTimeout(() => {
-            diagramScene.popupWindow = new PopupWindow(
-              diagramScene,
-              'smBack',
-              `" So close! \n  Would you like to try again? "`,
-              false
-            );
-            diagramScene.popupWindow.create();
-            diagramScene.add.existing(diagramScene.popupWindow);
-          }, 800);
+            setTimeout(() => {
+              diagramScene.popupWindow = new PopupWindow(
+                diagramScene,
+                'smBack',
+                `" So close! \n  Would you like to try again? "`,
+                false
+              );
+              diagramScene.popupWindow.create();
+              diagramScene.add.existing(diagramScene.popupWindow);
+            }, 800);
 
-          this.isSuccessPopupShowed = true;
+            this.isSuccessPopupShowed = true;
+          }
         }
+        console.log(positionsCorrect ? 'Success' : 'Fail');
       }
-      console.log(positionsCorrect ? 'Success' : 'Fail');
     });
   };
 

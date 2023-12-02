@@ -55,7 +55,7 @@ export default class PopupWindow extends Phaser.GameObjects.Container {
     this.popupWindow.add(popupImage);
 
     if (isBtnOption) {
-      const text = this.scene.add.text(-135, -55, popupText, {
+      const text = this.scene.add.text(-135, -73, popupText, {
         fontSize: '25px',
         fontFamily: 'Roboto Condensed',
         color: '#1B1C1D',
@@ -109,7 +109,7 @@ export default class PopupWindow extends Phaser.GameObjects.Container {
       this.popupWindow.add(noBtn);
       this.popupWindow.add(text);
     } else {
-      const text = this.scene.add.text(-135, -55, popupText, {
+      const text = this.scene.add.text(-135, -73, popupText, {
         fontSize: '25px',
         fontFamily: 'Roboto Condensed',
         color: '#1B1C1D',
