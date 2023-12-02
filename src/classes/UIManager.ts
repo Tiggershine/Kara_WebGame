@@ -3,7 +3,7 @@ import DiagramScene from '../scenes/DiagramScene';
 import StateCircle from './StateCircle';
 import PopupWindow from './PopupWindow';
 import { StateInput } from './InputManager';
-import { InputLabel } from './InputLabel';
+import InputLabel from './InputLabel';
 import {
   diagramContainerConfig,
   playgroundContainerConfig,

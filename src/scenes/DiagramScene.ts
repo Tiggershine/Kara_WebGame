@@ -5,8 +5,9 @@ import EdgeManager from '../classes/EdgeManager';
 import StateCircleManager from '../classes/StateCircleManager';
 import InputManager from '../classes/InputManager';
 import MissionManager from '../classes/MissionManager';
-import { InputLabel } from '../classes/InputLabel';
+import InputLabel from '../classes/InputLabel';
 import PopupWindow from '../classes/PopupWindow';
+import InputWindow from '../classes/InputWindow';
 
 interface MissionData {
   level: number;
@@ -22,6 +23,7 @@ export default class DiagramScene extends Phaser.Scene {
   inputManager: InputManager = new InputManager();
   stateCircles: StateCircle[] = [];
   inputLabels: InputLabel[] = [];
+  inputWindows: InputWindow[] = [];
   diagramValidArea!: Phaser.GameObjects.Rectangle;
   missionInfoImage!: Phaser.GameObjects.Image;
   private idCount: number = 1;
@@ -38,19 +40,6 @@ export default class DiagramScene extends Phaser.Scene {
 
   create(missionData: MissionData) {
     this.cameras.main.fadeIn(500, 0, 0, 0);
-
-    // this.popupWindow = new PopupWindow(
-    //   this,
-    //   'smBack',
-    //   `" All inputs will be reset.\n  Do you want to keep going? "`
-    // );
-    // this.popupWindow.create();
-
-    // Add PopupWindow to the scene
-    // this.add.existing(this.popupWindow);
-
-    // Optionally, set visibility
-    // this.popupWindow.setVisible(true);
 
     this.level = missionData.level;
     this.mission = missionData.mission;
@@ -95,6 +84,9 @@ export default class DiagramScene extends Phaser.Scene {
   //////////////////// ** GETTER & SETTER **////////////////////
   get getStateCircles(): StateCircle[] {
     return this.stateCircles;
+  }
+  get getInputWindows(): InputWindow[] {
+    return this.inputWindows;
   }
   get getIdCount(): number {
     return this.idCount;

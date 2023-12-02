@@ -22,7 +22,7 @@ import {
 } from '../configurations';
 import StateCircleManager from './StateCircleManager';
 
-export class InputWindow extends Phaser.GameObjects.Container {
+export default class InputWindow extends Phaser.GameObjects.Container {
   private diagramScene: DiagramScene;
   private stateCircleId: number = -1;
   private controlButtons: ControlButton[] = [];
@@ -189,6 +189,7 @@ export class InputWindow extends Phaser.GameObjects.Container {
     // Set Divider for Controller container
     dividerGraphics.lineBetween(230, 700, 510, 700);
   }
+  ///////** STATE UPDATE METHODS *//////////////////////////////////////////////////////////////////////////////////////////////////////
 
   ///////** STATE UPDATE METHODS *//////////////////////////////////////////////////////////////////////////////////////////////////////
 

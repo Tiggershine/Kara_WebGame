@@ -22,11 +22,9 @@ export default class EdgeManager {
     const angle = Math.atan2(circleB.y - circleA.y, circleB.x - circleA.x);
 
     const radius = circleA.circle.width / 2;
-
     // Calculate the offset from the center of circleA to the edge point
     const offsetX_A = radius * Math.cos(angle);
     const offsetY_A = radius * Math.sin(angle);
-
     // Calculate the offset from the center of circleB to the edge point
     const offsetX_B = radius * Math.cos(angle + Math.PI); // Add PI to reverse direction
     const offsetY_B = radius * Math.sin(angle + Math.PI);
@@ -34,7 +32,6 @@ export default class EdgeManager {
     // Calculate startX and startY for circleA
     const startX = circleA.x + offsetX_A + (3 / 4) * radius * Math.sin(angle);
     const startY = circleA.y + offsetY_A - (3 / 4) * radius * Math.cos(angle);
-
     // Calculate endX and endY for circleB
     const endX = circleB.x + offsetX_B + (3 / 4) * radius * Math.sin(angle);
     const endY = circleB.y + offsetY_B - (3 / 4) * radius * Math.cos(angle);

@@ -3,7 +3,7 @@ import DiagramScene from '../scenes/DiagramScene';
 import InputWindowScene from '../scenes/InputWindowScene';
 import StateCircle from './StateCircle';
 
-export class InputLabel extends Phaser.GameObjects.Container {
+export default class InputLabel extends Phaser.GameObjects.Container {
   private label!: Phaser.GameObjects.Text;
   private graphic!: Phaser.GameObjects.Graphics;
   private isSelected: boolean = false;

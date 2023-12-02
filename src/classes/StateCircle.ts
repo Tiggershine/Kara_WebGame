@@ -1,9 +1,9 @@
 import Phaser, { Input } from 'phaser';
 import InputManager, { StateInput } from './InputManager';
 import DiagramScene from '../scenes/DiagramScene';
-import { InputWindow } from './InputWindow';
+import InputWindow from './InputWindow';
 import EdgeManager from './EdgeManager';
-import { InputLabel } from './InputLabel';
+import InputLabel from './InputLabel';
 import UIManager from './UIManager';
 
 interface StateCircleType {
@@ -126,6 +126,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.diagramScene.add.existing(this);
 
     this.inputWindow = new InputWindow(this.scene, 0, 0, id);
+    diagramScene.inputWindows.push(this.inputWindow);
     // this.inputWindow.setVisible(false);
   }
 
@@ -319,7 +320,18 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     // this.inputLabel.setLabelText = newName;
     // console.log('StateCircle.ts', 'name: ', this.name);
 
-    this.scene.events.emit('updateStateCircleName', this.id, this.name);
+    // this.scene.events.emit('updateStateCircleName', this.id, this.name);
+
+    // Event emit -> stateCircle: { id, name } emit
+    this.diagramScene.events.emit(
+      'updatedStateCircles',
+      this.diagramScene.getStateCircles.map((stateCircle) => {
+        return {
+          id: stateCircle.getId,
+          name: stateCircle.getName,
+        };
+      })
+    );
   };
 
   /** InputWindow */

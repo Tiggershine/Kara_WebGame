@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { InputWindow } from './InputWindow';
+import InputWindow from './InputWindow';
 import DiagramScene from '../scenes/DiagramScene';
 
 export class NextStateButton extends Phaser.GameObjects.Container {
@@ -22,7 +22,6 @@ export class NextStateButton extends Phaser.GameObjects.Container {
     buttonId: number,
     buttonTexture: string,
     backgroundTexture: string,
-    // options: string[], // string으로
     options: { id: number; name: string }[],
     inputWindow: InputWindow // Adding a new parameter to store a reference to the InputWindow instance
   ) {
@@ -38,6 +37,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
     this.buttonTexture = buttonTexture;
     this.backgroundTexture = backgroundTexture;
     this.buttonContainer = this.scene.add.container(0, 0);
+    // unfold 전에 보여지는 NextState 버튼
     const buttonRectangle = this.scene.add
       .rectangle(0, 0, 70, 24, 0xfcf6f5)
       .setOrigin(0.5, 0.5)
@@ -77,13 +77,13 @@ export class NextStateButton extends Phaser.GameObjects.Container {
   }
 
   unfoldOptions() {
-    // 기존에 생성된 메뉴 아이템들을 삭제
+    // Destroy existing menu items
     this.menuItems.forEach((item) => {
       item.destroy();
     });
     this.menuItems = [];
 
-    // 새로운 options에 대해 요소를 생성
+    // Create new menu items
     this.options.forEach((option: { id: number; name: string }, index) => {
       if (!this.scene) {
         // console.error('Scene is not available in NextStateButton');
@@ -107,26 +107,27 @@ export class NextStateButton extends Phaser.GameObjects.Container {
           Phaser.Geom.Rectangle.Contains
         )
         .setVisible(false)
-        // .setDepth(10)
         .on('pointerdown', (pointer: Phaser.Input.Pointer) => {
           pointer.event.stopPropagation();
-          if (this.inputWindow) {
-            this.inputWindow.updateNextStateInput(this.buttonId, option.id);
-          } else {
-            console.error('InputWindow is not available in NextStateButton');
-          }
+          // if (this.inputWindow) {
+          //   this.inputWindow.updateNextStateInput(this.buttonId, option.id);
+          // } else {
+          //   console.error('InputWindow is not available in NextStateButton');
+          // }
           this.selectedHighlight(menuItemRectangle);
-          this.inputWindow?.updateNextStateInput(this.buttonId, option.id);
           console.log('(MextStateButton.ts) option.id: ', option.id);
 
           // 선택한 옵션의 이름으로 buttonLabel의 텍스트를 업데이트
           this.buttonLabel.setText(option.name);
+          this.inputWindow?.updateNextStateInput(this.buttonId, option.id);
 
           this.closeMenu();
         });
       this.menuItems.push(optionContainer);
       this.add(optionContainer);
     });
+    // this.scene.add.existing(this);
+    // this.scene.input.on('pointerdown', this.handleOutsideClick, this);
   }
 
   toggleMenu = () => {

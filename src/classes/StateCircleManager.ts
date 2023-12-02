@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import DiagramScene from '../scenes/DiagramScene';
 import StateCircle from './StateCircle';
-import { InputLabel } from './InputLabel';
+import InputLabel from './InputLabel';
+import InputWindow from './InputWindow';
 import { StateInput } from '../classes/InputManager';
 
 export default class StateCircleManager {
@@ -31,6 +32,16 @@ export default class StateCircleManager {
       throw new Error(`InputLabel with id ${id} not found`);
     }
     return label;
+  };
+
+  getInputWindowById = (id: number): InputWindow => {
+    const inputWindow = this.diagramScene.inputWindows.find(
+      (inputWindow) => inputWindow.getId === id
+    );
+    if (!inputWindow) {
+      throw new Error(`InputWindow with id ${id} not found`);
+    }
+    return inputWindow;
   };
 
   extractIdAndStateInputStateCircles = (): {
@@ -75,11 +86,13 @@ export default class StateCircleManager {
       this.diagramScene.inputLabels
     );
     // // Event emit -> stateCircle: { id, name } emit
+    // this.diagramScene.events.emit('stateCircleUpdated', {
+    //   id: id,
+    //   newName: newName,
+    // });
     this.diagramScene.events.emit(
-      'updatedStateCircles',
+      'stateCircleUpdated',
       this.diagramScene.stateCircles.map((stateCircle) => {
-        // TODO: DELETE TEST CODE
-        // console.log('(DiagramScene.ts) stateCircles: ', stateCircle);
         return {
           id: stateCircle.getId,
           name: stateCircle.getName,
@@ -90,13 +103,37 @@ export default class StateCircleManager {
 
   // Find StateCircle by id => DELETE the StateCircle && InputLable && Edge
   public deleteStateCircleById = (id: number): void => {
-    // StateCircle 찾기
+    // 삭제할 StateCircle 찾기
     const circleToDelete =
       this.diagramScene.stateCircleManager.getStateCircleById(id);
     if (!circleToDelete) {
       console.error('StateCircle not found with id:', id);
       return;
     }
+
+    // 연관 InputWindow 삭제
+    // const inputWindowToDelete =
+    //   this.diagramScene.stateCircleManager.getInputLabelById(id);
+    const inputWindowToDelete = circleToDelete.getInputWindow();
+    if (!inputWindowToDelete) {
+      console.error('InputWindow not found with id:', id);
+      return;
+    } else {
+      const previousStateCircle =
+        this.diagramScene.stateCircleManager.getStateCircleById(id - 1);
+      if (previousStateCircle) {
+        previousStateCircle.emit('pointerdown');
+      } else {
+        console.error('Cannot find previous StateCircle of ID', id);
+      }
+
+      inputWindowToDelete.destroy();
+      // InputWindows 배열 업데이트
+      this.diagramScene.inputWindows = this.diagramScene.inputWindows.filter(
+        (inputWindow) => inputWindow.getId !== id
+      );
+    }
+
     // edge로 연결된 StateCircles 찾기
     const connectedCircles = this.diagramScene.getStateCircles.filter(
       (circle) =>
@@ -119,6 +156,7 @@ export default class StateCircleManager {
     // 연결된 StateCircle들의 에지 업데이트
     connectedCircles.forEach((circle) => circle.updateEdges());
 
+    // StateCircles 배열 업데이트
     this.diagramScene.stateCircles = this.diagramScene.stateCircles.filter(
       (circle) => circle.getId !== id
     );
@@ -136,6 +174,19 @@ export default class StateCircleManager {
     }
 
     this.diagramScene.uiManager.addLabels();
+
+    this.diagramScene.events.emit('stateCircleDeleted', id);
+
+    // Event emit -> stateCircle: { id, name } emit
+    this.diagramScene.events.emit(
+      'updatedStateCircles',
+      this.diagramScene.getStateCircles.map((stateCircle) => {
+        return {
+          id: stateCircle.getId,
+          name: stateCircle.getName,
+        };
+      })
+    );
 
     console.log(
       '(DiagramScene.ts',
@@ -161,9 +212,9 @@ export default class StateCircleManager {
       this.diagramScene.uiManager.createEdgesForStateCircles();
 
       // Emit an event with the updated state inputs
-      this.diagramScene.scene
-        .get('PlaygroundScene')
-        .events.emit('stateInputDataUpdated', this.diagramScene.stateCircles);
+      // this.diagramScene.scene
+      //   .get('PlaygroundScene')
+      //   .events.emit('stateInputDataUpdated', this.diagramScene.stateCircles);
     }
   }
 }
