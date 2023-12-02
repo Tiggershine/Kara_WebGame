@@ -202,7 +202,7 @@ export default class TaskHelper {
       callbackFunction();
     }
 
-    // this.scene.events.emit('simulationEnd');
+    this.scene.events.emit('simulationEnd');
 
     this.player.playerHighlightOff();
     this.simulationHighlight.simulationHighlightOff();
