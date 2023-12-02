@@ -134,7 +134,6 @@ export default class SubMenuScene extends Phaser.Scene {
     }
 
     missionLogs.forEach((missionLog, index) => {
-      console.log('missionLogs forEach 시작');
       if (missionLog.isSuccess) {
         console.log('missionLogs forEach isSuccess');
         this.createMissionButtons(
@@ -167,7 +166,6 @@ export default class SubMenuScene extends Phaser.Scene {
     const selectedTexture: string = texture + 'Hover';
     console.log(selectedTexture);
     missionBtn.on('pointerover', () => {
-      console.log('pointerover');
       missionBtn.setTexture(selectedTexture);
     });
     missionBtn.on('pointerout', () => {

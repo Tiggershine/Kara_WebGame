@@ -109,6 +109,11 @@ export default class TaskHelper {
     const maxSameStateCount = 30; // Threshold for the same state repetition
 
     while (currentStateId !== 100) {
+      // if (currentStateId === 100) {
+      //   this.findStateCircleByIdSelect(this.scene, currentStateId);
+      //   return; // Exit the function
+      // }
+
       if (currentStateId === previousStateId) {
         sameStateCount++;
         if (sameStateCount >= maxSameStateCount) {
@@ -219,7 +224,10 @@ export default class TaskHelper {
 
           // nextStateId = stateInput.nextStateId;
           currentStateId = stateInput.nextState;
-          // console.log('새로운 currentStateId: ', currentStateId);
+          console.log('새로운 currentStateId: ', currentStateId);
+          if (currentStateId === 100) {
+            this.findStateCircleByIdSelect(this.scene, currentStateId);
+          }
 
           break;
         }
@@ -231,6 +239,7 @@ export default class TaskHelper {
       callbackFunction();
     }
 
+    // Simulation Play Button 변경을 위한 event emit
     this.scene.events.emit('simulationEnd');
 
     this.player.playerHighlightOff();

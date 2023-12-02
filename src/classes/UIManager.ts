@@ -220,7 +220,8 @@ export default class UIManager {
       0,
       stateName,
       false
-    ).setVisible(false);
+    ).setDepth(-10);
+    // .setVisible(false);
     this.diagramScene.inputLabels.push(inputLabel);
 
     const endStateCircle = new StateCircle(

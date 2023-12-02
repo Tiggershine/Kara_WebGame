@@ -129,11 +129,4 @@ export default class Stars extends Phaser.GameObjects.Container {
       !isOtherObjectsExist
     );
   }
-
-  // createMissonInfoContainer = () => {
-  //   this.missionInfoContainer = this.scene.add.container(
-  //     this.scene.cameras.main.centerX,
-  //     this.scene.cameras.main.centerY
-  //   );
-  // };
 }
