@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import Player from '../classes/sprites/Player';
 import Wall from '../classes/sprites/Wall';
+import Star from '../classes/sprites/Star';
 import TaskHelper from '../classes/TaskHelper';
 import DiagramScene from '../scenes/DiagramScene';
 import PopupWindow from '../classes/PopupWindow';
@@ -16,10 +17,19 @@ type StateInput = {
   nextStateId: number;
 };
 
-type State = {
-  id: number;
-  stateInputs: StateInput[];
-};
+const wallPositions = [
+  { x: 105, y: 265 },
+  { x: 155, y: 265 },
+  { x: 205, y: 265 },
+  { x: 255, y: 265 },
+  { x: 305, y: 265 },
+  { x: 205, y: 365 },
+  { x: 255, y: 365 },
+  { x: 305, y: 365 },
+  { x: 355, y: 365 },
+  { x: 405, y: 365 },
+  { x: 455, y: 365 },
+];
 
 const stateInputData = [
   {
@@ -109,108 +119,96 @@ const stateInputData = [
 export default class TunnelFinder extends Phaser.GameObjects.Container {
   private taskHelper: TaskHelper;
   private player!: Player;
-  private wall1!: Wall;
-  private wall2!: Wall;
-  private wall3!: Wall;
-  private wall4!: Wall;
-  private wall5!: Wall;
-  private wall6!: Wall;
-  private wall7!: Wall;
-  private wall8!: Wall;
-  private wall9!: Wall;
-  private wall10!: Wall;
-  private wall11!: Wall;
-  private wall12!: Wall;
+  private walls!: Wall[];
+  private star!: Star;
   private isSuccessPopupShowed: boolean = false;
-
-  // private stateInputData: any;
-  // private inputDataChecked: boolean = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
 
     this.player = new Player(this.scene, 55, 315);
     this.player.setAngle(90);
-    this.wall1 = new Wall(this.scene, 105, 265);
-    this.wall2 = new Wall(this.scene, 155, 265);
-    this.wall3 = new Wall(this.scene, 205, 265);
-    this.wall4 = new Wall(this.scene, 255, 265);
-    this.wall5 = new Wall(this.scene, 305, 265);
-    this.wall6 = new Wall(this.scene, 205, 365);
-    this.wall7 = new Wall(this.scene, 255, 365);
-    this.wall8 = new Wall(this.scene, 305, 365);
-    this.wall9 = new Wall(this.scene, 355, 365);
-    this.wall10 = new Wall(this.scene, 405, 365);
-    this.wall11 = new Wall(this.scene, 455, 365);
+
+    this.walls = wallPositions.map((pos) => new Wall(this.scene, pos.x, pos.y));
+    this.walls.forEach((wall) => scene.add.existing(wall));
+
+    this.star = new Star(this.scene, 355, 315);
 
     this.taskHelper = new TaskHelper(scene, this.player);
 
     scene.add.existing(this.player);
-    scene.add.existing(this.wall1);
-    scene.add.existing(this.wall2);
-    scene.add.existing(this.wall3);
-    scene.add.existing(this.wall4);
-    scene.add.existing(this.wall5);
-    scene.add.existing(this.wall6);
-    scene.add.existing(this.wall7);
-    scene.add.existing(this.wall8);
-    scene.add.existing(this.wall9);
-    scene.add.existing(this.wall10);
-    scene.add.existing(this.wall11);
-
-    // this.stateInputData = stateInputData;
+    scene.add.existing(this.star);
   }
 
   restartSimulation = (stateInputData: any, highlightOn: boolean) => {
     this.player.cleanUpStars();
     this.player.setPosition(55, 315);
 
+    this.star = new Star(this.scene, 355, 315);
+    this.scene.add.existing(this.star);
+
     this.processStateInputData(stateInputData, highlightOn);
   };
 
   processStateInputData = (stateInputData: any, highlightOn: boolean) => {
     this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
-      const positionsCorrect = this.checkObjectPositions();
-
-      console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
-      if (!this.isSuccessPopupShowed) {
-        if (positionsCorrect) {
+      if (this.taskHelper.wasInfiniteLoopDetected()) {
+        // Display infinite loop warning popup
+        setTimeout(() => {
           const diagramScene = this.scene.scene.get(
             'DiagramScene'
           ) as DiagramScene;
+          diagramScene.popupWindow = new PopupWindow(
+            diagramScene,
+            'smAlert',
+            `" Oops! \n  Looks like we're going in circles! \n  Check your instructions again.    "`,
+            false
+          );
+          diagramScene.popupWindow.create();
+          diagramScene.add.existing(diagramScene.popupWindow);
+        }, 800);
+      } else {
+        const positionsCorrect = this.checkObjectPositions();
 
-          setTimeout(() => {
-            diagramScene.popupWindow = new PopupWindow(
-              diagramScene,
-              'smBack',
-              `" Great job! \n  Let's take on the next mission. "`,
-              false
-            );
-            diagramScene.popupWindow.create();
-            diagramScene.add.existing(diagramScene.popupWindow);
-          }, 800);
+        console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
+        if (!this.isSuccessPopupShowed) {
+          if (positionsCorrect) {
+            const diagramScene = this.scene.scene.get(
+              'DiagramScene'
+            ) as DiagramScene;
 
-          this.isSuccessPopupShowed = true;
-        } else {
-          const diagramScene = this.scene.scene.get(
-            'DiagramScene'
-          ) as DiagramScene;
+            setTimeout(() => {
+              diagramScene.popupWindow = new PopupWindow(
+                diagramScene,
+                'sm',
+                `" Great job! \n  Let's take on the next mission. "`,
+                false
+              );
+              diagramScene.popupWindow.create();
+              diagramScene.add.existing(diagramScene.popupWindow);
+            }, 800);
 
-          setTimeout(() => {
-            diagramScene.popupWindow = new PopupWindow(
-              diagramScene,
-              'smBack',
-              `" So close! \n  Would you like to try again? "`,
-              false
-            );
-            diagramScene.popupWindow.create();
-            diagramScene.add.existing(diagramScene.popupWindow);
-          }, 800);
+            this.isSuccessPopupShowed = true;
+          } else {
+            const diagramScene = this.scene.scene.get(
+              'DiagramScene'
+            ) as DiagramScene;
 
-          this.isSuccessPopupShowed = true;
+            setTimeout(() => {
+              diagramScene.popupWindow = new PopupWindow(
+                diagramScene,
+                'smAlert',
+                `" That didn't work out.\n   Ready for another try? "`,
+                false
+              );
+              diagramScene.popupWindow.create();
+              diagramScene.add.existing(diagramScene.popupWindow);
+            }, 800);
+          }
         }
+        this.scene.events.emit('simulationEnd');
+        console.log(positionsCorrect ? 'Success' : 'Fail');
       }
-      console.log(positionsCorrect ? 'Success' : 'Fail');
     });
   };
 
@@ -218,7 +216,22 @@ export default class TunnelFinder extends Phaser.GameObjects.Container {
     const isPlayerAt355315 = this.scene.children.list.some(
       (child) => child instanceof Player && child.x === 355 && child.y === 315
     );
+    // const areWallsCorrect = wallPositions.every((pos) => {
+    //   this.scene.children.list.some(
+    //     (child) =>
+    //       child instanceof Wall && child.x === pos.x && child.y === pos.y
+    //   );
+    // });
+    const isStarOBjectExist = this.scene.children.list.some(
+      (child) => child instanceof Star
+    );
+    console.log(
+      'isPlayerAt355315: ',
+      isPlayerAt355315,
+      'isStarOBjectExist: ',
+      isStarOBjectExist
+    );
 
-    return isPlayerAt355315;
+    return isPlayerAt355315 && !isStarOBjectExist;
   }
 }

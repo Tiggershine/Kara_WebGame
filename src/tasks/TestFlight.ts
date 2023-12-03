@@ -29,7 +29,6 @@ export default class TestFlight extends Phaser.GameObjects.Container {
   }
 
   restartSimulation = (stateInputData: any, highlightOn: boolean) => {
-    console.log('restartSimulation triggered');
     this.player.cleanUpStars();
     this.player.setPosition(155, 315).setAngle(90);
     this.player.playerHighlight.setPosition(155, 315);
@@ -41,7 +40,6 @@ export default class TestFlight extends Phaser.GameObjects.Container {
   };
 
   processStateInputData = (stateInputData: any, highlightOn: boolean) => {
-    console.log('processStateInputData triggered');
     this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
       if (this.taskHelper.wasInfiniteLoopDetected()) {
         // Display infinite loop warning popup
@@ -71,7 +69,7 @@ export default class TestFlight extends Phaser.GameObjects.Container {
             setTimeout(() => {
               diagramScene.popupWindow = new PopupWindow(
                 diagramScene,
-                'smBack',
+                'sm',
                 `" Congratulations on completing \n   your first mission! "`,
                 false
               );
@@ -88,19 +86,16 @@ export default class TestFlight extends Phaser.GameObjects.Container {
             setTimeout(() => {
               diagramScene.popupWindow = new PopupWindow(
                 diagramScene,
-                'smBack',
+                'smAlert',
                 `" So close! \n  Would you like to try again? "`,
                 false
               );
               diagramScene.popupWindow.create();
               diagramScene.add.existing(diagramScene.popupWindow);
             }, 800);
-
-            this.scene.events.emit('simulationEnd');
-
-            // this.isSuccessPopupShowed = true;
           }
         }
+        this.scene.events.emit('simulationEnd');
         console.log(positionsCorrect ? 'Success' : 'Fail');
       }
     });

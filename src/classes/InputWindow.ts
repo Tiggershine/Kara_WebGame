@@ -465,7 +465,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
   addSensorDropdownButton(clickedDropdown: DropdownMenu) {
     const registedSensorCount = this.tempSensorInputs.length;
 
-    if (registedSensorCount < 3) {
+    if (registedSensorCount < 4) {
       let newX = clickedDropdown.getX + 50;
       let newY = clickedDropdown.getY;
 

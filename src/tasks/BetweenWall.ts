@@ -77,47 +77,63 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
 
   processStateInputData = (stateInputData: any, highlightOn: boolean) => {
     this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
-      const positionsCorrect = this.checkObjectPositions();
-
-      console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
-      if (!this.isSuccessPopupShowed) {
-        if (positionsCorrect) {
+      if (this.taskHelper.wasInfiniteLoopDetected()) {
+        // Display infinite loop warning popup
+        setTimeout(() => {
           const diagramScene = this.scene.scene.get(
             'DiagramScene'
           ) as DiagramScene;
+          diagramScene.popupWindow = new PopupWindow(
+            diagramScene,
+            'smAlert',
+            `" Oops! \n  Looks like we're going in circles! \n  Check your instructions again.    "`,
+            false
+          );
+          diagramScene.popupWindow.create();
+          diagramScene.add.existing(diagramScene.popupWindow);
+        }, 800);
+      } else {
+        const positionsCorrect = this.checkObjectPositions();
 
-          setTimeout(() => {
-            diagramScene.popupWindow = new PopupWindow(
-              diagramScene,
-              'smBack',
-              `" Great job! \n  Let's take on the next mission. "`,
-              false
-            );
-            diagramScene.popupWindow.create();
-            diagramScene.add.existing(diagramScene.popupWindow);
-          }, 800);
+        console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
+        if (!this.isSuccessPopupShowed) {
+          if (positionsCorrect) {
+            const diagramScene = this.scene.scene.get(
+              'DiagramScene'
+            ) as DiagramScene;
 
-          this.isSuccessPopupShowed = true;
-        } else {
-          const diagramScene = this.scene.scene.get(
-            'DiagramScene'
-          ) as DiagramScene;
+            setTimeout(() => {
+              diagramScene.popupWindow = new PopupWindow(
+                diagramScene,
+                'sm',
+                `" Bravo! You've succeeded! "`,
+                false
+              );
+              diagramScene.popupWindow.create();
+              diagramScene.add.existing(diagramScene.popupWindow);
+            }, 800);
 
-          setTimeout(() => {
-            diagramScene.popupWindow = new PopupWindow(
-              diagramScene,
-              'smBack',
-              `" So close! \n  Would you like to try again? "`,
-              false
-            );
-            diagramScene.popupWindow.create();
-            diagramScene.add.existing(diagramScene.popupWindow);
-          }, 800);
+            this.isSuccessPopupShowed = true;
+          } else {
+            const diagramScene = this.scene.scene.get(
+              'DiagramScene'
+            ) as DiagramScene;
 
-          this.isSuccessPopupShowed = true;
+            setTimeout(() => {
+              diagramScene.popupWindow = new PopupWindow(
+                diagramScene,
+                'smAlert',
+                `" Oops, not quite!\n   Want to try again? "`,
+                false
+              );
+              diagramScene.popupWindow.create();
+              diagramScene.add.existing(diagramScene.popupWindow);
+            }, 800);
+          }
         }
+        this.scene.events.emit('simulationEnd');
+        console.log(positionsCorrect ? 'Success' : 'Fail');
       }
-      console.log(positionsCorrect ? 'Success' : 'Fail');
     });
   };
 
