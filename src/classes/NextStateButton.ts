@@ -115,7 +115,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
           //   console.error('InputWindow is not available in NextStateButton');
           // }
           this.selectedHighlight(menuItemRectangle);
-          console.log('(MextStateButton.ts) option.id: ', option.id);
+          console.log('(NextStateButton.ts) option.id: ', option.id);
 
           // 선택한 옵션의 이름으로 buttonLabel의 텍스트를 업데이트
           this.buttonLabel.setText(option.name);

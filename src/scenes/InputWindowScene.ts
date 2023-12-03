@@ -10,7 +10,7 @@ import {
 // import { InputGuideline } from '../classes/InputGuideline';
 // import { InputLabel } from '../classes/InputLabel';
 import DiagramScene from './DiagramScene';
-import { InputWindow } from '../classes/InputWindow';
+import InputWindow from '../classes/InputWindow';
 
 /** Contorl Button Options */
 const buttonConfigurations = [
@@ -154,204 +154,204 @@ export const moveInputPoints = [
   { key: 'dummyBtn_57', x: 885, y: 750 },
   { key: 'dummyBtn_58', x: 935, y: 750 },
 ];
-export default class InputWindowScene extends Phaser.Scene {
-  // private dropdownButtons: DropdownMenu[] = [];
-  // private currentDropdownCount: number = 0; // Move currentDropdownCount here
-  inputManager: InputManager = new InputManager();
-  private tempSensorType?: SensorType;
-  private inputWindow?: InputWindow;
+// export default class InputWindowScene extends Phaser.Scene {
+//   // private dropdownButtons: DropdownMenu[] = [];
+//   // private currentDropdownCount: number = 0; // Move currentDropdownCount here
+//   inputManager: InputManager = new InputManager();
+//   private tempSensorType?: SensorType;
+//   private inputWindow?: InputWindow;
 
-  private buttonConfigurations = [
-    {
-      name: 'yesButton',
-      type: ButtonType.YesButton,
-      texture: 'yesButton',
-      selectedTexture: 'yesButtonSelected',
-      x: 370,
-      y: 665,
-    },
-    {
-      name: 'noButton',
-      type: ButtonType.NoButton,
-      texture: 'noButton',
-      selectedTexture: 'noButtonSelected',
-      x: 430,
-      y: 665,
-    },
-    {
-      name: 'yesNoButton',
-      type: ButtonType.YesNoButton,
-      texture: 'yesNoButton',
-      selectedTexture: 'yesNoButtonSelected',
-      x: 490,
-      y: 665,
-    },
-    {
-      name: 'forwardButton',
-      type: ButtonType.ForwardButton,
-      texture: 'forwardButton',
-      selectedTexture: 'forwardButtonSelected',
-      x: 250,
-      y: 745,
-    },
-    {
-      name: 'leftButton',
-      type: ButtonType.LeftButton,
-      texture: 'leftButton',
-      selectedTexture: 'leftButtonSelected',
-      x: 310,
-      y: 745,
-    },
-    {
-      name: 'rightButton',
-      type: ButtonType.RightButton,
-      texture: 'rightButton',
-      selectedTexture: 'rightButtonSelected',
-      x: 370,
-      y: 745,
-    },
-    {
-      name: 'putButton',
-      type: ButtonType.PutButton,
-      texture: 'putButton',
-      selectedTexture: 'putButtonSelected',
-      x: 430,
-      y: 745,
-    },
-    {
-      name: 'pickButton',
-      type: ButtonType.PickButton,
-      texture: 'pickButton',
-      selectedTexture: 'pickButtonSelected',
-      x: 490,
-      y: 745,
-    },
-  ];
-  // private inputLabels: InputLabel[] = [];
-  private diagramScene?: DiagramScene;
+//   private buttonConfigurations = [
+//     {
+//       name: 'yesButton',
+//       type: ButtonType.YesButton,
+//       texture: 'yesButton',
+//       selectedTexture: 'yesButtonSelected',
+//       x: 370,
+//       y: 665,
+//     },
+//     {
+//       name: 'noButton',
+//       type: ButtonType.NoButton,
+//       texture: 'noButton',
+//       selectedTexture: 'noButtonSelected',
+//       x: 430,
+//       y: 665,
+//     },
+//     {
+//       name: 'yesNoButton',
+//       type: ButtonType.YesNoButton,
+//       texture: 'yesNoButton',
+//       selectedTexture: 'yesNoButtonSelected',
+//       x: 490,
+//       y: 665,
+//     },
+//     {
+//       name: 'forwardButton',
+//       type: ButtonType.ForwardButton,
+//       texture: 'forwardButton',
+//       selectedTexture: 'forwardButtonSelected',
+//       x: 250,
+//       y: 745,
+//     },
+//     {
+//       name: 'leftButton',
+//       type: ButtonType.LeftButton,
+//       texture: 'leftButton',
+//       selectedTexture: 'leftButtonSelected',
+//       x: 310,
+//       y: 745,
+//     },
+//     {
+//       name: 'rightButton',
+//       type: ButtonType.RightButton,
+//       texture: 'rightButton',
+//       selectedTexture: 'rightButtonSelected',
+//       x: 370,
+//       y: 745,
+//     },
+//     {
+//       name: 'putButton',
+//       type: ButtonType.PutButton,
+//       texture: 'putButton',
+//       selectedTexture: 'putButtonSelected',
+//       x: 430,
+//       y: 745,
+//     },
+//     {
+//       name: 'pickButton',
+//       type: ButtonType.PickButton,
+//       texture: 'pickButton',
+//       selectedTexture: 'pickButtonSelected',
+//       x: 490,
+//       y: 745,
+//     },
+//   ];
+//   // private inputLabels: InputLabel[] = [];
+//   private diagramScene?: DiagramScene;
 
-  constructor() {
-    super('InputWindowScene');
-  }
+//   constructor() {
+//     super('InputWindowScene');
+//   }
 
-  // Values for Style
-  private inputContainerStyle = {
-    x: 550,
-    y: 400,
-    width: 500,
-    height: 380,
-    borderRadius: 10,
-    backgroundColor: 0xfcf6f5,
-  };
+//   // Values for Style
+//   private inputContainerStyle = {
+//     x: 550,
+//     y: 400,
+//     width: 500,
+//     height: 380,
+//     borderRadius: 10,
+//     backgroundColor: 0xfcf6f5,
+//   };
 
-  private controllerContainerStyle = {
-    x: 210,
-    y: 620,
-    width: 320,
-    height: 160,
-    borderRadius: 10,
-    backgroundColor: 0xfcf6f5,
-  };
+//   private controllerContainerStyle = {
+//     x: 210,
+//     y: 620,
+//     width: 320,
+//     height: 160,
+//     borderRadius: 10,
+//     backgroundColor: 0xfcf6f5,
+//   };
 
-  preload() {}
+//   preload() {}
 
-  create() {
-    // Continaer Graphic
-    const containerStyle = {
-      width: 500,
-      height: 380,
-      borderRadius: 10,
-      backgroundColor: 0xfcf6f5,
-    };
+//   create() {
+//     // Continaer Graphic
+//     const containerStyle = {
+//       width: 500,
+//       height: 380,
+//       borderRadius: 10,
+//       backgroundColor: 0xfcf6f5,
+//     };
 
-    const containerGraphic = this.add.graphics({
-      fillStyle: { color: containerStyle.backgroundColor },
-    });
-    containerGraphic.fillRoundedRect(
-      550,
-      400,
-      containerStyle.width,
-      containerStyle.height,
-      containerStyle.borderRadius
-    );
+//     const containerGraphic = this.add.graphics({
+//       fillStyle: { color: containerStyle.backgroundColor },
+//     });
+//     containerGraphic.fillRoundedRect(
+//       550,
+//       400,
+//       containerStyle.width,
+//       containerStyle.height,
+//       containerStyle.borderRadius
+//     );
 
-    const controllerContainerStyle = {
-      width: 320,
-      height: 160,
-      borderRadius: 10,
-      backgroundColor: 0xfcf6f5,
-    };
-    const controlContainerGraphic = this.add.graphics({
-      fillStyle: { color: controllerContainerStyle.backgroundColor },
-    });
-    controlContainerGraphic.fillRoundedRect(
-      210,
-      620,
-      controllerContainerStyle.width,
-      controllerContainerStyle.height,
-      controllerContainerStyle.borderRadius
-    );
+//     const controllerContainerStyle = {
+//       width: 320,
+//       height: 160,
+//       borderRadius: 10,
+//       backgroundColor: 0xfcf6f5,
+//     };
+//     const controlContainerGraphic = this.add.graphics({
+//       fillStyle: { color: controllerContainerStyle.backgroundColor },
+//     });
+//     controlContainerGraphic.fillRoundedRect(
+//       210,
+//       620,
+//       controllerContainerStyle.width,
+//       controllerContainerStyle.height,
+//       controllerContainerStyle.borderRadius
+//     );
 
-    // Divider graphics
-    const dividerGraphics = this.add.graphics({
-      lineStyle: {
-        width: 1,
-        color: 14277081, // #D9D9D9
-      },
-    });
-    // Set Divider for Input container
-    dividerGraphics.lineBetween(559, 457, 1041, 457);
-    dividerGraphics.lineBetween(760, 408, 760, 774);
-    dividerGraphics.lineBetween(960, 408, 960, 774);
-    // Set Divider for Controller container
-    dividerGraphics.lineBetween(230, 700, 510, 700);
+//     // Divider graphics
+//     const dividerGraphics = this.add.graphics({
+//       lineStyle: {
+//         width: 1,
+//         color: 14277081, // #D9D9D9
+//       },
+//     });
+//     // Set Divider for Input container
+//     dividerGraphics.lineBetween(559, 457, 1041, 457);
+//     dividerGraphics.lineBetween(760, 408, 760, 774);
+//     dividerGraphics.lineBetween(960, 408, 960, 774);
+//     // Set Divider for Controller container
+//     dividerGraphics.lineBetween(230, 700, 510, 700);
 
-    // Label for Inputwindow
-    this.add.image(862.5, 433, 'moveLabel');
-    this.add.image(1000, 433, 'nextStateLabel');
+//     // Label for Inputwindow
+//     this.add.image(862.5, 433, 'moveLabel');
+//     this.add.image(1000, 433, 'nextStateLabel');
 
-    buttonConfigurations.forEach((config) => {
-      this.createControlButton(config.x, config.y, config.texture, config.type);
-    });
+//     buttonConfigurations.forEach((config) => {
+//       this.createControlButton(config.x, config.y, config.texture, config.type);
+//     });
 
-    // this.events.emit('inputWindowSceneReady');
-  }
+//     // this.events.emit('inputWindowSceneReady');
+//   }
 
-  ///////** METHODS *//////////////////////////////////////////////////////////////////////////////////////////////////////
+//   ///////** METHODS *//////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // Function returns a RoundRectGraphics object
-  createRoundRectGraphics = (
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    borderRadius: number,
-    backgroundColor: number
-  ): Phaser.GameObjects.Graphics => {
-    const roundRectGraphics = this.add.graphics({
-      fillStyle: { color: backgroundColor },
-    });
-    roundRectGraphics.fillRoundedRect(x, y, width, height, borderRadius);
+//   // Function returns a RoundRectGraphics object
+//   createRoundRectGraphics = (
+//     x: number,
+//     y: number,
+//     width: number,
+//     height: number,
+//     borderRadius: number,
+//     backgroundColor: number
+//   ): Phaser.GameObjects.Graphics => {
+//     const roundRectGraphics = this.add.graphics({
+//       fillStyle: { color: backgroundColor },
+//     });
+//     roundRectGraphics.fillRoundedRect(x, y, width, height, borderRadius);
 
-    return roundRectGraphics;
-  };
+//     return roundRectGraphics;
+//   };
 
-  /**
-   *
-   * @param x x coordinate
-   * @param y y coordinate
-   * @param texture Namespace used to import image file
-   * @param type Button type
-   * @returns ControlButton Object
-   */
-  createControlButton = (
-    x: number,
-    y: number,
-    texture: string,
-    type: ButtonType
-  ): ControlButton => {
-    const newControlButton = new ControlButton(this, x, y, texture, type);
+//   /**
+//    *
+//    * @param x x coordinate
+//    * @param y y coordinate
+//    * @param texture Namespace used to import image file
+//    * @param type Button type
+//    * @returns ControlButton Object
+//    */
+//   createControlButton = (
+//     x: number,
+//     y: number,
+//     texture: string,
+//     type: ButtonType
+//   ): ControlButton => {
+//     const newControlButton = new ControlButton(this, x, y, texture, type);
 
-    return newControlButton;
-  };
-}
+//     return newControlButton;
+//   };
+// }

@@ -131,9 +131,6 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   }
 
   updateEdges = (): void => {
-    // Get a reference to the DiagramScene
-    // const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
-
     // Create a temporary array to hold the new edges
     const newEdges: Phaser.GameObjects.Graphics[] = [];
 
@@ -252,7 +249,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
       // TODO: DELETE TEST CODE
       // console.log(this.inputWindow.getInputwindowActive());
-      // this.inputWindow.setVisible(false); // Hide the InputWindow
+      this.inputWindow.setVisible(false); // Hide the InputWindow
     }
   };
 

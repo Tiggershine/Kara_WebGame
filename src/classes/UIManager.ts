@@ -220,8 +220,7 @@ export default class UIManager {
       0,
       stateName,
       false
-    ).setDepth(-10);
-    // .setVisible(false);
+    ).setVisible(false);
     this.diagramScene.inputLabels.push(inputLabel);
 
     const endStateCircle = new StateCircle(
@@ -301,6 +300,7 @@ export default class UIManager {
       circle.stateInputs.forEach((input) => {
         if (input.nextState !== undefined) {
           if (input.nextState === circle.id) {
+            // nextState가 자기 자신인 경우
             // Create a self edge
             this.diagramScene.edgeManager.createSelfEdge(circle);
           }

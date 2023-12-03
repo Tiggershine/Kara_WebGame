@@ -82,6 +82,7 @@ export default class EdgeManager {
     const selfEdgeCenterX = circle.x + radius * Math.cos(startAngle);
     const selfEdgeCenterY = circle.y - selfEdgeRadius - 36; // Move up by 2/3 of the radius
 
+    edge.fillStyle(0x000000, 1);
     // Draw the self edge circle
     edge.beginPath();
     edge.arc(
@@ -121,7 +122,7 @@ export default class EdgeManager {
     edge.lineTo(arrowRightX, arrowRightY);
     edge.closePath();
     edge.fillPath();
-    edge.setDepth(10);
+    edge.setDepth(100);
 
     // Set the data for the self-edge
     edge.setData('startCircle', circle);
