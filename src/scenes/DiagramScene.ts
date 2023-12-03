@@ -60,6 +60,9 @@ export default class DiagramScene extends Phaser.Scene {
       () => this.stateCircleManager.updateStateCircleNameById,
       this
     );
+    this.events.on('simulationEnd', () => {
+      this.setIsMissionInitiated = true;
+    });
 
     // this.scene.moveAbove('InputWindowScene', 'DiagramScene');
     this.scene.moveAbove('DiagramScene', 'PlaygroundScene');

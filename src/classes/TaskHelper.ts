@@ -118,16 +118,6 @@ export default class TaskHelper {
         sameStateCount++;
         if (sameStateCount >= maxSameStateCount) {
           this.infiniteLoopDetected = true; // Set the flag
-          // const diagramScene = this.scene.scene.get(
-          //   'DiagramScene'
-          // ) as DiagramScene;
-          // diagramScene.popupWindow = new PopupWindow(
-          //   diagramScene,
-          //   'popupSmAlert',
-          //   `" Oops! Looks like we're going in circles! \n Check your instructions again."`,
-          //   false
-          // );
-
           console.error('Infinite loop detected in processStateInputData.');
           break; // Exit the loop if the threshold is reached
         }
@@ -249,6 +239,7 @@ export default class TaskHelper {
     // }
   };
 
+  // Let know there's Infinite loop detected
   wasInfiniteLoopDetected = (): boolean => {
     return this.infiniteLoopDetected;
   };

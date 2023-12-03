@@ -30,6 +30,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
   private nextStateButtons: NextStateButton[] = [];
   private tempSensorInputs: SensorType[] = []; // Store selected sensor button
   private inputRowCount: number = 1; // 줄 순서대로 입력을 강제하기 위한 인수
+  private sensorButtonId: number = 1;
   private inputGuideline!: InputGuideline;
   private inputGuidelines: InputGuideline[] = [];
   private isActive!: boolean;
@@ -229,14 +230,17 @@ export default class InputWindow extends Phaser.GameObjects.Container {
   };
 
   // Sensor(input) update ( When select Dropdown option )
-  updateTempSensorInputs = (sensorType: SensorType): void => {
-    const index = this.tempSensorInputs.length;
+  updateTempSensorInputs = (buttonId: number, sensorType: SensorType): void => {
+    const index = buttonId - 1;
 
     if (index >= 0 && index < 5) {
       this.tempSensorInputs[index] = sensorType;
+      // StateCircle의 StateInputs 업데이트
+      this.updateStateCircleStateInput();
     } else {
       console.log('Index out of bounds: ', index);
     }
+    console.log('tempSensorInputs', this.tempSensorInputs);
   };
 
   // Update - Condition input
@@ -433,10 +437,12 @@ export default class InputWindow extends Phaser.GameObjects.Container {
     texture: string,
     options: DropdownOption[]
   ): DropdownMenu => {
+    const buttonId = this.sensorButtonId;
     const dropdownButton = new DropdownMenu(
       this.scene,
       x,
       y,
+      buttonId,
       texture,
       options,
       this
@@ -451,16 +457,19 @@ export default class InputWindow extends Phaser.GameObjects.Container {
       this
     );
 
+    console.log('dropdownButton', dropdownButton);
     return dropdownButton;
   };
 
-  // Used to create addtional dropdown button, when option selected
+  // Used to create addtional dropdown button, when option select
   addSensorDropdownButton(clickedDropdown: DropdownMenu) {
     const registedSensorCount = this.tempSensorInputs.length;
 
     if (registedSensorCount < 3) {
       let newX = clickedDropdown.getX + 50;
       let newY = clickedDropdown.getY;
+
+      this.sensorButtonId++;
 
       const newDropdownButton = this.createSensorDropdownButton(
         newX,

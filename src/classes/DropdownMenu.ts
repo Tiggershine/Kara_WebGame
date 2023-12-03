@@ -1,7 +1,6 @@
 import Phaser from 'phaser';
 import { SensorCheck } from './InputManager';
-import InputWindowScene from '../scenes/InputWindowScene';
-import { InputWindow } from './InputWindow';
+import InputWindow from './InputWindow';
 
 export enum SensorType {
   WallFront,
@@ -18,6 +17,7 @@ export interface DropdownOption {
 }
 
 export class DropdownMenu extends Phaser.GameObjects.Container {
+  private id: number = 0;
   private options: DropdownOption[] = [];
   private isMenuOpen: boolean = false;
   private button!: Phaser.GameObjects.Image;
@@ -31,6 +31,7 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
     scene: Phaser.Scene,
     x: number,
     y: number,
+    id: number,
     buttonTexture: string,
     options: DropdownOption[],
     inputWindow?: InputWindow // Adding a new parameter to store a reference to the InputWindow instance
@@ -38,6 +39,7 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
     super(scene, x, y);
     this.inputWindow = inputWindow; // Storing the reference to the InputWindow instance
 
+    this.id = id;
     this.options = options;
     this.button = this.scene.add.image(0, 0, buttonTexture).setInteractive();
     // Adding a tween animation to the button when it is added
@@ -59,7 +61,7 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
         .setDepth(10)
         .on('pointerdown', () => {
           // TODO: DELETE the under test code
-          // console.log(option.value + ' selected!');
+          console.log(option.value + ' selected!');
 
           // TODO: 이 코드 다시 수정할 것 (Sensor 중복 선택하면 alert하는 함수) - 일단 주석처리
           // this.inputWindow?.checkRegistedSensor(option.type);
@@ -68,7 +70,7 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
           this.selectedHightlight(menuItem, this.selectedOptionTexture);
           this.button.setTexture(this.selectedOptionTexture);
           // console.log('(DropdownMenu.ts) option: ', option);
-          // this.handleOptionSelection(option);
+          this.handleOptionSelection(option);
 
           // Check if the event handler has already been executed
           console.log(
@@ -87,7 +89,7 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
 
             this.inputWindow?.addSensorDropdownButton(this); //
           }
-          this.inputWindow?.updateTempSensorInputs(option.type); //
+          this.inputWindow?.updateTempSensorInputs(this.id, option.type); //
 
           this.closeMenu();
         });
@@ -179,7 +181,8 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
 
   // Dropdown의 option이 선택되면 Inputwindow의 임시 저장소에 SensorType 저장
   private handleOptionSelection(option: DropdownOption): void {
-    this.inputWindow && this.inputWindow.updateTempSensorInputs(option.type);
+    this.inputWindow &&
+      this.inputWindow.updateTempSensorInputs(this.id, option.type);
     return;
   }
 

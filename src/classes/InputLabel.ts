@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
 import DiagramScene from '../scenes/DiagramScene';
-import InputWindowScene from '../scenes/InputWindowScene';
 import StateCircle from './StateCircle';
 
 export default class InputLabel extends Phaser.GameObjects.Container {

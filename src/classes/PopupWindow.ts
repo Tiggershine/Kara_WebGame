@@ -5,7 +5,7 @@ const popupTypeConfig = [
   { id: 'sm', texture: 'popupSm' },
   { id: 'smAlert', texture: 'popupSmAlert' },
   { id: 'md', texture: 'popupMd' },
-  { id: 'mmAlert', texture: 'popupMdAlert' },
+  { id: 'mdAlert', texture: 'popupMdAlert' },
   { id: 'default', texture: 'popupMd' },
 ];
 

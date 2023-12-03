@@ -87,6 +87,11 @@ export default class Player extends BaseSprite {
         star.destroy();
       }
     });
+    this.scene.children.list.forEach((child) => {
+      if (child instanceof Star) {
+        child.destroy();
+      }
+    });
   };
 
   playerHighlightOn = (): void => {
@@ -222,6 +227,8 @@ export default class Player extends BaseSprite {
 
     if (star) {
       star.destroy();
+      console.log('star destroyed');
+      // this.scene.children.list.forEach((child) => console.log(child));
       return true;
     } else {
       console.log('No star to pick');
