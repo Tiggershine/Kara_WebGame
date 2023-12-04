@@ -37,8 +37,8 @@ export default class MenuScene extends Phaser.Scene {
     }
 
     ////////// LOAD AUDIOS //////////
-    this.load.audio('swipeSound', 'assets/sounds/swipeSound.ogg');
-    this.load.audio('menuClickSound', 'assets/sounds/menuClickSound.ogg');
+    this.load.audio('swipeSound', 'assets/sounds/swipeSound.mp3');
+    this.load.audio('menuClickSound', 'assets/sounds/menuClickSound.mp3');
   }
 
   create(data: MenuSceneData) {

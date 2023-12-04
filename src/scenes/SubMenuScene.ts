@@ -75,8 +75,8 @@ export default class SubMenuScene extends Phaser.Scene {
     }
 
     ////////// LOAD AUDIOS //////////
-    this.load.audio('menuClickSound', 'assets/sounds/menuClickSound.ogg');
-    this.load.audio('backButtonSound', 'assets/sounds/backButtonSound.ogg');
+    this.load.audio('menuClickSound', 'assets/sounds/menuClickSound.mp3');
+    this.load.audio('backButtonSound', 'assets/sounds/backButtonSound.mp3');
   }
 
   create(data: SubMenuSceneData) {

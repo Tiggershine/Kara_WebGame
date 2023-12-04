@@ -22,7 +22,7 @@ export default class StartScene extends Phaser.Scene {
     }
 
     ////////// LOAD AUDIOS //////////
-    this.load.audio('startButtonSound', 'assets/sounds/startButtonSound.ogg');
+    this.load.audio('startButtonSound', 'assets/sounds/startButtonSound.mp3');
   }
 
   create() {
@@ -40,10 +40,9 @@ export default class StartScene extends Phaser.Scene {
       this.startBtn.setTexture('startBtn');
     });
     this.startBtn.on('pointerdown', () => {
+      this.sound.play('startButtonSound');
       this.cameras.main.fadeOut(300, 0, 0, 0, (_: any, progress: number) => {
         if (progress === 1) {
-          this.sound.play('startButtonSound');
-
           // 페이드 아웃이 완료되면 새 장면 시작
           this.scene.start('MenuScene');
         }
