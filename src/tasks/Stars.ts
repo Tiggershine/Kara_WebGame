@@ -3,8 +3,6 @@ import Player from '../classes/sprites/Player';
 import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
 import TaskHelper from '../classes/TaskHelper';
-import PopupWindow from '../classes/PopupWindow';
-import DiagramScene from '../scenes/DiagramScene';
 
 export default class Stars extends Phaser.GameObjects.Container {
   private player!: Player;
@@ -12,7 +10,6 @@ export default class Stars extends Phaser.GameObjects.Container {
   private star2!: Star;
   private wall!: Wall;
   private taskHelper!: TaskHelper;
-  private isSuccessPopupShowed: boolean = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
@@ -42,72 +39,14 @@ export default class Stars extends Phaser.GameObjects.Container {
     this.scene.add.existing(this.star1);
     this.scene.add.existing(this.star2);
 
-    this.processStateInputData(stateInputData, highlightOn);
+    this.startSimulation(stateInputData, highlightOn);
   };
 
-  processStateInputData = (stateInputData: any, highlightOn: boolean) => {
-    this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
-      if (this.taskHelper.wasInfiniteLoopDetected()) {
-        // Display infinite loop warning popup
-        setTimeout(() => {
-          const diagramScene = this.scene.scene.get(
-            'DiagramScene'
-          ) as DiagramScene;
-          diagramScene.popupWindow = new PopupWindow(
-            diagramScene,
-            'smAlert',
-            `" Oops! \n  Looks like we're going in circles! \n  Check your instructions again.    "`,
-            false
-          );
-          diagramScene.popupWindow.create();
-          diagramScene.add.existing(diagramScene.popupWindow);
-        }, 800);
-      } else {
-        const positionsCorrect = this.checkObjectPositions();
-
-        console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
-        if (!this.isSuccessPopupShowed) {
-          if (positionsCorrect) {
-            const diagramScene = this.scene.scene.get(
-              'DiagramScene'
-            ) as DiagramScene;
-
-            setTimeout(() => {
-              diagramScene.popupWindow = new PopupWindow(
-                diagramScene,
-                'sm',
-                `" Bravo! You've succeeded! "`,
-                false
-              );
-              diagramScene.popupWindow.create();
-              diagramScene.add.existing(diagramScene.popupWindow);
-            }, 800);
-
-            this.isSuccessPopupShowed = true;
-          } else {
-            const diagramScene = this.scene.scene.get(
-              'DiagramScene'
-            ) as DiagramScene;
-
-            setTimeout(() => {
-              diagramScene.popupWindow = new PopupWindow(
-                diagramScene,
-                'smAlert',
-                `" Oops, not quite!\n   Want to try again? "`,
-                false
-              );
-              diagramScene.popupWindow.create();
-              diagramScene.add.existing(diagramScene.popupWindow);
-            }, 800);
-          }
-        }
-        this.scene.events.emit('simulationEnd');
-        console.log(positionsCorrect ? 'Success' : 'Fail');
-      }
-    });
+  startSimulation = (stateInputData: any, highlightOn: boolean) => {
+    this.taskHelper.executeSimulation(this, stateInputData, highlightOn);
   };
 
-  private checkObjectPositions(): boolean {
+  checkObjectPositions(): boolean {
     const isStarAt155315 = this.scene.children.list.some(
       (child) => child instanceof Star && child.x === 155 && child.y === 315
     );
@@ -145,4 +84,13 @@ export default class Stars extends Phaser.GameObjects.Container {
       !isOtherObjectsExist
     );
   }
+
+  getSuccessMessage = (): string => {
+    this.taskHelper.setIsSuccessPopupShowed = true;
+    return `" Bravo! You've succeeded! "`;
+  };
+
+  getFailureMessage = (): string => {
+    return `" Oops, not quite!\n   Want to try again? "`;
+  };
 }

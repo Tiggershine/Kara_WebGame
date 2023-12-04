@@ -8,6 +8,7 @@ export default class StartScene extends Phaser.Scene {
   }
 
   preload() {
+    ////////// LOAD IMAGES //////////
     const imageSources = {
       startSceneImg: 'assets/StartSceneImg.png',
       startBtn: 'assets/StartBtn.png',
@@ -19,6 +20,9 @@ export default class StartScene extends Phaser.Scene {
         this.load.image(key, imageSources[key as keyof typeof imageSources]);
       }
     }
+
+    ////////// LOAD AUDIOS //////////
+    this.load.audio('startButtonSound', 'assets/sounds/startButtonSound.ogg');
   }
 
   create() {
@@ -36,6 +40,8 @@ export default class StartScene extends Phaser.Scene {
       this.startBtn.setTexture('startBtn');
     });
     this.startBtn.on('pointerdown', () => {
+      this.sound.play('startButtonSound');
+
       this.cameras.main.fadeOut(300, 0, 0, 0, (_: any, progress: number) => {
         if (progress === 1) {
           // 페이드 아웃이 완료되면 새 장면 시작

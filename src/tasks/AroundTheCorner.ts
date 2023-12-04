@@ -3,8 +3,6 @@ import Player from '../classes/sprites/Player';
 import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
 import TaskHelper from '../classes/TaskHelper';
-import DiagramScene from '../scenes/DiagramScene';
-import PopupWindow from '../classes/PopupWindow';
 
 export default class AroundTheCorner extends Phaser.GameObjects.Container {
   private player!: Player;
@@ -13,7 +11,6 @@ export default class AroundTheCorner extends Phaser.GameObjects.Container {
   private wall2!: Wall;
   private wall3!: Wall;
   private taskHelper!: TaskHelper;
-  private isSuccessPopupShowed: boolean = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
@@ -44,56 +41,60 @@ export default class AroundTheCorner extends Phaser.GameObjects.Container {
     this.star = new Star(this.scene, 455, 315);
     this.scene.add.existing(this.star);
 
-    this.processStateInputData(stateInputData, highlightOn);
+    this.startSimulation(stateInputData, highlightOn);
   };
 
-  processStateInputData = (stateInputData: any, highlightOn: boolean) => {
-    this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
-      const positionsCorrect = this.checkObjectPositions();
-
-      console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
-      if (!this.isSuccessPopupShowed) {
-        if (positionsCorrect) {
-          const diagramScene = this.scene.scene.get(
-            'DiagramScene'
-          ) as DiagramScene;
-
-          setTimeout(() => {
-            diagramScene.popupWindow = new PopupWindow(
-              diagramScene,
-              'smBack',
-              `" Great job! \n  Let's take on the next mission. "`,
-              false
-            );
-            diagramScene.popupWindow.create();
-            diagramScene.add.existing(diagramScene.popupWindow);
-          }, 800);
-
-          this.isSuccessPopupShowed = true;
-        } else {
-          const diagramScene = this.scene.scene.get(
-            'DiagramScene'
-          ) as DiagramScene;
-
-          setTimeout(() => {
-            diagramScene.popupWindow = new PopupWindow(
-              diagramScene,
-              'smBack',
-              `" So close! \n  Would you like to try again? "`,
-              false
-            );
-            diagramScene.popupWindow.create();
-            diagramScene.add.existing(diagramScene.popupWindow);
-          }, 800);
-
-          this.isSuccessPopupShowed = true;
-        }
-      }
-      console.log(positionsCorrect ? 'Success' : 'Fail');
-    });
+  startSimulation = (stateInputData: any, highlightOn: boolean) => {
+    this.taskHelper.executeSimulation(this, stateInputData, highlightOn);
   };
 
-  private checkObjectPositions(): boolean {
+  // processStateInputData = (stateInputData: any, highlightOn: boolean) => {
+  //   this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
+  //     const positionsCorrect = this.checkObjectPositions();
+
+  //     console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
+  //     if (!this.isSuccessPopupShowed) {
+  //       if (positionsCorrect) {
+  //         const diagramScene = this.scene.scene.get(
+  //           'DiagramScene'
+  //         ) as DiagramScene;
+
+  //         setTimeout(() => {
+  //           diagramScene.popupWindow = new PopupWindow(
+  //             diagramScene,
+  //             'smBack',
+  //             `" Great job! \n  Let's take on the next mission. "`,
+  //             false
+  //           );
+  //           diagramScene.popupWindow.create();
+  //           diagramScene.add.existing(diagramScene.popupWindow);
+  //         }, 800);
+
+  //         this.isSuccessPopupShowed = true;
+  //       } else {
+  //         const diagramScene = this.scene.scene.get(
+  //           'DiagramScene'
+  //         ) as DiagramScene;
+
+  //         setTimeout(() => {
+  //           diagramScene.popupWindow = new PopupWindow(
+  //             diagramScene,
+  //             'smBack',
+  //             `" So close! \n  Would you like to try again? "`,
+  //             false
+  //           );
+  //           diagramScene.popupWindow.create();
+  //           diagramScene.add.existing(diagramScene.popupWindow);
+  //         }, 800);
+
+  //         this.isSuccessPopupShowed = true;
+  //       }
+  //     }
+  //     console.log(positionsCorrect ? 'Success' : 'Fail');
+  //   });
+  // };
+
+  checkObjectPositions(): boolean {
     const isPlayerAt455315 = this.scene.children.list.some(
       (child) => child instanceof Player && child.x === 455 && child.y === 315
     );
@@ -125,6 +126,15 @@ export default class AroundTheCorner extends Phaser.GameObjects.Container {
       !isOtherObjectsExist
     );
   }
+
+  getSuccessMessage = (): string => {
+    this.taskHelper.setIsSuccessPopupShowed = true;
+    return `" Great job! \n  Let's take on the next mission. "`;
+  };
+
+  getFailureMessage = (): string => {
+    return `" So close! \n  Would you like to try again? "`;
+  };
 
   createGuidelineGraphic = () => {
     const guidelineGraphic = this.scene.add.graphics({

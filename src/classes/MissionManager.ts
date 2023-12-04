@@ -1,4 +1,5 @@
 import DiagramScene from '../scenes/DiagramScene';
+import TaskHelper from './TaskHelper';
 import TestFlight from '../tasks/TestFlight';
 import TunnelFinder from '../tasks/TunnelFinder';
 import ClimbingUp from '../tasks/ClimbingUp';
@@ -8,6 +9,12 @@ import AroundTheCorner from '../tasks/AroundTheCorner';
 import NazcaLine from '../tasks/NazcaLine';
 import { StateInput } from './InputManager';
 import { playButtonConfig } from '../configurations';
+
+interface MissionInterface {
+  checkObjectPositions(): boolean;
+  getSuccessMessage(): string;
+  getFailureMessage(): string;
+}
 
 export default class MissionManager {
   private diagramScene: DiagramScene;
@@ -113,7 +120,7 @@ export default class MissionManager {
                   this.diagramScene.getIsHighlightOn
                 );
               } else {
-                this.missionTestFlight.processStateInputData(
+                this.missionTestFlight.startSimulation(
                   stateInputData,
                   this.diagramScene.getIsHighlightOn
                 );
@@ -132,7 +139,7 @@ export default class MissionManager {
                   this.diagramScene.getIsHighlightOn
                 );
               } else {
-                this.minssionTunnelFinder.processStateInputData(
+                this.minssionTunnelFinder.startSimulation(
                   stateInputData,
                   this.diagramScene.getIsHighlightOn
                 );
@@ -151,7 +158,7 @@ export default class MissionManager {
                   this.diagramScene.getIsHighlightOn
                 );
               } else {
-                this.missionClimbingUp.processStateInputData(
+                this.missionClimbingUp.startSimulation(
                   stateInputData,
                   this.diagramScene.getIsHighlightOn
                 );
@@ -170,7 +177,7 @@ export default class MissionManager {
                   this.diagramScene.getIsHighlightOn
                 );
               } else {
-                this.missionBetweenWall.processStateInputData(
+                this.missionBetweenWall.startSimulation(
                   stateInputData,
                   this.diagramScene.getIsHighlightOn
                 );
@@ -193,7 +200,7 @@ export default class MissionManager {
                   this.diagramScene.getIsHighlightOn
                 );
               } else {
-                this.missionStars.processStateInputData(
+                this.missionStars.startSimulation(
                   stateInputData,
                   this.diagramScene.getIsHighlightOn
                 );
@@ -212,7 +219,7 @@ export default class MissionManager {
                   this.diagramScene.getIsHighlightOn
                 );
               } else {
-                this.missionAroundTheCorner.processStateInputData(
+                this.missionAroundTheCorner.startSimulation(
                   stateInputData,
                   this.diagramScene.getIsHighlightOn
                 );
@@ -235,7 +242,7 @@ export default class MissionManager {
                   this.diagramScene.getIsHighlightOn
                 );
               } else {
-                this.missionNazcaLine.processStateInputData(
+                this.missionNazcaLine.startSimulation(
                   stateInputData,
                   this.diagramScene.getIsHighlightOn
                 );

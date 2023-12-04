@@ -277,7 +277,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
   };
 
   clearConditionButtonInput = (
-    rowNumber: number, // 줄 순번 (index _X)
+    rowNumber: number, // 줄 순번 (index X_)
     sensorNumber: number // 등록된 Sensor 순번 (index X_)
   ): void => {
     const stateInputOrder = rowNumber - 1; // StateInput 배열의 index
@@ -320,6 +320,8 @@ export default class InputWindow extends Phaser.GameObjects.Container {
     ) {
       this.tempStateInputs[stateInputOrder].move[moveButtonsOrder] = null;
     }
+    // StateCircle의 StateInputs 업데이트
+    this.updateStateCircleStateInput();
   };
 
   // Update -  NextState input
@@ -794,9 +796,16 @@ export default class InputWindow extends Phaser.GameObjects.Container {
           image.setVisible(false);
 
           const rowNumber: number = parseInt(pointKey.split('_')[1][0]);
-          const targetSensorIndex: number = parseInt(pointKey.split('_')[1][1]);
+          const buttonOrder: number = parseInt(pointKey.split('_')[1][1]);
 
-          this.clearConditionButtonInput(rowNumber, targetSensorIndex);
+          // Condition Buttons
+          if (buttonOrder < 5) {
+            this.clearConditionButtonInput(rowNumber, buttonOrder);
+          }
+          // Move Buttons
+          else if (buttonOrder > 4) {
+            this.clearMoveButtonInput(rowNumber, buttonOrder);
+          }
         }
       }
     );

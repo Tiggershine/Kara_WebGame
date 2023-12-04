@@ -109,6 +109,8 @@ export default class Game extends Phaser.Scene {
         this.load.image(key, imageSources[key as keyof typeof imageSources]);
       }
     }
+
+    this.load.audio('menuClickSound', 'assets/sounds/menuClickSound.ogg');
   }
 
   async create(data: GameSceneData) {

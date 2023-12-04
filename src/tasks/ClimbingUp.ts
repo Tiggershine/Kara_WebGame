@@ -3,8 +3,6 @@ import Player from '../classes/sprites/Player';
 import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
 import TaskHelper from '../classes/TaskHelper';
-import PopupWindow from '../classes/PopupWindow';
-import DiagramScene from '../scenes/DiagramScene';
 
 const wallPositions = [
   { x: 205, y: 565 },
@@ -43,7 +41,6 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
   private star2!: Star;
   private walls!: Wall[];
   private taskHelper!: TaskHelper;
-  private isSuccessPopupShowed: boolean = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
@@ -76,72 +73,76 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
     //   console.log(child);
     // });
 
-    this.processStateInputData(stateInputData, highlightOn);
+    this.startSimulation(stateInputData, highlightOn);
   };
 
-  processStateInputData = (stateInputData: any, highlightOn: boolean) => {
-    this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
-      if (this.taskHelper.wasInfiniteLoopDetected()) {
-        // Display infinite loop warning popup
-        setTimeout(() => {
-          const diagramScene = this.scene.scene.get(
-            'DiagramScene'
-          ) as DiagramScene;
-          diagramScene.popupWindow = new PopupWindow(
-            diagramScene,
-            'smAlert',
-            `" Oops! \n  Looks like we're going in circles! \n  Check your instructions again.    "`,
-            false
-          );
-          diagramScene.popupWindow.create();
-          diagramScene.add.existing(diagramScene.popupWindow);
-        }, 800);
-      } else {
-        const positionsCorrect = this.checkObjectPositions();
-
-        console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
-        if (!this.isSuccessPopupShowed) {
-          if (positionsCorrect) {
-            const diagramScene = this.scene.scene.get(
-              'DiagramScene'
-            ) as DiagramScene;
-
-            setTimeout(() => {
-              diagramScene.popupWindow = new PopupWindow(
-                diagramScene,
-                'sm',
-                `" Awesome! \n  Mission achieved! "`,
-                false
-              );
-              diagramScene.popupWindow.create();
-              diagramScene.add.existing(diagramScene.popupWindow);
-            }, 800);
-
-            this.isSuccessPopupShowed = true;
-          } else {
-            const diagramScene = this.scene.scene.get(
-              'DiagramScene'
-            ) as DiagramScene;
-
-            setTimeout(() => {
-              diagramScene.popupWindow = new PopupWindow(
-                diagramScene,
-                'smAlert',
-                `" Not the result we wanted.\n   Want to go again? "`,
-                false
-              );
-              diagramScene.popupWindow.create();
-              diagramScene.add.existing(diagramScene.popupWindow);
-            }, 800);
-          }
-        }
-        this.scene.events.emit('simulationEnd');
-        console.log(positionsCorrect ? 'Success' : 'Fail');
-      }
-    });
+  startSimulation = (stateInputData: any, highlightOn: boolean) => {
+    this.taskHelper.executeSimulation(this, stateInputData, highlightOn);
   };
 
-  private checkObjectPositions(): boolean {
+  // processStateInputData = (stateInputData: any, highlightOn: boolean) => {
+  //   this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
+  //     if (this.taskHelper.wasInfiniteLoopDetected()) {
+  //       // Display infinite loop warning popup
+  //       setTimeout(() => {
+  //         const diagramScene = this.scene.scene.get(
+  //           'DiagramScene'
+  //         ) as DiagramScene;
+  //         diagramScene.popupWindow = new PopupWindow(
+  //           diagramScene,
+  //           'smAlert',
+  //           `" Oops! \n  Looks like we're going in circles! \n  Check your instructions again.    "`,
+  //           false
+  //         );
+  //         diagramScene.popupWindow.create();
+  //         diagramScene.add.existing(diagramScene.popupWindow);
+  //       }, 800);
+  //     } else {
+  //       const positionsCorrect = this.checkObjectPositions();
+
+  //       console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
+  //       if (!this.isSuccessPopupShowed) {
+  //         if (positionsCorrect) {
+  //           const diagramScene = this.scene.scene.get(
+  //             'DiagramScene'
+  //           ) as DiagramScene;
+
+  //           setTimeout(() => {
+  //             diagramScene.popupWindow = new PopupWindow(
+  //               diagramScene,
+  //               'sm',
+  //               `" Awesome! \n  Mission achieved! "`,
+  //               false
+  //             );
+  //             diagramScene.popupWindow.create();
+  //             diagramScene.add.existing(diagramScene.popupWindow);
+  //           }, 800);
+
+  //           this.isSuccessPopupShowed = true;
+  //         } else {
+  //           const diagramScene = this.scene.scene.get(
+  //             'DiagramScene'
+  //           ) as DiagramScene;
+
+  //           setTimeout(() => {
+  //             diagramScene.popupWindow = new PopupWindow(
+  //               diagramScene,
+  //               'smAlert',
+  //               `" Not the result we wanted.\n   Want to go again? "`,
+  //               false
+  //             );
+  //             diagramScene.popupWindow.create();
+  //             diagramScene.add.existing(diagramScene.popupWindow);
+  //           }, 800);
+  //         }
+  //       }
+  //       this.scene.events.emit('simulationEnd');
+  //       console.log(positionsCorrect ? 'Success' : 'Fail');
+  //     }
+  //   });
+  // };
+
+  checkObjectPositions(): boolean {
     const isPlayerAt505215 = this.scene.children.list.some(
       (child) => child instanceof Player && child.x === 505 && child.y === 215
     );
@@ -182,4 +183,13 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
     );
     return isPlayerAt505215 && areWallsCorrect && !isStarOBjectExist;
   }
+
+  getSuccessMessage = (): string => {
+    this.taskHelper.setIsSuccessPopupShowed = true;
+    return `" Awesome! \n  Mission achieved! "`;
+  };
+
+  getFailureMessage = (): string => {
+    return `" Not the result we wanted.\n   Want to go again? "`;
+  };
 }

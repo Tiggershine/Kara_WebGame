@@ -3,8 +3,6 @@ import Player from '../classes/sprites/Player';
 import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
 import TaskHelper from '../classes/TaskHelper';
-import PopupWindow from '../classes/PopupWindow';
-import DiagramScene from '../scenes/DiagramScene';
 
 const WallPositions = [
   { x: 55, y: 115 },
@@ -72,7 +70,6 @@ export default class NazcaLine extends Phaser.GameObjects.Container {
   private player!: Player;
   private walls!: Wall[];
   private taskHelper!: TaskHelper;
-  private isSuccessPopupShowed: boolean = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
@@ -91,58 +88,62 @@ export default class NazcaLine extends Phaser.GameObjects.Container {
     this.player.setPosition(105, 165).setAngle(90);
     this.player.playerHighlight.setPosition(105, 165);
 
-    this.processStateInputData(stateInputData, highlightOn);
+    this.startSimulation(stateInputData, highlightOn);
   };
 
-  processStateInputData = (stateInputData: any, highlightOn: boolean) => {
-    console.log('NazcaLine Simulation 시작');
-
-    this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
-      const positionsCorrect = this.checkObjectPositions();
-
-      if (!this.isSuccessPopupShowed) {
-        if (positionsCorrect) {
-          const diagramScene = this.scene.scene.get(
-            'DiagramScene'
-          ) as DiagramScene;
-
-          setTimeout(() => {
-            diagramScene.popupWindow = new PopupWindow(
-              diagramScene,
-              'smBack',
-              `" Great job! \n  Let's take on the next mission. "`,
-              false
-            );
-            diagramScene.popupWindow.create();
-            diagramScene.add.existing(diagramScene.popupWindow);
-          }, 800);
-
-          this.isSuccessPopupShowed = true;
-        } else {
-          const diagramScene = this.scene.scene.get(
-            'DiagramScene'
-          ) as DiagramScene;
-
-          setTimeout(() => {
-            diagramScene.popupWindow = new PopupWindow(
-              diagramScene,
-              'smBack',
-              `" So close! \n  Would you like to try again? "`,
-              false
-            );
-            diagramScene.popupWindow.create();
-            diagramScene.add.existing(diagramScene.popupWindow);
-          }, 800);
-
-          this.isSuccessPopupShowed = true;
-        }
-      }
-      console.log(positionsCorrect ? 'Success' : 'Fail');
-      // console.log('END');
-    });
+  startSimulation = (stateInputData: any, highlightOn: boolean) => {
+    this.taskHelper.executeSimulation(this, stateInputData, highlightOn);
   };
 
-  private checkObjectPositions(): boolean {
+  // processStateInputData = (stateInputData: any, highlightOn: boolean) => {
+  //   console.log('NazcaLine Simulation 시작');
+
+  //   this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
+  //     const positionsCorrect = this.checkObjectPositions();
+
+  //     if (!this.isSuccessPopupShowed) {
+  //       if (positionsCorrect) {
+  //         const diagramScene = this.scene.scene.get(
+  //           'DiagramScene'
+  //         ) as DiagramScene;
+
+  //         setTimeout(() => {
+  //           diagramScene.popupWindow = new PopupWindow(
+  //             diagramScene,
+  //             'smBack',
+  //             `" Great job! \n  Let's take on the next mission. "`,
+  //             false
+  //           );
+  //           diagramScene.popupWindow.create();
+  //           diagramScene.add.existing(diagramScene.popupWindow);
+  //         }, 800);
+
+  //         this.isSuccessPopupShowed = true;
+  //       } else {
+  //         const diagramScene = this.scene.scene.get(
+  //           'DiagramScene'
+  //         ) as DiagramScene;
+
+  //         setTimeout(() => {
+  //           diagramScene.popupWindow = new PopupWindow(
+  //             diagramScene,
+  //             'smBack',
+  //             `" So close! \n  Would you like to try again? "`,
+  //             false
+  //           );
+  //           diagramScene.popupWindow.create();
+  //           diagramScene.add.existing(diagramScene.popupWindow);
+  //         }, 800);
+
+  //         this.isSuccessPopupShowed = true;
+  //       }
+  //     }
+  //     console.log(positionsCorrect ? 'Success' : 'Fail');
+  //     // console.log('END');
+  //   });
+  // };
+
+  checkObjectPositions(): boolean {
     const isPlayerAt405465 = this.scene.children.list.some(
       (child) => child instanceof Player && child.x === 405 && child.y === 465
     );
@@ -188,4 +189,13 @@ export default class NazcaLine extends Phaser.GameObjects.Container {
       !isOtherObjectsExist
     );
   }
+
+  getSuccessMessage = (): string => {
+    this.taskHelper.setIsSuccessPopupShowed = true;
+    return `" Great job! \n  Let's take on the next mission. "`;
+  };
+
+  getFailureMessage = (): string => {
+    return `" So close! \n  Would you like to try again? "`;
+  };
 }

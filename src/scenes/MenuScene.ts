@@ -24,6 +24,7 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   preload() {
+    ////////// LOAD IMAGES //////////
     const imageSources = {
       menuImg1: 'assets/MenuImg1.png',
       menuImg2: 'assets/MenuImg2.png',
@@ -34,6 +35,10 @@ export default class MenuScene extends Phaser.Scene {
         this.load.image(key, imageSources[key as keyof typeof imageSources]);
       }
     }
+
+    ////////// LOAD AUDIOS //////////
+    this.load.audio('swipeSound', 'assets/sounds/swipeSound.ogg');
+    this.load.audio('menuClickSound', 'assets/sounds/menuClickSound.ogg');
   }
 
   create(data: MenuSceneData) {
@@ -96,6 +101,8 @@ export default class MenuScene extends Phaser.Scene {
         if (upTime - downTime < 150) {
           // Check if the duration is less than 0.3 second
           this.handleImageClick();
+
+          this.sound.play('menuClickSound', { volume: 0.7 });
         }
       });
   };
@@ -172,6 +179,8 @@ export default class MenuScene extends Phaser.Scene {
     };
 
     if (swipeDirection === 'left') {
+      this.sound.play('swipeSound');
+
       if (this.currentImage.texture.key === 'menuImg1') {
         // Tween currentImage to the left
         this.tweens.add({
@@ -239,6 +248,8 @@ export default class MenuScene extends Phaser.Scene {
         return;
       }
     } else if (swipeDirection === 'right') {
+      this.sound.play('swipeSound');
+
       if (this.currentImage.texture.key === 'menuImg3') {
         // Tween currentImage to the right
         this.tweens.add({

@@ -1,12 +1,16 @@
 import Phaser from 'phaser';
 import Player from './sprites/Player';
-import Star from './sprites/Star';
-import Wall from './sprites/Wall';
 import StateCircle from './StateCircle';
 import SimulationHighlight from './SimulationHighlight';
 import PopupWindow from './PopupWindow';
 import DiagramScene from '../scenes/DiagramScene';
 import { SensorCheck, StateInput } from './InputManager';
+
+interface MissionInterface {
+  checkObjectPositions(): boolean;
+  getSuccessMessage(): string;
+  getFailureMessage(): string;
+}
 
 type State = {
   id: number;
@@ -74,6 +78,7 @@ export default class TaskHelper {
   private scene!: Phaser.Scene;
   private player: Player;
   private infiniteLoopDetected: boolean = false;
+  private isSuccessPopupShowed: boolean = false;
 
   constructor(scene: Phaser.Scene, player: Player) {
     this.scene = scene;
@@ -82,6 +87,13 @@ export default class TaskHelper {
     const diagramScene = scene.scene.get('DiagramScene') as DiagramScene;
     this.simulationHighlight = new SimulationHighlight(scene, 'inputHighlight');
     this.simulationHighlight.setDepth(1000);
+  }
+
+  get getIsSuccessPopupShowed(): boolean {
+    return this.isSuccessPopupShowed;
+  }
+  set setIsSuccessPopupShowed(newIsSuccessPopupShowed: boolean) {
+    this.isSuccessPopupShowed = newIsSuccessPopupShowed;
   }
 
   // To simulate ths mission based on user input
@@ -242,6 +254,67 @@ export default class TaskHelper {
   // Let know there's Infinite loop detected
   wasInfiniteLoopDetected = (): boolean => {
     return this.infiniteLoopDetected;
+  };
+
+  // 각 미션의 Simulation을 위한 함수 (성공, 실패, 무한 loop popup 포함)
+  executeSimulation = (
+    mission: MissionInterface,
+    stateInputData: any,
+    highlightOn: boolean
+  ) => {
+    this.processStateInputData(stateInputData, highlightOn, () => {
+      if (this.wasInfiniteLoopDetected()) {
+        // Display infinite loop warning popup
+        setTimeout(() => {
+          const diagramScene = this.scene.scene.get(
+            'DiagramScene'
+          ) as DiagramScene;
+          diagramScene.popupWindow = new PopupWindow(
+            diagramScene,
+            'smAlert',
+            `" Oops! \n  Looks like we're going in circles! \n  Check your instructions again.    "`,
+            false
+          );
+          diagramScene.popupWindow.create();
+          diagramScene.add.existing(diagramScene.popupWindow);
+        }, 800);
+      } else {
+        const positionsCorrect = mission.checkObjectPositions();
+
+        const diagramScene = this.scene.scene.get(
+          'DiagramScene'
+        ) as DiagramScene;
+
+        if (positionsCorrect) {
+          if (!this.getIsSuccessPopupShowed) {
+            setTimeout(() => {
+              diagramScene.popupWindow = new PopupWindow(
+                diagramScene,
+                'sm',
+                mission.getSuccessMessage(),
+                false
+              );
+              diagramScene.popupWindow.create();
+              diagramScene.add.existing(diagramScene.popupWindow);
+            }, 800);
+            this.scene.events.emit('simulationEnd');
+          }
+        } else {
+          setTimeout(() => {
+            diagramScene.popupWindow = new PopupWindow(
+              diagramScene,
+              'smAlert',
+              mission.getFailureMessage(),
+              false
+            );
+            diagramScene.popupWindow.create();
+            diagramScene.add.existing(diagramScene.popupWindow);
+          }, 800);
+          this.scene.events.emit('simulationEnd');
+        }
+        console.log(positionsCorrect ? 'Success' : 'Fail');
+      }
+    });
   };
 
   // To find a StateCircle by id and to pointerdown the found StateCircle (by emit event)

@@ -49,6 +49,7 @@ export default class SubMenuScene extends Phaser.Scene {
   }
 
   preload() {
+    ////////// LOAD IMAGES //////////
     const imageSources = {
       backgroundImg: 'assets/BackgroundImg.png',
       iconBack: 'assets/IconBack.png',
@@ -72,6 +73,10 @@ export default class SubMenuScene extends Phaser.Scene {
         this.load.image(key, imageSources[key as keyof typeof imageSources]);
       }
     }
+
+    ////////// LOAD AUDIOS //////////
+    this.load.audio('menuClickSound', 'assets/sounds/menuClickSound.ogg');
+    this.load.audio('backButtonSound', 'assets/sounds/backButtonSound.ogg');
   }
 
   create(data: SubMenuSceneData) {
@@ -81,6 +86,8 @@ export default class SubMenuScene extends Phaser.Scene {
     this.iconBack = this.add.image(106, 90, 'iconBack');
     this.iconBack.setInteractive();
     this.iconBack.on('pointerdown', () => {
+      this.sound.play('backButtonSound');
+
       this.cameras.main.fadeOut(500, 0, 0, 0, (_: any, progress: number) => {
         this.scene.start('MenuScene', {
           level: data.level,
@@ -172,6 +179,7 @@ export default class SubMenuScene extends Phaser.Scene {
       missionBtn.setTexture(texture);
     });
     missionBtn.on('pointerdown', () => {
+      this.sound.play('menuClickSound', { volume: 0.7 });
       if (mission) this.handleImageClick(mission);
     });
   };

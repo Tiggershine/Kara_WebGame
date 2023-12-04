@@ -66,7 +66,7 @@ export default class Player extends BaseSprite {
     super(scene, x, y, 'player');
 
     this.setDisplaySize(45, 45).setAngle(90);
-    this.setDepth(5);
+    this.setDepth(1);
 
     this.playerHighlightChecked = false;
 

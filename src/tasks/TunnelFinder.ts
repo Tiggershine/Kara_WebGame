@@ -3,18 +3,10 @@ import Player from '../classes/sprites/Player';
 import Wall from '../classes/sprites/Wall';
 import Star from '../classes/sprites/Star';
 import TaskHelper from '../classes/TaskHelper';
-import DiagramScene from '../scenes/DiagramScene';
-import PopupWindow from '../classes/PopupWindow';
 
 type SensorCheck = {
   sensor: number;
   condition: number;
-};
-
-type StateInput = {
-  sensorChecks: SensorCheck[];
-  moves: number[];
-  nextStateId: number;
 };
 
 const wallPositions = [
@@ -121,7 +113,6 @@ export default class TunnelFinder extends Phaser.GameObjects.Container {
   private player!: Player;
   private walls!: Wall[];
   private star!: Star;
-  private isSuccessPopupShowed: boolean = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
@@ -147,72 +138,76 @@ export default class TunnelFinder extends Phaser.GameObjects.Container {
     this.star = new Star(this.scene, 355, 315);
     this.scene.add.existing(this.star);
 
-    this.processStateInputData(stateInputData, highlightOn);
+    this.startSimulation(stateInputData, highlightOn);
   };
 
-  processStateInputData = (stateInputData: any, highlightOn: boolean) => {
-    this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
-      if (this.taskHelper.wasInfiniteLoopDetected()) {
-        // Display infinite loop warning popup
-        setTimeout(() => {
-          const diagramScene = this.scene.scene.get(
-            'DiagramScene'
-          ) as DiagramScene;
-          diagramScene.popupWindow = new PopupWindow(
-            diagramScene,
-            'smAlert',
-            `" Oops! \n  Looks like we're going in circles! \n  Check your instructions again.    "`,
-            false
-          );
-          diagramScene.popupWindow.create();
-          diagramScene.add.existing(diagramScene.popupWindow);
-        }, 800);
-      } else {
-        const positionsCorrect = this.checkObjectPositions();
-
-        console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
-        if (!this.isSuccessPopupShowed) {
-          if (positionsCorrect) {
-            const diagramScene = this.scene.scene.get(
-              'DiagramScene'
-            ) as DiagramScene;
-
-            setTimeout(() => {
-              diagramScene.popupWindow = new PopupWindow(
-                diagramScene,
-                'sm',
-                `" Great job! \n  Let's take on the next mission. "`,
-                false
-              );
-              diagramScene.popupWindow.create();
-              diagramScene.add.existing(diagramScene.popupWindow);
-            }, 800);
-
-            this.isSuccessPopupShowed = true;
-          } else {
-            const diagramScene = this.scene.scene.get(
-              'DiagramScene'
-            ) as DiagramScene;
-
-            setTimeout(() => {
-              diagramScene.popupWindow = new PopupWindow(
-                diagramScene,
-                'smAlert',
-                `" That didn't work out.\n   Ready for another try? "`,
-                false
-              );
-              diagramScene.popupWindow.create();
-              diagramScene.add.existing(diagramScene.popupWindow);
-            }, 800);
-          }
-        }
-        this.scene.events.emit('simulationEnd');
-        console.log(positionsCorrect ? 'Success' : 'Fail');
-      }
-    });
+  startSimulation = (stateInputData: any, highlightOn: boolean) => {
+    this.taskHelper.executeSimulation(this, stateInputData, highlightOn);
   };
 
-  private checkObjectPositions(): boolean {
+  // executeSimulation = (stateInputData: any, highlightOn: boolean) => {
+  //   this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
+  //     if (this.taskHelper.wasInfiniteLoopDetected()) {
+  //       // Display infinite loop warning popup
+  //       setTimeout(() => {
+  //         const diagramScene = this.scene.scene.get(
+  //           'DiagramScene'
+  //         ) as DiagramScene;
+  //         diagramScene.popupWindow = new PopupWindow(
+  //           diagramScene,
+  //           'smAlert',
+  //           `" Oops! \n  Looks like we're going in circles! \n  Check your instructions again.    "`,
+  //           false
+  //         );
+  //         diagramScene.popupWindow.create();
+  //         diagramScene.add.existing(diagramScene.popupWindow);
+  //       }, 800);
+  //     } else {
+  //       const positionsCorrect = this.checkObjectPositions();
+
+  //       console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
+  //       if (!this.isSuccessPopupShowed) {
+  //         if (positionsCorrect) {
+  //           const diagramScene = this.scene.scene.get(
+  //             'DiagramScene'
+  //           ) as DiagramScene;
+
+  //           setTimeout(() => {
+  //             diagramScene.popupWindow = new PopupWindow(
+  //               diagramScene,
+  //               'sm',
+  //               `" Great job! \n  Let's take on the next mission. "`,
+  //               false
+  //             );
+  //             diagramScene.popupWindow.create();
+  //             diagramScene.add.existing(diagramScene.popupWindow);
+  //           }, 800);
+
+  //           this.isSuccessPopupShowed = true;
+  //         } else {
+  //           const diagramScene = this.scene.scene.get(
+  //             'DiagramScene'
+  //           ) as DiagramScene;
+
+  //           setTimeout(() => {
+  //             diagramScene.popupWindow = new PopupWindow(
+  //               diagramScene,
+  //               'smAlert',
+  //               `" That didn't work out.\n   Ready for another try? "`,
+  //               false
+  //             );
+  //             diagramScene.popupWindow.create();
+  //             diagramScene.add.existing(diagramScene.popupWindow);
+  //           }, 800);
+  //         }
+  //       }
+  //       this.scene.events.emit('simulationEnd');
+  //       console.log(positionsCorrect ? 'Success' : 'Fail');
+  //     }
+  //   });
+  // };
+
+  checkObjectPositions(): boolean {
     const isPlayerAt355315 = this.scene.children.list.some(
       (child) => child instanceof Player && child.x === 355 && child.y === 315
     );
@@ -234,4 +229,13 @@ export default class TunnelFinder extends Phaser.GameObjects.Container {
 
     return isPlayerAt355315 && !isStarOBjectExist;
   }
+
+  getSuccessMessage = (): string => {
+    this.taskHelper.setIsSuccessPopupShowed = true;
+    return `" Great job! \n  Let's take on the next mission. "`;
+  };
+
+  getFailureMessage = (): string => {
+    return `" That didn't work out.\n   Ready for another try? "`;
+  };
 }

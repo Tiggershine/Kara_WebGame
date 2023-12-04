@@ -318,13 +318,13 @@ export default class UIManager {
                     edge.data && edge.data.get('endCircle') === nextStateCircle
                 )
               ) {
-                console.log(
-                  'createdge 코앞',
-                  'circle: ',
-                  circle,
-                  'nextStateCircle: ',
-                  nextStateCircle
-                );
+                // console.log(
+                //   'createdge 코앞',
+                //   'circle: ',
+                //   circle,
+                //   'nextStateCircle: ',
+                //   nextStateCircle
+                // );
                 this.diagramScene.edgeManager.createEdge(
                   circle,
                   nextStateCircle
