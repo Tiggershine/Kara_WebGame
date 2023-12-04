@@ -69,6 +69,7 @@ export default class UIManager {
         newStateCircle = this.createStateCircle(pointer.x, pointer.y);
         // newStateCircle.setPosition(pointer.x, pointer.y).setVisible(true);
         newStateCircle && newStateCircle.select();
+        this.diagramScene.sound.play('addStateSound');
       }
       this.createAddButton();
       return;
@@ -399,6 +400,7 @@ export default class UIManager {
       backButton.setTexture(backButtonConfig.texture);
     });
     backButton.on('pointerdown', () => {
+      this.diagramScene.sound.play('backButtonSound');
       this.diagramScene.popupWindow = new PopupWindow(
         this.diagramScene,
         'smBack',
@@ -417,6 +419,8 @@ export default class UIManager {
             0,
             (_: any, progress: number) => {
               if (progress === 1) {
+                this.diagramScene.sound.stopAll(); // BGM STOP
+
                 if (this.diagramScene.scene.isActive('DiagramScene')) {
                   this.diagramScene.scene.stop('DiagramScene');
                 }
@@ -451,26 +455,9 @@ export default class UIManager {
     backButton.on('pointerout', () => {
       backButton.setTexture(resetButtonConfig.texture);
     });
-    // backButton.on('pointerdown', () => {
-    //   this.diagramScene.popupWindow = new PopupWindow(
-    //     this.diagramScene,
-    //     'smBack',
-    //     `" All inputs will be reset.\n  Do you want to keep going? "`
-    //   );
-    //   this.diagramScene.popupWindow.create();
-    //   this.diagramScene.add.existing(this.diagramScene.popupWindow);
-
-    //   // let choice = false;
-
-    //   this.diagramScene.events.on('popupResponse', (response: boolean) => {
-    //     if (response) {
-    //       this.diagramScene.missionManager.cleanUpDiagramScene().then(() => {
-    //         this.diagramScene.scene.restart();
-    //       });
-    //     }
-    //   });
-    // });
     backButton.on('pointerdown', () => {
+      this.diagramScene.sound.stopAll(); // BGM STOP
+
       this.diagramScene.missionManager.cleanUpDiagramScene();
 
       this.diagramScene.scene.restart();

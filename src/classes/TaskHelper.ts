@@ -287,6 +287,7 @@ export default class TaskHelper {
 
         if (positionsCorrect) {
           if (!this.getIsSuccessPopupShowed) {
+            this.scene.sound.play('missionSuccessSound');
             setTimeout(() => {
               diagramScene.popupWindow = new PopupWindow(
                 diagramScene,
@@ -297,6 +298,7 @@ export default class TaskHelper {
               diagramScene.popupWindow.create();
               diagramScene.add.existing(diagramScene.popupWindow);
             }, 800);
+
             this.scene.events.emit('simulationEnd');
           }
         } else {

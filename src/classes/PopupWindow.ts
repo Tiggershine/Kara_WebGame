@@ -73,6 +73,7 @@ export default class PopupWindow extends Phaser.GameObjects.Container {
         yesBtn.setTexture('popupYesBtn');
       });
       yesBtn.on('pointerdown', () => {
+        this.scene.sound.play('buttonSound1');
         this.scene.tweens.add({
           targets: this.popupWindow,
           alpha: 0,
@@ -93,6 +94,7 @@ export default class PopupWindow extends Phaser.GameObjects.Container {
         noBtn.setTexture('popupNoBtn');
       });
       noBtn.on('pointerdown', () => {
+        this.scene.sound.play('buttonSound1');
         this.scene.tweens.add({
           targets: this.popupWindow,
           alpha: 0,

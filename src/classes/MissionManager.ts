@@ -26,12 +26,39 @@ export default class MissionManager {
   private missionAroundTheCorner!: AroundTheCorner;
   private missionNazcaLine!: NazcaLine;
 
+  bgmKeys = [
+    'softGameBGM',
+    'softGameBGM2',
+    'ecxiteGameBGM',
+    'ecxiteGameBGM2',
+    'ecxiteGameBGM3',
+    'joyGameBGM',
+  ]; // 사용할 BGM 키들
+
   constructor(diagaramScene: DiagramScene) {
     this.diagramScene = diagaramScene;
   }
 
+  playRandomBGM() {
+    // const bgmKeys = [
+    //   'softGameBGM',
+    //   'softGameBGM2',
+    //   'ecxiteGameBGM',
+    //   'ecxiteGameBGM2',
+    //   'ecxiteGameBGM3',
+    //   'joyGameBGM',
+    // ]; // 사용할 BGM 키들
+    const randomIndex = Math.floor(Math.random() * this.bgmKeys.length);
+    const selectedBGM = this.bgmKeys[randomIndex];
+    // this.diagramScene.setSelectedBGM = selectedBGM;
+
+    this.diagramScene.sound.play(selectedBGM, { volume: 0.2, loop: true });
+  }
+
   // Mission Loader according to level & mission
   missionLoader = (level: number, mission: number): void => {
+    this.playRandomBGM();
+
     switch (level) {
       case 1:
         switch (mission) {
@@ -41,6 +68,7 @@ export default class MissionManager {
               playButtonConfig.x,
               playButtonConfig.y
             );
+            // this.missionTestFlight.playBGM();
             break;
           case 2:
             this.minssionTunnelFinder = new TunnelFinder(

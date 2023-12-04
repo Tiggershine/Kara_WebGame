@@ -108,6 +108,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
         )
         .setVisible(false)
         .on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+          this.scene.sound.play('buttonSound2');
           pointer.event.stopPropagation();
           // if (this.inputWindow) {
           //   this.inputWindow.updateNextStateInput(this.buttonId, option.id);
@@ -131,6 +132,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
   }
 
   toggleMenu = () => {
+    this.scene.sound.play('buttonSound1');
     this.isMenuOpen ? this.closeMenu() : this.openMenu();
   };
 

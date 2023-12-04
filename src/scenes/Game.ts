@@ -110,7 +110,25 @@ export default class Game extends Phaser.Scene {
       }
     }
 
+    ////////// LOAD AUDIOS //////////
+    this.load.audio('softGameBGM', 'assets/sounds/softGameBGM.mp3');
+    this.load.audio('softGameBGM2', 'assets/sounds/softGameBGM2.mp3');
+    this.load.audio('ecxiteGameBGM', 'assets/sounds/ecxiteGameBGM.mp3');
+    this.load.audio('ecxiteGameBGM2', 'assets/sounds/ecxiteGameBGM2.mp3');
+    this.load.audio('ecxiteGameBGM3', 'assets/sounds/ecxiteGameBGM3.mp3');
+    this.load.audio('joyGameBGM', 'assets/sounds/joyGameBGM.mp3');
+
     this.load.audio('menuClickSound', 'assets/sounds/menuClickSound.ogg');
+    this.load.audio('addStateSound', 'assets/sounds/addStateSound.mp3');
+    this.load.audio('buttonSound1', 'assets/sounds/buttonSound1.mp3');
+    this.load.audio('buttonSound2', 'assets/sounds/buttonSound2.mp3');
+    this.load.audio('buttonRemoveSound', 'assets/sounds/buttonRemoveSound.mp3');
+    this.load.audio('backButtonSound', 'assets/sounds/backButtonSound.mp3');
+
+    this.load.audio(
+      'missionSuccessSound',
+      'assets/sounds/missionSuccessSound.mp3'
+    );
   }
 
   async create(data: GameSceneData) {

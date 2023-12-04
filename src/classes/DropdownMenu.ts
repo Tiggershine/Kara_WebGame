@@ -62,6 +62,7 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
         .on('pointerdown', () => {
           // TODO: DELETE the under test code
           console.log(option.value + ' selected!');
+          this.scene.sound.play('buttonSound2');
 
           // TODO: 이 코드 다시 수정할 것 (Sensor 중복 선택하면 alert하는 함수) - 일단 주석처리
           // this.inputWindow?.checkRegistedSensor(option.type);
@@ -141,6 +142,7 @@ export class DropdownMenu extends Phaser.GameObjects.Container {
    * @description Toggle on and off
    */
   toggleMenu = () => {
+    this.scene.sound.play('buttonSound1');
     this.isMenuOpen ? this.closeMenu() : this.openMenu();
   };
 

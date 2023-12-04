@@ -131,4 +131,8 @@ export default class TestFlight extends Phaser.GameObjects.Container {
   getFailureMessage = (): string => {
     return `" So close! \n  Would you like to try again? "`;
   };
+
+  // playBGM() {
+  //   this.scene.sound.play('softGameBGM', { loop: true });
+  // }
 }

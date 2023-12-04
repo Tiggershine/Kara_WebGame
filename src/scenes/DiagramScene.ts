@@ -39,7 +39,7 @@ export default class DiagramScene extends Phaser.Scene {
   }
 
   create(missionData: MissionData) {
-    this.cameras.main.fadeIn(500, 0, 0, 0);
+    this.cameras.main.fadeIn(300, 0, 0, 0);
 
     this.level = missionData.level;
     this.mission = missionData.mission;
@@ -83,6 +83,8 @@ export default class DiagramScene extends Phaser.Scene {
     ///////////////////////// MISSON LOAD /////////////////////////
     this.missionManager.missionLoader(missionData.level, missionData.mission);
   }
+  //////////////////// ** BGM SETTING **////////////////////
+  bgmLoader = () => {};
 
   //////////////////// ** GETTER & SETTER **////////////////////
   get getStateCircles(): StateCircle[] {

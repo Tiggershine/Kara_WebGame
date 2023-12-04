@@ -623,6 +623,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
 
             if (distance <= 20) {
               newButton.destroy();
+              this.diagramScene.sound.play('buttonSound1');
 
               const registedSensorCount: number = this.tempSensorInputs.length; // 등록된 sensor 갯수
               const targetSensorIndex: number = parseInt(
@@ -668,6 +669,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
 
             if (distance <= 20) {
               newButton.destroy();
+              this.diagramScene.sound.play('buttonSound1');
 
               const moveInputIndex = parseInt(point.key.split('_')[1][1]);
               const rowNumber = parseInt(point.key.split('_')[1][0]); // 1
@@ -794,6 +796,8 @@ export default class InputWindow extends Phaser.GameObjects.Container {
 
         if (!isInsideContainer) {
           image.setVisible(false);
+
+          this.diagramScene.sound.play('buttonRemoveSound');
 
           const rowNumber: number = parseInt(pointKey.split('_')[1][0]);
           const buttonOrder: number = parseInt(pointKey.split('_')[1][1]);
