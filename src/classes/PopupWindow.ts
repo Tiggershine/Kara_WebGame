@@ -1,16 +1,16 @@
 import Phaser from 'phaser';
 
 const popupTypeConfig = [
-  { id: 'smBack', texture: 'popupSmBack' },
   { id: 'sm', texture: 'popupSm' },
   { id: 'smAlert', texture: 'popupSmAlert' },
+  { id: 'smStateDelete', texure: 'popupSm' },
+  { id: 'smBackBtn', texture: 'popupSm' },
+  { id: 'smBack', texture: 'popupSmBack' },
   { id: 'md', texture: 'popupMd' },
   { id: 'mdAlert', texture: 'popupMdAlert' },
   { id: 'default', texture: 'popupSm' },
   { id: 'smInfinite', texture: 'popupInfinite' },
   { id: 'smBoundary', texture: 'popupBoundary' },
-  { id: 'smStateDelete', texure: 'popupSm' },
-  { id: 'smBackBtn', texture: 'popupSm' },
 ];
 
 export default class PopupWindow extends Phaser.GameObjects.Container {
