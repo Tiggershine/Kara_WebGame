@@ -119,6 +119,7 @@ export default class TaskHelper {
     let previousStateId = null;
     let sameStateCount = 0;
     const maxSameStateCount = 30; // Threshold for the same state repetition
+    let stateTransitionCounts: { [key: string]: number } = {}; // 상태 전환 추적 객체
 
     while (currentStateId !== 100) {
       // if (currentStateId === 100) {
@@ -136,6 +137,24 @@ export default class TaskHelper {
       } else {
         sameStateCount = 0; // Reset the counter if a different state is encountered
       }
+
+      // 상태 전환 기록
+      const transitionKey = `${previousStateId}-${currentStateId}`;
+      if (stateTransitionCounts[transitionKey]) {
+        stateTransitionCounts[transitionKey]++;
+      } else {
+        stateTransitionCounts[transitionKey] = 1;
+      }
+
+      // 두 상태 간의 이동이 임계값을 초과하는지 확인
+      if (stateTransitionCounts[transitionKey] >= maxSameStateCount) {
+        this.infiniteLoopDetected = true;
+        console.error(
+          'Infinite loop detected between two states in processStateInputData.'
+        );
+        break;
+      }
+
       const currentState: State = stateInputData.find(
         (state: State) => state.id === currentStateId
       );
@@ -387,35 +406,6 @@ export default class TaskHelper {
     }
   }
 
-  // executeMove = async (
-  //   player: Player,
-  //   moveId: number | null
-  // ): Promise<boolean> => {
-  //   switch (moveId) {
-  //     case 3:
-  //       await player.moveForward();
-  //       console.log('moveForward');
-  //       break;
-  //     case 4:
-  //       await player.turnLeft();
-  //       console.log('turnLeft');
-  //       break;
-  //     case 5:
-  //       await player.turnRight();
-  //       console.log('turnRight');
-  //       break;
-  //     case 6:
-  //       await player.putStar();
-  //       console.log('putStar');
-  //       break;
-  //     case 7:
-  //       await player.pickStar();
-  //       console.log('pickStar');
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // };
   executeMove = async (
     player: Player,
     moveId: number | null
