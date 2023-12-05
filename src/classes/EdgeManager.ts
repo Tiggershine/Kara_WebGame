@@ -122,7 +122,7 @@ export default class EdgeManager {
     edge.lineTo(arrowRightX, arrowRightY);
     edge.closePath();
     edge.fillPath();
-    edge.setDepth(100);
+    edge.setDepth(1);
 
     // Set the data for the self-edge
     edge.setData('startCircle', circle);
