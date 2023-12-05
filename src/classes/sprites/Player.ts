@@ -109,41 +109,6 @@ export default class Player extends BaseSprite {
     return new Promise((resolve) => setTimeout(resolve, ms));
   };
 
-  /** Methods for Moves */
-  // moveForward = async () => {
-  //   // console.log('moveForward 함수 실행');
-  //   // hightlightSelected && this.playerHighlight.setVisible(true);
-  //   // this.scene.add.existing(this.playerHighlight);
-  //   const angle = this.angle % 360;
-
-  //   switch (angle) {
-  //     case 90:
-  //     case -270:
-  //       await this.delay(500);
-  //       this.x += 50;
-  //       this.playerHighlight.x = this.x;
-  //       break;
-  //     case 180:
-  //     case -180:
-  //       await this.delay(500);
-  //       this.y += 50;
-  //       this.playerHighlight.y = this.y;
-  //       break;
-  //     case 270:
-  //     case -90:
-  //       await this.delay(500);
-  //       this.x -= 50;
-  //       this.playerHighlight.x = this.x;
-  //       break;
-  //     case 0:
-  //       await this.delay(500);
-  //       this.y -= 50;
-  //       this.playerHighlight.y = this.y;
-  //       break;
-  //     default:
-  //       console.log('Invalid angle');
-  //   }
-  // };
   moveForward = async (): Promise<boolean> => {
     // Calculate the next position based on the current angle
     let nextX = this.x;

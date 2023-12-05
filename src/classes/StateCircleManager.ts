@@ -119,12 +119,19 @@ export default class StateCircleManager {
       console.error('InputWindow not found with id:', id);
       return;
     } else {
-      const previousStateCircle =
-        this.diagramScene.stateCircleManager.getStateCircleById(id - 1);
-      if (previousStateCircle) {
-        previousStateCircle.emit('pointerdown');
+      // const previousStateCircle =
+      //   this.diagramScene.stateCircleManager.getStateCircleById(id - 1);
+      // if (previousStateCircle) {
+      //   previousStateCircle.emit('pointerdown');
+      // } else {
+      //   console.error('Cannot find previous StateCircle of ID', id);
+      // }
+      const startStateCircle =
+        this.diagramScene.stateCircleManager.getStateCircleById(0);
+      if (startStateCircle) {
+        startStateCircle.emit('pointerdown');
       } else {
-        console.error('Cannot find previous StateCircle of ID', id);
+        console.error('Cannot find StartStateCircle');
       }
 
       inputWindowToDelete.destroy();

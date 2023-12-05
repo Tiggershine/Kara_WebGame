@@ -208,6 +208,19 @@ export default class TaskHelper {
               move
             );
             if (!moveSuccessful) {
+              this.scene.sound.play('mistakeSound', { volume: 0.5 });
+              setTimeout(() => {
+                const diagramScene = this.scene.scene.get(
+                  'DiagramScene'
+                ) as DiagramScene;
+                diagramScene.popupWindow = new PopupWindow(
+                  diagramScene,
+                  'smBoundary',
+                  false
+                );
+                diagramScene.popupWindow.create();
+                diagramScene.add.existing(diagramScene.popupWindow);
+              }, 800);
               console.log('경계선을 넘어갈 수 없음');
               return;
             }
@@ -265,14 +278,14 @@ export default class TaskHelper {
     this.processStateInputData(stateInputData, highlightOn, () => {
       if (this.wasInfiniteLoopDetected()) {
         // Display infinite loop warning popup
+        this.scene.sound.play('mistakeSound', { volume: 0.5 });
         setTimeout(() => {
           const diagramScene = this.scene.scene.get(
             'DiagramScene'
           ) as DiagramScene;
           diagramScene.popupWindow = new PopupWindow(
             diagramScene,
-            'smAlert',
-            `" Oops! \n  Looks like we're going in circles! \n  Check your instructions again.    "`,
+            'smInfinite',
             false
           );
           diagramScene.popupWindow.create();
@@ -292,30 +305,33 @@ export default class TaskHelper {
               diagramScene.popupWindow = new PopupWindow(
                 diagramScene,
                 'sm',
-                mission.getSuccessMessage(),
-                false
+                false,
+                mission.getSuccessMessage()
               );
               diagramScene.popupWindow.create();
               diagramScene.add.existing(diagramScene.popupWindow);
             }, 800);
 
-            this.scene.events.emit('simulationEnd');
+            // this.scene.events.emit('simulationEnd');
           }
         } else {
+          this.scene.sound.play('missionFailSound');
           setTimeout(() => {
             diagramScene.popupWindow = new PopupWindow(
               diagramScene,
               'smAlert',
-              mission.getFailureMessage(),
-              false
+              false,
+              mission.getFailureMessage()
             );
             diagramScene.popupWindow.create();
             diagramScene.add.existing(diagramScene.popupWindow);
           }, 800);
-          this.scene.events.emit('simulationEnd');
+
+          // this.scene.events.emit('simulationEnd');
         }
         console.log(positionsCorrect ? 'Success' : 'Fail');
       }
+      this.scene.events.emit('simulationEnd');
     });
   };
 

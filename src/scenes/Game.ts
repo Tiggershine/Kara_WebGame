@@ -102,6 +102,8 @@ export default class Game extends Phaser.Scene {
       popupNoBtnHover: 'assets/PopupNoHover.png',
       popupOKBtn: 'assets/PopupOK.png',
       popupOKBtnHover: 'assets/PopupOKHover.png',
+      popupInfinite: 'assets/PopupInfinite.png',
+      popupBoundary: 'assets/PopupBoundary.png',
     };
 
     for (let key in imageSources) {
@@ -133,6 +135,7 @@ export default class Game extends Phaser.Scene {
       'missionSuccessSound',
       'assets/sounds/missionSuccessSound.mp3'
     );
+    this.load.audio('missionFailSound', 'assets/sounds/missionFailSound.mp3');
   }
 
   async create(data: GameSceneData) {

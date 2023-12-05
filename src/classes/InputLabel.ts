@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import DiagramScene from '../scenes/DiagramScene';
+import PopupWindow from './PopupWindow';
 import StateCircle from './StateCircle';
 
 export default class InputLabel extends Phaser.GameObjects.Container {
@@ -61,8 +62,34 @@ export default class InputLabel extends Phaser.GameObjects.Container {
       } else {
         this.timerEvent = scene.time.addEvent({
           delay: 1000, // 1초 후에 실행
-          callback: this.deleteInputLabel,
+          // callback: this.deleteInputLabel,
+          callback: () => {
+            // Timer Event가 실행되면 Popup Window 생성
+            this.scene.sound.play('backButtonSound'); // 필요한 경우 사운드 추가
+            const popupWindow = new PopupWindow(
+              this.scene,
+              'smStateDelete',
+              true,
+              `" Are you sure you want to \n    delete this state? "`
+            );
+            popupWindow.create();
+            this.scene.add.existing(popupWindow);
+
+            // Popup Window 이벤트 핸들러
+            this.scene.events.once(
+              'deletePopupResponse',
+              (response: boolean) => {
+                if (response) {
+                  // Yes를 눌렀을 경우 Label 삭제 로직 실행
+                  this.deleteInputLabel();
+                }
+                // No를 누르거나 팝업이 닫힐 경우 아무것도 하지
+                return;
+              }
+            );
+          },
           callbackScope: this,
+          repeat: 0,
         });
       }
       this.lastClickTime = currentTime;
@@ -189,7 +216,7 @@ export default class InputLabel extends Phaser.GameObjects.Container {
   };
 
   private deleteInputLabel = (): void => {
-    console.log('LongPress event - StateCircle 삭제');
+    console.log('LongPress event - StateCircle 삭제', 'stateId', this.stateId);
 
     // DiagramScene 참조
     const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;

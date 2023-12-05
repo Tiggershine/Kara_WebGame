@@ -6,7 +6,11 @@ const popupTypeConfig = [
   { id: 'smAlert', texture: 'popupSmAlert' },
   { id: 'md', texture: 'popupMd' },
   { id: 'mdAlert', texture: 'popupMdAlert' },
-  { id: 'default', texture: 'popupMd' },
+  { id: 'default', texture: 'popupSm' },
+  { id: 'smInfinite', texture: 'popupInfinite' },
+  { id: 'smBoundary', texture: 'popupBoundary' },
+  { id: 'smStateDelete', texure: 'popupSm' },
+  { id: 'smBackBtn', texture: 'popupSm' },
 ];
 
 export default class PopupWindow extends Phaser.GameObjects.Container {
@@ -18,13 +22,13 @@ export default class PopupWindow extends Phaser.GameObjects.Container {
   constructor(
     scene: Phaser.Scene,
     popupType: string,
-    popupText: string,
-    isBtnOption: boolean
+    isBtnOption: boolean,
+    popupText?: string
   ) {
     super(scene);
 
     this.popupType = popupType;
-    this.popupText = popupText;
+    this.popupText = popupText ? popupText : '';
     this.isBtnOption = isBtnOption;
   }
 
@@ -42,9 +46,9 @@ export default class PopupWindow extends Phaser.GameObjects.Container {
       this.scene.cameras.main.centerY
     );
 
-    console.log('Popup window 그립니다.');
+    console.log('Popup window 그립니다.', this.popupType);
     const texture =
-      popupTypeConfig.find((typeConfig) => typeConfig.id === popupType)
+      popupTypeConfig.find((typeConfig) => typeConfig.id === this.popupType)
         ?.texture ||
       popupTypeConfig.find((typeConfig) => typeConfig.id === 'default')
         ?.texture ||
@@ -55,7 +59,7 @@ export default class PopupWindow extends Phaser.GameObjects.Container {
     this.popupWindow.add(popupImage);
 
     if (isBtnOption) {
-      const text = this.scene.add.text(-135, -73, popupText, {
+      const text = this.scene.add.text(-135, -60, popupText, {
         fontSize: '25px',
         fontFamily: 'Roboto Condensed',
         color: '#1B1C1D',
@@ -80,7 +84,11 @@ export default class PopupWindow extends Phaser.GameObjects.Container {
           duration: 500,
           onComplete: () => {
             this.popupWindow.setVisible(false);
-            this.scene.events.emit('popupResponse', true);
+            if (this.popupType === 'smBackBtn') {
+              this.scene.events.emit('backPopupResponse', true);
+            } else if (this.popupType === 'smStateDelete') {
+              this.scene.events.emit('deletePopupResponse', true);
+            }
           },
         });
       });
@@ -101,7 +109,11 @@ export default class PopupWindow extends Phaser.GameObjects.Container {
           duration: 500,
           onComplete: () => {
             this.popupWindow.setVisible(false);
-            this.scene.events.emit('popupResponse', false);
+            if (this.popupType === 'smBackBtn') {
+              this.scene.events.emit('backPopupResponse', false);
+            } else if (this.popupType === 'smStateDelete') {
+              this.scene.events.emit('deletePopupResponse', false);
+            }
           },
         });
       });
@@ -111,7 +123,7 @@ export default class PopupWindow extends Phaser.GameObjects.Container {
       this.popupWindow.add(noBtn);
       this.popupWindow.add(text);
     } else {
-      const text = this.scene.add.text(-135, -73, popupText, {
+      const text = this.scene.add.text(-135, -60, popupText, {
         fontSize: '25px',
         fontFamily: 'Roboto Condensed',
         color: '#1B1C1D',

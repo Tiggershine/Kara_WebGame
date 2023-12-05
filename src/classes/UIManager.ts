@@ -407,14 +407,14 @@ export default class UIManager {
       this.diagramScene.sound.play('backButtonSound');
       this.diagramScene.popupWindow = new PopupWindow(
         this.diagramScene,
-        'smBack',
-        `" Would you like to return to \n   the menu? "`,
-        true
+        'smBackBtn',
+        true,
+        `" Would you like to return to \n   the menu? "`
       );
       this.diagramScene.popupWindow.create();
       this.diagramScene.add.existing(this.diagramScene.popupWindow);
 
-      this.diagramScene.events.on('popupResponse', (response: boolean) => {
+      this.diagramScene.events.on('backPopupResponse', (response: boolean) => {
         if (response) {
           this.diagramScene.cameras.main.fadeOut(
             500,
