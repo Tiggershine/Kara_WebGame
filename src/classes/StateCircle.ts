@@ -228,6 +228,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
   select = (): void => {
     this.setIsSelected(true);
+    this.setDepth(4);
 
     if (this.inputWindow) {
       // TODO: DELETE TEST CODE
@@ -242,6 +243,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
   deselect = (): void => {
     this.setIsSelected(false);
+    this.setDepth(2);
 
     if (this.inputWindow) {
       // TODO: DELETE TEST CODE

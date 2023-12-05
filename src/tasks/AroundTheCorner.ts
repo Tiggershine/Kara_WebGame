@@ -6,7 +6,9 @@ import TaskHelper from '../classes/TaskHelper';
 
 export default class AroundTheCorner extends Phaser.GameObjects.Container {
   private player!: Player;
-  private star!: Star;
+  private star1!: Star;
+  private star2!: Star;
+  private star3!: Star;
   private wall1!: Wall;
   private wall2!: Wall;
   private wall3!: Wall;
@@ -23,13 +25,17 @@ export default class AroundTheCorner extends Phaser.GameObjects.Container {
     this.wall2 = new Wall(this.scene, 255, 315);
     this.wall3 = new Wall(this.scene, 405, 315);
 
-    this.star = new Star(this.scene, 455, 315);
+    this.star1 = new Star(this.scene, 205, 315);
+    this.star2 = new Star(this.scene, 355, 315);
+    this.star3 = new Star(this.scene, 455, 315);
 
     scene.add.existing(this.player);
     scene.add.existing(this.wall1);
     scene.add.existing(this.wall2);
     scene.add.existing(this.wall3);
-    scene.add.existing(this.star);
+    scene.add.existing(this.star1);
+    scene.add.existing(this.star2);
+    scene.add.existing(this.star3);
 
     this.createGuidelineGraphic();
   }
@@ -38,8 +44,12 @@ export default class AroundTheCorner extends Phaser.GameObjects.Container {
     this.player.setPosition(105, 315).setAngle(90);
     this.player.playerHighlight.setPosition(105, 315);
 
-    this.star = new Star(this.scene, 455, 315);
-    this.scene.add.existing(this.star);
+    this.star1 = new Star(this.scene, 205, 315);
+    this.star2 = new Star(this.scene, 355, 315);
+    this.star3 = new Star(this.scene, 455, 315);
+    this.scene.add.existing(this.star1);
+    this.scene.add.existing(this.star2);
+    this.scene.add.existing(this.star3);
 
     this.startSimulation(stateInputData, highlightOn);
   };
@@ -47,52 +57,6 @@ export default class AroundTheCorner extends Phaser.GameObjects.Container {
   startSimulation = (stateInputData: any, highlightOn: boolean) => {
     this.taskHelper.executeSimulation(this, stateInputData, highlightOn);
   };
-
-  // processStateInputData = (stateInputData: any, highlightOn: boolean) => {
-  //   this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
-  //     const positionsCorrect = this.checkObjectPositions();
-
-  //     console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
-  //     if (!this.isSuccessPopupShowed) {
-  //       if (positionsCorrect) {
-  //         const diagramScene = this.scene.scene.get(
-  //           'DiagramScene'
-  //         ) as DiagramScene;
-
-  //         setTimeout(() => {
-  //           diagramScene.popupWindow = new PopupWindow(
-  //             diagramScene,
-  //             'smBack',
-  //             `" Great job! \n  Let's take on the next mission. "`,
-  //             false
-  //           );
-  //           diagramScene.popupWindow.create();
-  //           diagramScene.add.existing(diagramScene.popupWindow);
-  //         }, 800);
-
-  //         this.isSuccessPopupShowed = true;
-  //       } else {
-  //         const diagramScene = this.scene.scene.get(
-  //           'DiagramScene'
-  //         ) as DiagramScene;
-
-  //         setTimeout(() => {
-  //           diagramScene.popupWindow = new PopupWindow(
-  //             diagramScene,
-  //             'smBack',
-  //             `" So close! \n  Would you like to try again? "`,
-  //             false
-  //           );
-  //           diagramScene.popupWindow.create();
-  //           diagramScene.add.existing(diagramScene.popupWindow);
-  //         }, 800);
-
-  //         this.isSuccessPopupShowed = true;
-  //       }
-  //     }
-  //     console.log(positionsCorrect ? 'Success' : 'Fail');
-  //   });
-  // };
 
   checkObjectPositions(): boolean {
     const isPlayerAt455315 = this.scene.children.list.some(
@@ -109,7 +73,9 @@ export default class AroundTheCorner extends Phaser.GameObjects.Container {
     );
     const isOtherObjectsExist = this.scene.children.list.some(
       (child) =>
-        (child instanceof Player || child instanceof Wall) &&
+        (child instanceof Player ||
+          child instanceof Wall ||
+          child instanceof Star) &&
         !(
           (child.x === 455 && child.y === 315) ||
           (child.x === 155 && child.y === 315) ||

@@ -76,68 +76,6 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
     this.taskHelper.executeSimulation(this, stateInputData, highlightOn);
   };
 
-  // processStateInputData = (stateInputData: any, highlightOn: boolean) => {
-  //   this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
-  //     if (this.taskHelper.wasInfiniteLoopDetected()) {
-  //       // Display infinite loop warning popup
-  //       setTimeout(() => {
-  //         const diagramScene = this.scene.scene.get(
-  //           'DiagramScene'
-  //         ) as DiagramScene;
-  //         diagramScene.popupWindow = new PopupWindow(
-  //           diagramScene,
-  //           'smAlert',
-  //           `" Oops! \n  Looks like we're going in circles! \n  Check your instructions again.    "`,
-  //           false
-  //         );
-  //         diagramScene.popupWindow.create();
-  //         diagramScene.add.existing(diagramScene.popupWindow);
-  //       }, 800);
-  //     } else {
-  //       const positionsCorrect = this.checkObjectPositions();
-
-  //       console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
-  //       if (!this.isSuccessPopupShowed) {
-  //         if (positionsCorrect) {
-  //           const diagramScene = this.scene.scene.get(
-  //             'DiagramScene'
-  //           ) as DiagramScene;
-
-  //           setTimeout(() => {
-  //             diagramScene.popupWindow = new PopupWindow(
-  //               diagramScene,
-  //               'sm',
-  //               `" Bravo! You've succeeded! "`,
-  //               false
-  //             );
-  //             diagramScene.popupWindow.create();
-  //             diagramScene.add.existing(diagramScene.popupWindow);
-  //           }, 800);
-
-  //           this.isSuccessPopupShowed = true;
-  //         } else {
-  //           const diagramScene = this.scene.scene.get(
-  //             'DiagramScene'
-  //           ) as DiagramScene;
-
-  //           setTimeout(() => {
-  //             diagramScene.popupWindow = new PopupWindow(
-  //               diagramScene,
-  //               'smAlert',
-  //               `" Oops, not quite!\n   Want to try again? "`,
-  //               false
-  //             );
-  //             diagramScene.popupWindow.create();
-  //             diagramScene.add.existing(diagramScene.popupWindow);
-  //           }, 800);
-  //         }
-  //       }
-  //       this.scene.events.emit('simulationEnd');
-  //       console.log(positionsCorrect ? 'Success' : 'Fail');
-  //     }
-  //   });
-  // };
-
   checkObjectPositions(): boolean {
     const isStarAt155315 = this.scene.children.list.some(
       (child) => child instanceof Star && child.x === 155 && child.y === 315

@@ -29,7 +29,7 @@ export default class UIManager {
   /** Add Button for createing new stateCircle */
   createAddButton() {
     const addButton = this.diagramScene.add.image(575, 55, 'addButton');
-    addButton.setDepth(5).setInteractive();
+    addButton.setDepth(2).setInteractive();
     this.diagramScene.input.setDraggable(addButton);
 
     // // Create new StateCircle object
@@ -524,7 +524,7 @@ export default class UIManager {
         infoImageTexture
       )
       .setInteractive();
-    missionInfoImg.setDepth(3).setVisible(false);
+    missionInfoImg.setDepth(5).setVisible(false);
 
     return missionInfoImg;
   };

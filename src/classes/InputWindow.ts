@@ -648,8 +648,8 @@ export default class InputWindow extends Phaser.GameObjects.Container {
                 buttonType
               );
             } else {
-              this.diagramScene.sound.play('mistakeSound', { volume: 0.5 });
               newButton.destroy();
+              // this.diagramScene.sound.play('mistakeSound', { volume: 0.5 });
             }
           }
         } else if (
@@ -688,7 +688,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
               );
               // break;
             } else {
-              this.diagramScene.sound.play('mistakeSound', { volume: 0.5 });
+              // this.diagramScene.sound.play('mistakeSound', { volume: 0.5 });
               newButton.destroy();
             }
           }
