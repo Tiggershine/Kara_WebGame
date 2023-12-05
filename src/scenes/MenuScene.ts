@@ -102,7 +102,7 @@ export default class MenuScene extends Phaser.Scene {
           // Check if the duration is less than 0.3 second
           this.handleImageClick();
 
-          this.sound.play('menuClickSound', { volume: 0.7 });
+          this.sound.play('menuClickSound', { volume: 0.5 });
         }
       });
   };
@@ -179,7 +179,7 @@ export default class MenuScene extends Phaser.Scene {
     };
 
     if (swipeDirection === 'left') {
-      this.sound.play('swipeSound');
+      this.sound.play('swipeSound', { volume: 0.7 });
 
       if (this.currentImage.texture.key === 'menuImg1') {
         // Tween currentImage to the left
@@ -248,7 +248,7 @@ export default class MenuScene extends Phaser.Scene {
         return;
       }
     } else if (swipeDirection === 'right') {
-      this.sound.play('swipeSound');
+      this.sound.play('swipeSound', { volume: 0.7 });
 
       if (this.currentImage.texture.key === 'menuImg3') {
         // Tween currentImage to the right

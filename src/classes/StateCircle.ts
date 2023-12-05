@@ -106,6 +106,7 @@ export default class StateCircle extends Phaser.GameObjects.Container {
         return;
       } else {
         this.select();
+        this.diagramScene.sound.play('stateSelectSound', { volume: 0.7 });
 
         const diagramScene = this.scene.scene.get(
           'DiagramScene'

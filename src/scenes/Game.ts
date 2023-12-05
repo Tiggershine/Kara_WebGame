@@ -124,6 +124,10 @@ export default class Game extends Phaser.Scene {
     this.load.audio('buttonSound2', 'assets/sounds/buttonSound2.mp3');
     this.load.audio('buttonRemoveSound', 'assets/sounds/buttonRemoveSound.mp3');
     this.load.audio('backButtonSound', 'assets/sounds/backButtonSound.mp3');
+    this.load.audio('stateSelectSound', 'assets/sounds/stateSelectSound.mp3');
+    this.load.audio('toggleOnSound', 'assets/sounds/toggleOnSound.mp3');
+    this.load.audio('toggleOffSound', 'assets/sounds/toggleOffSound.mp3');
+    this.load.audio('mistakeSound', 'assets/sounds/mistakeSound.mp3');
 
     this.load.audio(
       'missionSuccessSound',

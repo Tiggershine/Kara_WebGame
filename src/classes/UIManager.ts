@@ -69,9 +69,12 @@ export default class UIManager {
         newStateCircle = this.createStateCircle(pointer.x, pointer.y);
         // newStateCircle.setPosition(pointer.x, pointer.y).setVisible(true);
         newStateCircle && newStateCircle.select();
-        this.diagramScene.sound.play('addStateSound');
+        this.createAddButton();
+        this.diagramScene.sound.play('addStateSound', { volume: 0.7 });
+      } else {
+        this.diagramScene.sound.play('mistakeSound', { volume: 0.5 });
+        this.createAddButton();
       }
-      this.createAddButton();
       return;
     });
   }
@@ -222,6 +225,7 @@ export default class UIManager {
       stateName,
       false
     ).setVisible(false);
+    inputLabel.setDepth(-10);
     this.diagramScene.inputLabels.push(inputLabel);
 
     const endStateCircle = new StateCircle(
@@ -561,6 +565,7 @@ export default class UIManager {
     });
 
     playButton.on('pointerdown', () => {
+      this.diagramScene.sound.play('buttonSound1', { volume: 0.7 });
       if (this.diagramScene.getIsSimulationPlaying) {
         playButton.setTexture(playButtonConfig.texture);
         this.diagramScene.setIsSimulationPlaying = false;
@@ -592,10 +597,12 @@ export default class UIManager {
 
     highlightToggle.on('pointerdown', () => {
       if (!this.diagramScene.getIsHighlightOn) {
+        this.diagramScene.sound.play('toggleOnSound', { volume: 0.7 });
         console.log('on', this.diagramScene.getIsHighlightOn);
         highlightToggle.setTexture(highligtToggleConfig.selectedTexture);
         this.diagramScene.setIsHighlightOn = true;
       } else {
+        this.diagramScene.sound.play('toggleOffSound', { volume: 0.7 });
         console.log('on', this.diagramScene.getIsHighlightOn);
         highlightToggle.setTexture(highligtToggleConfig.texture);
         this.diagramScene.setIsHighlightOn = false;

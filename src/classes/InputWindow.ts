@@ -623,7 +623,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
 
             if (distance <= 20) {
               newButton.destroy();
-              this.diagramScene.sound.play('buttonSound1');
+              this.diagramScene.sound.play('buttonSound1', { volume: 0.5 });
 
               const registedSensorCount: number = this.tempSensorInputs.length; // 등록된 sensor 갯수
               const targetSensorIndex: number = parseInt(
@@ -648,6 +648,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
                 buttonType
               );
             } else {
+              this.diagramScene.sound.play('mistakeSound', { volume: 0.5 });
               newButton.destroy();
             }
           }
@@ -687,6 +688,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
               );
               // break;
             } else {
+              this.diagramScene.sound.play('mistakeSound', { volume: 0.5 });
               newButton.destroy();
             }
           }
