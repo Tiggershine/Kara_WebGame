@@ -104,14 +104,14 @@ export default class SubMenuScene extends Phaser.Scene {
     this.selectedLevel = data.level;
     // 배경 이미지 Init (Level에 따라서)
     if (data.level) {
-      console.log('data.level: ', data.level);
+      // console.log('data.level: ', data.level);
       this.setupInitialImg(data.level);
     }
   }
 
   // Level에 따른 배경 이미지 (Level1 / Level2 / Level3)
   setupInitialImg = (level: number): void => {
-    console.log('setupInitialImg 실행 - level: ', level);
+    // console.log('setupInitialImg 실행 - level: ', level);
     switch (level) {
       case 1:
         this.add.image(540, 243, 'subMenuImg1');
@@ -133,7 +133,7 @@ export default class SubMenuScene extends Phaser.Scene {
   setupMissionImgList = (missionLogName: string) => {
     const missionLogs =
       SubMenuScene[missionLogName as keyof typeof SubMenuScene];
-    console.log(missionLogs);
+    // console.log(missionLogs);
 
     if (!Array.isArray(missionLogs)) {
       console.log('Invalid mission log name or not an array');
@@ -142,7 +142,7 @@ export default class SubMenuScene extends Phaser.Scene {
 
     missionLogs.forEach((missionLog, index) => {
       if (missionLog.isSuccess) {
-        console.log('missionLogs forEach isSuccess');
+        // console.log('missionLogs forEach isSuccess');
         this.createMissionButtons(
           missionButtonConfig[index].x,
           missionButtonConfig[index].y,
@@ -150,7 +150,7 @@ export default class SubMenuScene extends Phaser.Scene {
           index + 1
         );
       } else {
-        console.log('missionLogs forEach isNotSuccess');
+        // console.log('missionLogs forEach isNotSuccess');
         this.createMissionButtons(
           missionButtonConfig[index].x,
           missionButtonConfig[index].y,
@@ -167,11 +167,11 @@ export default class SubMenuScene extends Phaser.Scene {
     texture: string,
     mission?: number
   ) => {
-    console.log(x, y, texture, mission);
+    // console.log(x, y, texture, mission);
     const missionBtn = this.add.image(x, y, texture).setInteractive();
     this.scene.scene.add.existing(missionBtn);
     const selectedTexture: string = texture + 'Hover';
-    console.log(selectedTexture);
+    // console.log(selectedTexture);
     missionBtn.on('pointerover', () => {
       missionBtn.setTexture(selectedTexture);
     });

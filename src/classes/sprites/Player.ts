@@ -135,7 +135,7 @@ export default class Player extends BaseSprite {
         break;
       default:
         console.log('Invalid angle');
-        return false;
+        return true;
     }
 
     // Check if the next position is beyond the boundary

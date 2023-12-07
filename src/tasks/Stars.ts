@@ -98,7 +98,7 @@ export default class Stars extends Phaser.GameObjects.Container {
   }
 
   getSuccessMessage = (): string => {
-    this.taskHelper.setIsSuccessPopupShowed = true;
+    // this.taskHelper.setIsSuccessPopupShowed = true;
     return `" Bravo! You've succeeded! "`;
   };
 

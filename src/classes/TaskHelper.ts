@@ -250,8 +250,9 @@ export default class TaskHelper {
                 );
                 diagramScene.popupWindow.create();
                 diagramScene.add.existing(diagramScene.popupWindow);
-              }, 800);
+              }, 500);
               console.log('경계선을 넘어갈 수 없음');
+              this.scene.events.emit('simulationEnd');
               return;
             }
           }
@@ -322,11 +323,11 @@ export default class TaskHelper {
     stateInputData: any,
     highlightOn: boolean
   ) => {
-    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+    // const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
 
     this.processStateInputData(stateInputData, highlightOn, () => {
       if (this.wasInfiniteLoopDetected()) {
-        this.scene.events.emit('simulationEnd');
+        // this.scene.events.emit('simulationEnd');
 
         // Display infinite loop warning popup
         this.scene.sound.play('mistakeSound', { volume: 0.5 });
@@ -341,10 +342,9 @@ export default class TaskHelper {
           );
           diagramScene.popupWindow.create();
           diagramScene.add.existing(diagramScene.popupWindow);
-        }, 800);
-        // '시뮬레이션 종료'로 설정
-        // diagramScene.setIsSimulationPlaying = false;
+        }, 500);
 
+        this.scene.events.emit('simulationEnd');
         return;
       } else {
         const positionsCorrect = mission.checkObjectPositions();
@@ -365,10 +365,12 @@ export default class TaskHelper {
               );
               diagramScene.popupWindow.create();
               diagramScene.add.existing(diagramScene.popupWindow);
-            }, 800);
+            }, 500);
+
+            this.setIsSuccessPopupShowed = true;
 
             this.scene.events.emit('simulationEnd');
-            // return;
+            return;
           }
         } else {
           this.scene.sound.play('missionFailSound');
@@ -381,10 +383,10 @@ export default class TaskHelper {
             );
             diagramScene.popupWindow.create();
             diagramScene.add.existing(diagramScene.popupWindow);
-          }, 800);
+          }, 500);
 
           this.scene.events.emit('simulationEnd');
-          // return;
+          return;
         }
         console.log(positionsCorrect ? 'Success' : 'Fail');
       }
@@ -460,7 +462,7 @@ export default class TaskHelper {
         return await player.pickStar();
       default:
         console.log('Invalid move');
-        return false; // No valid moveId was provided
+        return true; // No valid moveId was provided
     }
   };
 
