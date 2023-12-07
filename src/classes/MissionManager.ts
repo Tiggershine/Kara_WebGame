@@ -222,12 +222,14 @@ export default class MissionManager {
         switch (mission) {
           case 1:
             if (this.missionStars) {
+              console.log('Restart Simulation');
               if (this.diagramScene.getIsMissionInitiated) {
                 this.missionStars.restartSimulation(
                   stateInputData,
                   this.diagramScene.getIsHighlightOn
                 );
               } else {
+                console.log('New Simulation');
                 this.missionStars.startSimulation(
                   stateInputData,
                   this.diagramScene.getIsHighlightOn

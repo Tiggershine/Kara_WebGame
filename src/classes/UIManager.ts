@@ -560,8 +560,10 @@ export default class UIManager {
       .setInteractive();
 
     this.diagramScene.events.on('simulationEnd', () => {
-      playButton.setTexture(playButtonConfig.texture);
-      this.diagramScene.setIsSimulationPlaying = false;
+      if (playButton) {
+        playButton.setTexture(playButtonConfig.texture);
+        this.diagramScene.setIsSimulationPlaying = false;
+      }
     });
 
     playButton.on('pointerdown', () => {
@@ -584,9 +586,11 @@ export default class UIManager {
           this.diagramScene.getIsSimulationPlaying
         );
 
+        // 최신 StateInput update
         const stateInputData =
           this.diagramScene.stateCircleManager.extractIdAndStateInputStateCircles();
 
+        // Simulation 실행
         this.diagramScene.missionManager.simulationLoader(
           level,
           mission,

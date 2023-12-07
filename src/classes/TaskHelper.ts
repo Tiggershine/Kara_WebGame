@@ -289,15 +289,19 @@ export default class TaskHelper {
       return; // 시뮬레이션 중단
     }
 
-    if (callbackFunction) {
-      callbackFunction();
-    }
+    // if (callbackFunction) {
+    //   callbackFunction();
+    // }
 
     // Simulation Play Button 변경을 위한 event emit
     this.isSimulationRunning = false;
 
     this.player.playerHighlightOff();
     this.simulationHighlight.simulationHighlightOff();
+
+    if (callbackFunction) {
+      callbackFunction();
+    }
 
     // this.scene.events.emit('simulationEnd');
     // '시뮬레이션 종료'로 설정
@@ -364,7 +368,7 @@ export default class TaskHelper {
             }, 800);
 
             this.scene.events.emit('simulationEnd');
-            return;
+            // return;
           }
         } else {
           this.scene.sound.play('missionFailSound');
@@ -380,13 +384,10 @@ export default class TaskHelper {
           }, 800);
 
           this.scene.events.emit('simulationEnd');
-          return;
+          // return;
         }
         console.log(positionsCorrect ? 'Success' : 'Fail');
       }
-      // '시뮬레이션 종료'로 설정
-      // diagramScene.setIsSimulationPlaying = false;
-      // this.scene.events.emit('simulationEnd');
     });
   };
 
