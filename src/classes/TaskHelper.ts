@@ -354,24 +354,24 @@ export default class TaskHelper {
         ) as DiagramScene;
 
         if (positionsCorrect) {
-          if (!this.getIsSuccessPopupShowed) {
-            this.scene.sound.play('missionSuccessSound');
-            setTimeout(() => {
-              diagramScene.popupWindow = new PopupWindow(
-                diagramScene,
-                'sm',
-                false,
-                mission.getSuccessMessage()
-              );
-              diagramScene.popupWindow.create();
-              diagramScene.add.existing(diagramScene.popupWindow);
-            }, 500);
+          // if (!this.getIsSuccessPopupShowed) {
+          this.scene.sound.play('missionSuccessSound');
+          setTimeout(() => {
+            diagramScene.popupWindow = new PopupWindow(
+              diagramScene,
+              'sm',
+              false,
+              mission.getSuccessMessage()
+            );
+            diagramScene.popupWindow.create();
+            diagramScene.add.existing(diagramScene.popupWindow);
+          }, 500);
 
-            this.setIsSuccessPopupShowed = true;
+          this.setIsSuccessPopupShowed = true;
 
-            this.scene.events.emit('simulationEnd');
-            return;
-          }
+          this.scene.events.emit('simulationEnd');
+          return;
+          // }
         } else {
           this.scene.sound.play('missionFailSound');
           setTimeout(() => {

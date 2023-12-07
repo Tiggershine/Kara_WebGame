@@ -25,6 +25,18 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
     this.player = new Player(this.scene, 105, 315);
     this.player.setAngle(90);
     this.taskHelper = new TaskHelper(scene, this.player);
+    scene.add.existing(this.player);
+
+    this.star1 = new Star(this.scene, 155, 315);
+    this.star2 = new Star(this.scene, 205, 315);
+    this.star3 = new Star(this.scene, 355, 315);
+    this.star4 = new Star(this.scene, 405, 315);
+    this.star5 = new Star(this.scene, 455, 315);
+    scene.add.existing(this.star1);
+    scene.add.existing(this.star2);
+    scene.add.existing(this.star3);
+    scene.add.existing(this.star4);
+    scene.add.existing(this.star5);
 
     this.wall1 = new Wall(this.scene, 205, 265);
     this.wall2 = new Wall(this.scene, 405, 265);
@@ -33,28 +45,17 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
     this.wall5 = new Wall(this.scene, 405, 365);
     this.wall6 = new Wall(this.scene, 505, 315);
 
-    this.star1 = new Star(this.scene, 155, 315);
-    this.star2 = new Star(this.scene, 205, 315);
-    this.star3 = new Star(this.scene, 355, 315);
-    this.star4 = new Star(this.scene, 405, 315);
-    this.star5 = new Star(this.scene, 455, 315);
-
-    scene.add.existing(this.player);
     scene.add.existing(this.wall1);
     scene.add.existing(this.wall2);
     scene.add.existing(this.wall3);
     scene.add.existing(this.wall4);
     scene.add.existing(this.wall5);
     scene.add.existing(this.wall6);
-    scene.add.existing(this.star1);
-    scene.add.existing(this.star2);
-    scene.add.existing(this.star3);
-    scene.add.existing(this.star4);
-    scene.add.existing(this.star5);
   }
 
-  restartSimulation = (stateInputData: any, highlightOn: boolean) => {
+  reoranizeGameObjects = () => {
     this.player.cleanUpStars();
+
     this.player.setPosition(105, 315).setAngle(90);
     this.player.playerHighlight.setPosition(105, 315);
 
@@ -68,7 +69,10 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
     this.scene.add.existing(this.star3);
     this.scene.add.existing(this.star4);
     this.scene.add.existing(this.star5);
+  };
 
+  restartSimulation = (stateInputData: any, highlightOn: boolean) => {
+    this.reoranizeGameObjects();
     this.startSimulation(stateInputData, highlightOn);
   };
 

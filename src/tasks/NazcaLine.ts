@@ -83,11 +83,14 @@ export default class NazcaLine extends Phaser.GameObjects.Container {
     this.walls.forEach((wall) => scene.add.existing(wall));
   }
 
-  restartSimulation = (stateInputData: any, highlightOn: boolean) => {
+  reoranizeGameObjects = () => {
     this.player.cleanUpStars();
     this.player.setPosition(105, 165).setAngle(90);
     this.player.playerHighlight.setPosition(105, 165);
+  };
 
+  restartSimulation = (stateInputData: any, highlightOn: boolean) => {
+    this.reoranizeGameObjects();
     this.startSimulation(stateInputData, highlightOn);
   };
 

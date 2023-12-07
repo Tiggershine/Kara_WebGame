@@ -59,7 +59,7 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
     this.walls.forEach((wall) => scene.add.existing(wall));
   }
 
-  restartSimulation = (stateInputData: any, highlightOn: boolean) => {
+  reoranizeGameObjects = () => {
     this.player.cleanUpStars();
     this.player.setPosition(155, 565).setAngle(90);
     this.player.playerHighlight.setPosition(155, 565);
@@ -68,11 +68,10 @@ export default class StarFindInForest extends Phaser.GameObjects.Container {
     this.star2 = new Star(this.scene, 505, 215);
     this.scene.add.existing(this.star1);
     this.scene.add.existing(this.star2);
+  };
 
-    // this.scene.children.list.forEach((child) => {
-    //   console.log(child);
-    // });
-
+  restartSimulation = (stateInputData: any, highlightOn: boolean) => {
+    this.reoranizeGameObjects();
     this.startSimulation(stateInputData, highlightOn);
   };
 

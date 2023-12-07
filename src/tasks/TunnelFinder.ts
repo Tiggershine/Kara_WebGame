@@ -131,13 +131,16 @@ export default class TunnelFinder extends Phaser.GameObjects.Container {
     scene.add.existing(this.star);
   }
 
-  restartSimulation = (stateInputData: any, highlightOn: boolean) => {
+  reoranizeGameObjects = () => {
     this.player.cleanUpStars();
     this.player.setPosition(55, 315);
 
     this.star = new Star(this.scene, 355, 315);
     this.scene.add.existing(this.star);
+  };
 
+  restartSimulation = (stateInputData: any, highlightOn: boolean) => {
+    this.reoranizeGameObjects();
     this.startSimulation(stateInputData, highlightOn);
   };
 

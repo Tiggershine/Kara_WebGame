@@ -39,7 +39,8 @@ export default class AroundTheCorner extends Phaser.GameObjects.Container {
 
     this.createGuidelineGraphic();
   }
-  restartSimulation = (stateInputData: any, highlightOn: boolean) => {
+
+  reoranizeGameObjects = () => {
     this.player.cleanUpStars();
     this.player.setPosition(105, 315).setAngle(90);
     this.player.playerHighlight.setPosition(105, 315);
@@ -50,7 +51,10 @@ export default class AroundTheCorner extends Phaser.GameObjects.Container {
     this.scene.add.existing(this.star1);
     this.scene.add.existing(this.star2);
     this.scene.add.existing(this.star3);
+  };
 
+  restartSimulation = (stateInputData: any, highlightOn: boolean) => {
+    this.reoranizeGameObjects();
     this.startSimulation(stateInputData, highlightOn);
   };
 
