@@ -459,7 +459,6 @@ export default class InputWindow extends Phaser.GameObjects.Container {
       this
     );
 
-    console.log('dropdownButton', dropdownButton);
     return dropdownButton;
   };
 

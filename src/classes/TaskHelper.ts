@@ -79,14 +79,20 @@ export default class TaskHelper {
   private player: Player;
   private infiniteLoopDetected: boolean = false;
   private isSuccessPopupShowed: boolean = false;
+  private isSimulationRunning: boolean = false; // Simulation 멈춤을 위한 Sign
 
   constructor(scene: Phaser.Scene, player: Player) {
     this.scene = scene;
     this.player = player;
 
     const diagramScene = scene.scene.get('DiagramScene') as DiagramScene;
+    diagramScene.events.on(
+      'simulationRunningStatus',
+      this.updateSimulationStatus
+    );
+
     this.simulationHighlight = new SimulationHighlight(scene, 'inputHighlight');
-    this.simulationHighlight.setDepth(1000);
+    this.simulationHighlight.setDepth(10);
   }
 
   get getIsSuccessPopupShowed(): boolean {
@@ -96,12 +102,19 @@ export default class TaskHelper {
     this.isSuccessPopupShowed = newIsSuccessPopupShowed;
   }
 
+  updateSimulationStatus = (simulationStatus: boolean) => {
+    this.isSimulationRunning = simulationStatus;
+  };
+
   // To simulate ths mission based on user input
   processStateInputData = async (
     stateInputData: any,
     hightlightSelected: boolean,
     callbackFunction?: () => void
   ) => {
+    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+    // TODO: DELETE UNDER TEST CODE
+    console.log('stateInputData: ', stateInputData);
     // Reset the flag at the start of the function
     this.infiniteLoopDetected = false;
     // Set PlayerHighlight
@@ -121,12 +134,9 @@ export default class TaskHelper {
     const maxSameStateCount = 30; // Threshold for the same state repetition
     let stateTransitionCounts: { [key: string]: number } = {}; // 상태 전환 추적 객체
 
-    while (currentStateId !== 100) {
-      // if (currentStateId === 100) {
-      //   this.findStateCircleByIdSelect(this.scene, currentStateId);
-      //   return; // Exit the function
-      // }
-
+    while (currentStateId !== 100 && this.isSimulationRunning) {
+      console.log('this.isSimulationRunning', this.isSimulationRunning);
+      // 한 State를 계속해서 loop하는지 검사하는 코드
       if (currentStateId === previousStateId) {
         sameStateCount++;
         if (sameStateCount >= maxSameStateCount) {
@@ -138,6 +148,7 @@ export default class TaskHelper {
         sameStateCount = 0; // Reset the counter if a different state is encountered
       }
 
+      // Next state를 거쳐 다시 self state로 돌아오고 이게 반복되는지 검사하는 코드
       // 상태 전환 기록
       const transitionKey = `${previousStateId}-${currentStateId}`;
       if (stateTransitionCounts[transitionKey]) {
@@ -269,15 +280,28 @@ export default class TaskHelper {
       previousStateId = currentStateId;
     }
 
+    // 정지 버튼 누를 시 => 시뮬레이션 중단 + Highlight 중단
+    if (!this.isSimulationRunning) {
+      this.player.playerHighlightOff();
+      this.simulationHighlight.simulationHighlightOff();
+
+      console.log('시뮬레이션 중단');
+      return; // 시뮬레이션 중단
+    }
+
     if (callbackFunction) {
       callbackFunction();
     }
 
     // Simulation Play Button 변경을 위한 event emit
-    this.scene.events.emit('simulationEnd');
+    this.isSimulationRunning = false;
 
     this.player.playerHighlightOff();
     this.simulationHighlight.simulationHighlightOff();
+
+    // this.scene.events.emit('simulationEnd');
+    // '시뮬레이션 종료'로 설정
+    // diagramScene.setIsSimulationPlaying = false;
 
     return;
     // }
@@ -294,8 +318,12 @@ export default class TaskHelper {
     stateInputData: any,
     highlightOn: boolean
   ) => {
+    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+
     this.processStateInputData(stateInputData, highlightOn, () => {
       if (this.wasInfiniteLoopDetected()) {
+        this.scene.events.emit('simulationEnd');
+
         // Display infinite loop warning popup
         this.scene.sound.play('mistakeSound', { volume: 0.5 });
         setTimeout(() => {
@@ -310,6 +338,10 @@ export default class TaskHelper {
           diagramScene.popupWindow.create();
           diagramScene.add.existing(diagramScene.popupWindow);
         }, 800);
+        // '시뮬레이션 종료'로 설정
+        // diagramScene.setIsSimulationPlaying = false;
+
+        return;
       } else {
         const positionsCorrect = mission.checkObjectPositions();
 
@@ -331,7 +363,8 @@ export default class TaskHelper {
               diagramScene.add.existing(diagramScene.popupWindow);
             }, 800);
 
-            // this.scene.events.emit('simulationEnd');
+            this.scene.events.emit('simulationEnd');
+            return;
           }
         } else {
           this.scene.sound.play('missionFailSound');
@@ -346,11 +379,14 @@ export default class TaskHelper {
             diagramScene.add.existing(diagramScene.popupWindow);
           }, 800);
 
-          // this.scene.events.emit('simulationEnd');
+          this.scene.events.emit('simulationEnd');
+          return;
         }
         console.log(positionsCorrect ? 'Success' : 'Fail');
       }
-      this.scene.events.emit('simulationEnd');
+      // '시뮬레이션 종료'로 설정
+      // diagramScene.setIsSimulationPlaying = false;
+      // this.scene.events.emit('simulationEnd');
     });
   };
 
@@ -426,4 +462,11 @@ export default class TaskHelper {
         return false; // No valid moveId was provided
     }
   };
+
+  // get getIsSimulationRunning(): boolean {
+  //   return this.isSimulationRunning;
+  // }
+  // set setIsSimulationRunnin(newIsSimulRunning: boolean) {
+  //   this.isSimulationRunning = newIsSimulRunning;
+  // }
 }

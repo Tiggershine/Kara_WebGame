@@ -201,16 +201,6 @@ export default class Player extends BaseSprite {
     }
   };
 
-  // moveRight = () => {
-  //   this.x += 50;
-
-  //   this.wallFrontCheck();
-  // };
-  // moveLeft = () => {
-  //   this.x -= 50;
-  //   this.wallFrontCheck();
-  // };
-
   wallFrontCheck = (): boolean => {
     const angle = this.angle;
     let dx: number = 0;

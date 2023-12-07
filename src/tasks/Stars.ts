@@ -29,7 +29,7 @@ export default class Stars extends Phaser.GameObjects.Container {
     scene.add.existing(this.wall);
   }
 
-  restartSimulation = (stateInputData: any, highlightOn: boolean) => {
+  reoranizeGameObjects = () => {
     this.player.cleanUpStars();
     this.player.setPosition(155, 315).setAngle(90);
     this.player.playerHighlight.setPosition(155, 315);
@@ -38,6 +38,18 @@ export default class Stars extends Phaser.GameObjects.Container {
     this.star2 = new Star(this.scene, 305, 315);
     this.scene.add.existing(this.star1);
     this.scene.add.existing(this.star2);
+  };
+
+  restartSimulation = (stateInputData: any, highlightOn: boolean) => {
+    // this.player.cleanUpStars();
+    // this.player.setPosition(155, 315).setAngle(90);
+    // this.player.playerHighlight.setPosition(155, 315);
+
+    // this.star1 = new Star(this.scene, 205, 315);
+    // this.star2 = new Star(this.scene, 305, 315);
+    // this.scene.add.existing(this.star1);
+    // this.scene.add.existing(this.star2);
+    this.reoranizeGameObjects();
 
     this.startSimulation(stateInputData, highlightOn);
   };

@@ -566,22 +566,42 @@ export default class UIManager {
 
     playButton.on('pointerdown', () => {
       this.diagramScene.sound.play('buttonSound1', { volume: 0.7 });
+      // 현재 Simulation 중 -> 버튼을 누르면 Simulation 중단해야지
       if (this.diagramScene.getIsSimulationPlaying) {
         playButton.setTexture(playButtonConfig.texture);
         this.diagramScene.setIsSimulationPlaying = false;
-      } else {
+        this.diagramScene.events.emit(
+          'simulationRunningStatus',
+          this.diagramScene.getIsSimulationPlaying
+        );
+      }
+      // Simulation 실행 중 아님 -> 버튼을 누르면 Simulation 시작해야지
+      else {
         playButton.setTexture(playButtonConfig.selectedTexture);
         this.diagramScene.setIsSimulationPlaying = true;
+        this.diagramScene.events.emit(
+          'simulationRunningStatus',
+          this.diagramScene.getIsSimulationPlaying
+        );
+
+        const stateInputData =
+          this.diagramScene.stateCircleManager.extractIdAndStateInputStateCircles();
+
+        this.diagramScene.missionManager.simulationLoader(
+          level,
+          mission,
+          stateInputData
+        );
       }
 
-      const stateInputData =
-        this.diagramScene.stateCircleManager.extractIdAndStateInputStateCircles();
+      // const stateInputData =
+      //   this.diagramScene.stateCircleManager.extractIdAndStateInputStateCircles();
 
-      this.diagramScene.missionManager.simulationLoader(
-        level,
-        mission,
-        stateInputData
-      );
+      // this.diagramScene.missionManager.simulationLoader(
+      //   level,
+      //   mission,
+      //   stateInputData
+      // );
     });
   };
   //////////  HIGHLIGHT TOGGLE BUTTON FOR SIMULATION (PLAYGROUND)  //////////
