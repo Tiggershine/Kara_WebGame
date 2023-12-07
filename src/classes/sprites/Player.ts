@@ -114,7 +114,7 @@ export default class Player extends BaseSprite {
     let nextX = this.x;
     let nextY = this.y;
     const angle = this.angle % 360;
-    console.log('angle:', this.angle);
+    console.log('(x, y): (', this.x, ',', this.y, ')');
 
     switch (angle) {
       case 90:
