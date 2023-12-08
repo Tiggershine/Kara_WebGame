@@ -615,12 +615,13 @@ export default class InputWindow extends Phaser.GameObjects.Container {
           for (const point of conditionInputPoints) {
             const distance = Phaser.Math.Distance.Between(
               newButton.x,
-              newButton?.y,
+              newButton.y,
               point.x,
               point.y
             );
 
-            if (distance <= 20) {
+            if (distance <= 30) {
+              //20
               newButton.destroy();
               this.diagramScene.sound.play('buttonSound1', { volume: 0.5 });
 

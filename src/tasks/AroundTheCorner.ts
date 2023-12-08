@@ -55,10 +55,20 @@ export default class AroundTheCorner extends Phaser.GameObjects.Container {
 
   restartSimulation = (stateInputData: any, highlightOn: boolean) => {
     this.reoranizeGameObjects();
+    if (!highlightOn && this.player.getPlayerHighlight) {
+      this.player.playerHighlightOff();
+    } else if (highlightOn) {
+      this.player.playerHighlightOn();
+    }
     this.startSimulation(stateInputData, highlightOn);
   };
 
   startSimulation = (stateInputData: any, highlightOn: boolean) => {
+    if (!highlightOn && this.player.getPlayerHighlight) {
+      this.player.playerHighlightOff();
+    } else if (highlightOn) {
+      this.player.playerHighlightOn();
+    }
     this.taskHelper.executeSimulation(this, stateInputData, highlightOn);
   };
 

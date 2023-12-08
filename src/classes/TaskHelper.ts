@@ -114,15 +114,9 @@ export default class TaskHelper {
   ) => {
     const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
     // TODO: DELETE UNDER TEST CODE
-    console.log('stateInputData: ', stateInputData);
+    // console.log('stateInputData: ', stateInputData);
     // Reset the flag at the start of the function
     this.infiniteLoopDetected = false;
-    // Set PlayerHighlight
-    if (!hightlightSelected && this.player.getPlayerHighlight) {
-      this.player.playerHighlightOff();
-    } else if (hightlightSelected) {
-      this.player.playerHighlightOn();
-    }
 
     const startState = stateInputData.find((state: State) => state.id === 0);
 
@@ -134,8 +128,15 @@ export default class TaskHelper {
     const maxSameStateCount = 30; // Threshold for the same state repetition
     let stateTransitionCounts: { [key: string]: number } = {}; // 상태 전환 추적 객체
 
+    // Set PlayerHighlight
+    // if (!hightlightSelected && this.player.getPlayerHighlight) {
+    //   this.player.playerHighlightOff();
+    // } else if (hightlightSelected) {
+    //   this.player.playerHighlightOn();
+    // }
+
     while (currentStateId !== 100 && this.isSimulationRunning) {
-      console.log('this.isSimulationRunning', this.isSimulationRunning);
+      // console.log('this.isSimulationRunning', this.isSimulationRunning);
       // 한 State를 계속해서 loop하는지 검사하는 코드
       if (currentStateId === previousStateId) {
         sameStateCount++;
@@ -270,7 +271,7 @@ export default class TaskHelper {
 
           // nextStateId = stateInput.nextStateId;
           currentStateId = stateInput.nextState;
-          console.log('새로운 currentStateId: ', currentStateId);
+          // console.log('새로운 currentStateId: ', currentStateId);
           if (currentStateId === 100) {
             this.findStateCircleByIdSelect(this.scene, currentStateId);
           }
@@ -345,7 +346,7 @@ export default class TaskHelper {
         }, 500);
 
         this.scene.events.emit('simulationEnd');
-        return;
+        // return;
       } else {
         const positionsCorrect = mission.checkObjectPositions();
 
@@ -370,7 +371,7 @@ export default class TaskHelper {
           this.setIsSuccessPopupShowed = true;
 
           this.scene.events.emit('simulationEnd');
-          return;
+          // return;
           // }
         } else {
           this.scene.sound.play('missionFailSound');
@@ -386,7 +387,7 @@ export default class TaskHelper {
           }, 500);
 
           this.scene.events.emit('simulationEnd');
-          return;
+          // return;
         }
         console.log(positionsCorrect ? 'Success' : 'Fail');
       }

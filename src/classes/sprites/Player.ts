@@ -82,11 +82,16 @@ export default class Player extends BaseSprite {
   }
 
   cleanUpStars = (): void => {
+    // 'this.stars' 배열에 있는 모든 Star 객체를 파괴합니다.
     this.stars.forEach((star) => {
       if (star && star instanceof Star) {
         star.destroy();
       }
     });
+    // 'this.stars' 배열을 비웁니다.
+    this.stars = [];
+
+    // 씬의 children 리스트를 순회하면서 Star 객체를 찾아 파괴합니다.
     this.scene.children.list.forEach((child) => {
       if (child instanceof Star) {
         child.destroy();
@@ -114,7 +119,7 @@ export default class Player extends BaseSprite {
     let nextX = this.x;
     let nextY = this.y;
     const angle = this.angle % 360;
-    console.log('(x, y): (', this.x, ',', this.y, ')');
+    // console.log('(x, y): (', this.x, ',', this.y, ')');
 
     switch (angle) {
       case 90:
@@ -161,14 +166,14 @@ export default class Player extends BaseSprite {
   turnLeft = async () => {
     await this.delay(500);
     this.angle -= 90;
-    console.log('angle: ', this.angle);
+    // console.log('angle: ', this.angle);
     return true;
   };
 
   turnRight = async () => {
     await this.delay(500);
     this.angle += 90;
-    console.log('angle: ', this.angle);
+    // console.log('angle: ', this.angle);
     return true;
   };
 
@@ -182,23 +187,37 @@ export default class Player extends BaseSprite {
     return true;
   };
 
+  // pickStar = async () => {
+  //   await this.delay(500);
+  //   console.log('pickStar triggered', this.x, this.y);
+  //   const star = this.scene.children.list.find(
+  //     (child) =>
+  //       child instanceof Star && child.x === this.x && child.y === this.y
+  //   ) as Star | undefined;
+
+  //   if (star) {
+  //     star.destroy();
+  //     console.log('star destroyed');
+  //     // this.scene.children.list.forEach((child) => console.log(child));
+  //     return true;
+  //   } else {
+  //     console.log('No star to pick');
+  //     return true;
+  //   }
+  // };
   pickStar = async () => {
     await this.delay(500);
-    console.log('pickStar triggered');
-    const star = this.scene.children.list.find(
-      (child) =>
-        child instanceof Star && child.x === this.x && child.y === this.y
-    ) as Star | undefined;
+    console.log('pickStar triggered at', this.x, this.y);
 
-    if (star) {
-      star.destroy();
-      console.log('star destroyed');
-      // this.scene.children.list.forEach((child) => console.log(child));
-      return true;
-    } else {
-      console.log('No star to pick');
-      return true;
-    }
+    // 현재 Player의 위치에 있는 모든 Star 객체를 찾아 파괴합니다.
+    this.scene.children.list.forEach((child) => {
+      if (child instanceof Star && child.x === this.x && child.y === this.y) {
+        child.destroy();
+        console.log('Star destroyed at', this.x, this.y);
+      }
+    });
+
+    return true;
   };
 
   wallFrontCheck = (): boolean => {

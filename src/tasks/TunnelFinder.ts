@@ -133,7 +133,11 @@ export default class TunnelFinder extends Phaser.GameObjects.Container {
 
   reoranizeGameObjects = () => {
     this.player.cleanUpStars();
-    this.player.setPosition(55, 315);
+    // this.player.destroy();
+    // this.player = new Player(this.scene, 55, 315);
+    // this.scene.add.existing(this.player);
+    this.player.setPosition(55, 315).setAngle(90);
+    this.player.playerHighlight.setPosition(55, 315);
 
     this.star = new Star(this.scene, 355, 315);
     this.scene.add.existing(this.star);
@@ -141,10 +145,22 @@ export default class TunnelFinder extends Phaser.GameObjects.Container {
 
   restartSimulation = (stateInputData: any, highlightOn: boolean) => {
     this.reoranizeGameObjects();
+
+    if (!highlightOn && this.player.getPlayerHighlight) {
+      this.player.playerHighlightOff();
+    } else if (highlightOn) {
+      this.player.playerHighlightOn();
+    }
+
     this.startSimulation(stateInputData, highlightOn);
   };
 
   startSimulation = (stateInputData: any, highlightOn: boolean) => {
+    if (!highlightOn && this.player.getPlayerHighlight) {
+      this.player.playerHighlightOff();
+    } else if (highlightOn) {
+      this.player.playerHighlightOn();
+    }
     this.taskHelper.executeSimulation(this, stateInputData, highlightOn);
   };
 

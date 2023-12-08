@@ -92,7 +92,7 @@ export default class UIManager {
 
     const stateId = this.diagramScene.getIdCount;
     this.diagramScene.setIdCount = this.diagramScene.getIdCount + 1;
-    console.log('idCount: ', this.diagramScene.getIdCount);
+    // console.log('idCount: ', this.diagramScene.getIdCount);
     const stateName = 'State ' + stateId;
     const newStateInput: StateInput[] = [];
     const inputLabel: InputLabel = new InputLabel(
@@ -290,7 +290,7 @@ export default class UIManager {
   // StateCircles 배열을 순회하면서 각 StateCircle과 그 다음 StateCircle 간에 edge를 만듭니다.
   createEdgesForStateCircles(): void {
     // 먼저 모든 기존 엣지를 제거합니다.
-    console.log('엣지 함수 시작');
+    // console.log('엣지 함수 시작');
     this.diagramScene.getStateCircles.forEach((circle) => {
       circle.edges.forEach((edge) => {
         if (edge) {

@@ -4,8 +4,14 @@ import Star from '../classes/sprites/Star';
 import Wall from '../classes/sprites/Wall';
 import TaskHelper from '../classes/TaskHelper';
 
+const StarPositions = [
+  { x: 205, y: 315 },
+  { x: 305, y: 315 },
+];
+
 export default class Stars extends Phaser.GameObjects.Container {
   private player!: Player;
+  private stars!: Star[];
   private star1!: Star;
   private star2!: Star;
   private wall!: Wall;
@@ -22,6 +28,8 @@ export default class Stars extends Phaser.GameObjects.Container {
 
     this.star1 = new Star(this.scene, 205, 315);
     this.star2 = new Star(this.scene, 305, 315);
+    // this.stars = StarPositions.map((pos) => new Star(this.scene, pos.x, pos.y));
+    // this.stars.forEach((star) => scene.add.existing(star));
 
     scene.add.existing(this.player);
     scene.add.existing(this.star1);
@@ -31,6 +39,7 @@ export default class Stars extends Phaser.GameObjects.Container {
 
   reoranizeGameObjects = () => {
     this.player.cleanUpStars();
+
     this.player.setPosition(155, 315).setAngle(90);
     this.player.playerHighlight.setPosition(155, 315);
 
@@ -38,6 +47,8 @@ export default class Stars extends Phaser.GameObjects.Container {
     this.star2 = new Star(this.scene, 305, 315);
     this.scene.add.existing(this.star1);
     this.scene.add.existing(this.star2);
+    // this.stars = StarPositions.map((pos) => new Star(this.scene, pos.x, pos.y));
+    // this.stars.forEach((star) => this.scene.add.existing(star));
   };
 
   restartSimulation = (stateInputData: any, highlightOn: boolean) => {
@@ -51,10 +62,22 @@ export default class Stars extends Phaser.GameObjects.Container {
     // this.scene.add.existing(this.star2);
     this.reoranizeGameObjects();
 
+    if (!highlightOn && this.player.getPlayerHighlight) {
+      this.player.playerHighlightOff();
+    } else if (highlightOn) {
+      this.player.playerHighlightOn();
+    }
+
     this.startSimulation(stateInputData, highlightOn);
   };
 
   startSimulation = (stateInputData: any, highlightOn: boolean) => {
+    if (!highlightOn && this.player.getPlayerHighlight) {
+      this.player.playerHighlightOff();
+    } else if (highlightOn) {
+      this.player.playerHighlightOn();
+    }
+
     this.taskHelper.executeSimulation(this, stateInputData, highlightOn);
   };
 
