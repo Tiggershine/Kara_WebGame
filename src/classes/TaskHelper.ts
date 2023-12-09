@@ -234,25 +234,50 @@ export default class TaskHelper {
                 simulationPoint.y
               );
             }
-            let moveSuccessful: boolean = await this.executeMove(
-              this.player,
-              move
-            );
-            if (!moveSuccessful) {
+            // let moveSuccessful: boolean = await this.executeMove(
+            //   this.player,
+            //   move
+            // );
+            // if (!moveSuccessful) {
+            //   this.scene.sound.play('mistakeSound', { volume: 0.5 });
+            //   setTimeout(() => {
+            //     const diagramScene = this.scene.scene.get(
+            //       'DiagramScene'
+            //     ) as DiagramScene;
+            //     diagramScene.popupWindow = new PopupWindow(
+            //       diagramScene,
+            //       'smBoundary',
+            //       false
+            //     );
+            //     diagramScene.popupWindow.create();
+            //     diagramScene.add.existing(diagramScene.popupWindow);
+            //   }, 500);
+            //   console.log('경계선을 넘어갈 수 없음');
+            //   this.scene.events.emit('simulationEnd');
+            //   return;
+            // }
+            let moveResult = await this.executeMove(this.player, move);
+            if (moveResult !== 'success') {
               this.scene.sound.play('mistakeSound', { volume: 0.5 });
               setTimeout(() => {
                 const diagramScene = this.scene.scene.get(
                   'DiagramScene'
                 ) as DiagramScene;
+                let popupType =
+                  moveResult === 'wallError' ? 'smWall' : 'smBoundary';
                 diagramScene.popupWindow = new PopupWindow(
                   diagramScene,
-                  'smBoundary',
+                  popupType,
                   false
                 );
                 diagramScene.popupWindow.create();
                 diagramScene.add.existing(diagramScene.popupWindow);
               }, 500);
-              console.log('경계선을 넘어갈 수 없음');
+              console.log(
+                moveResult === 'wallError'
+                  ? 'WallError detected!'
+                  : 'BoundaryError detected'
+              );
               this.scene.events.emit('simulationEnd');
               return;
             }
@@ -446,10 +471,30 @@ export default class TaskHelper {
     }
   }
 
+  // executeMove = async (
+  //   player: Player,
+  //   moveId: number | null
+  // ): Promise<boolean> => {
+  //   switch (moveId) {
+  //     case 3:
+  //       return await player.moveForward();
+  //     case 4:
+  //       return await player.turnLeft();
+  //     case 5:
+  //       return await player.turnRight();
+  //     case 6:
+  //       return await player.putStar();
+  //     case 7:
+  //       return await player.pickStar();
+  //     default:
+  //       console.log('Invalid move');
+  //       return true; // No valid moveId was provided
+  //   }
+  // };
   executeMove = async (
     player: Player,
     moveId: number | null
-  ): Promise<boolean> => {
+  ): Promise<'success' | 'boundaryError' | 'wallError'> => {
     switch (moveId) {
       case 3:
         return await player.moveForward();
@@ -463,14 +508,7 @@ export default class TaskHelper {
         return await player.pickStar();
       default:
         console.log('Invalid move');
-        return true; // No valid moveId was provided
+        return 'success'; // No valid moveId was provided
     }
   };
-
-  // get getIsSimulationRunning(): boolean {
-  //   return this.isSimulationRunning;
-  // }
-  // set setIsSimulationRunnin(newIsSimulRunning: boolean) {
-  //   this.isSimulationRunning = newIsSimulRunning;
-  // }
 }

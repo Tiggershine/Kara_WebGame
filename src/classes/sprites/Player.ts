@@ -105,7 +105,6 @@ export default class Player extends BaseSprite {
   playerHighlightOff = (): void => {
     this.playerHighlight.setVisible(false);
   };
-
   cleanUpPlayerHighlight = (): void => {
     this.playerHighlight.destroy();
   };
@@ -114,11 +113,14 @@ export default class Player extends BaseSprite {
     return new Promise((resolve) => setTimeout(resolve, ms));
   };
 
-  moveForward = async (): Promise<boolean> => {
+  moveForward = async (): Promise<
+    'success' | 'boundaryError' | 'wallError'
+  > => {
     // Calculate the next position based on the current angle
     let nextX = this.x;
     let nextY = this.y;
     const angle = this.angle % 360;
+    console.log('angle', angle);
     // console.log('(x, y): (', this.x, ',', this.y, ')');
 
     switch (angle) {
@@ -140,51 +142,67 @@ export default class Player extends BaseSprite {
         break;
       default:
         console.log('Invalid angle');
-        return true;
+        break;
+    }
+
+    console.log('(x, y): (', this.x, ',', this.y, ')');
+    const isFrontWall = this.scene.children.list.some((child) => {
+      return child instanceof Wall && child.x === nextX && child.y === nextY;
+    });
+    console.log('isFrontWall: ', isFrontWall);
+    if (isFrontWall) {
+      console.log('Cannot move over Wall!');
+      return 'wallError';
     }
 
     // Check if the next position is beyond the boundary
-    const isBeyondBoundary = BoundaryCoordinates.some(
-      (coord) => nextX === coord.x && nextY === coord.y
-    );
-
+    const isBeyondBoundary = BoundaryCoordinates.some((coord) => {
+      return nextX === coord.x && nextY === coord.y;
+    });
     if (isBeyondBoundary) {
       console.log(`Cannot move beyond boundary at (${nextX}, ${nextY})`);
-      return false;
+      return 'boundaryError';
     }
 
     // Proceed with the move if within boundary
+    // if (!isFrontWall && !isBeyondBoundary) {
     await this.delay(500);
     this.x = nextX;
     this.y = nextY;
     this.playerHighlight.x = this.x;
     this.playerHighlight.y = this.y;
 
-    return true;
+    return 'success';
+    // } else {
+    //   return false;
+    // }
   };
 
-  turnLeft = async () => {
+  turnLeft = async (): Promise<'success'> => {
     await this.delay(500);
     this.angle -= 90;
     // console.log('angle: ', this.angle);
-    return true;
+    // return true;
+    return 'success';
   };
 
-  turnRight = async () => {
+  turnRight = async (): Promise<'success'> => {
     await this.delay(500);
     this.angle += 90;
     // console.log('angle: ', this.angle);
-    return true;
+    // return true;
+    return 'success';
   };
 
-  putStar = async () => {
+  putStar = async (): Promise<'success'> => {
     await this.delay(500);
     console.log('putStar triggered on', this.x, this.y);
     const star = new Star(this.scene, this.x, this.y);
     this.scene.add.existing(star);
     star.depth = this.depth - 1;
     this.stars.push(star);
-    return true;
+    // return true;
+    return 'success';
   };
 
   // pickStar = async () => {
@@ -205,7 +223,7 @@ export default class Player extends BaseSprite {
   //     return true;
   //   }
   // };
-  pickStar = async () => {
+  pickStar = async (): Promise<'success'> => {
     await this.delay(500);
     console.log('pickStar triggered at', this.x, this.y);
 
@@ -217,7 +235,8 @@ export default class Player extends BaseSprite {
       }
     });
 
-    return true;
+    // return true;
+    return 'success';
   };
 
   wallFrontCheck = (): boolean => {

@@ -11,6 +11,7 @@ const popupTypeConfig = [
   { id: 'default', texture: 'popupSm' },
   { id: 'smInfinite', texture: 'popupInfinite' },
   { id: 'smBoundary', texture: 'popupBoundary' },
+  { id: 'smWall', texture: 'popupWall' },
 ];
 
 export default class PopupWindow extends Phaser.GameObjects.Container {
