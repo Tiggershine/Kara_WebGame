@@ -491,22 +491,13 @@ export default class UIManager {
     const infoButton = this.diagramScene.add
       .image(infoButtonConfig.x, infoButtonConfig.y, infoButtonConfig.texture)
       .setInteractive();
-    infoButton.on('pointerover', () => {
-      infoButton.setTexture(infoButtonConfig.selectedTexture);
-    });
-    infoButton.on('pointerout', () => {
-      infoButton.setTexture(infoButtonConfig.texture);
-    });
 
     infoButton.on('pointerdown', (): void => {
-      if (!this.diagramScene.getIsMissionInfoOn) {
-        // this.diagramScene.missionInfoImage.setVisible(true);
+      // 현재 missionInfoImg의 가시성 상태를 체크
+      if (!this.diagramScene.missionInfoImage.visible) {
         this.fadeInMissionInfo();
-        this.diagramScene.setIsMissionInfoOn = true;
       } else {
-        // this.diagramScene.missionInfoImage.setVisible(false);
         this.fadeOutMissionInfo();
-        this.diagramScene.setIsMissionInfoOn = false;
       }
     });
   };
@@ -517,6 +508,20 @@ export default class UIManager {
   ): Phaser.GameObjects.Image => {
     const infoImageTexture: string = `missionInfo${level}${mission}`;
 
+    // Create an invisible background that covers the entire screen
+    const background = this.diagramScene.add
+      .rectangle(
+        this.diagramScene.cameras.main.centerX,
+        this.diagramScene.cameras.main.centerY,
+        this.diagramScene.cameras.main.width,
+        this.diagramScene.cameras.main.height,
+        0x000000,
+        0.5 // Half transparent
+      )
+      .setInteractive()
+      .setDepth(5)
+      .setVisible(false);
+
     const missionInfoImg: Phaser.GameObjects.Image = this.diagramScene.add
       .image(
         this.diagramScene.cameras.main.centerX,
@@ -525,6 +530,40 @@ export default class UIManager {
       )
       .setInteractive();
     missionInfoImg.setDepth(5).setVisible(false);
+
+    // Prevent clicks on the missionInfoImg from reaching the background
+    missionInfoImg.on(
+      'pointerdown',
+      (
+        pointer: Phaser.Input.Pointer,
+        localX: number,
+        localY: number,
+        event: Phaser.Types.Input.EventData
+      ) => {
+        event.stopPropagation();
+      }
+    );
+
+    // Add click listener to the background for closing the mission info
+    background.on('pointerdown', () => {
+      this.fadeOutMissionInfo();
+      missionInfoImg.setVisible(false);
+      background.setVisible(false);
+    });
+
+    // Modify fadeInMissionInfo to show the background
+    this.fadeInMissionInfo = (): void => {
+      this.diagramScene.tweens.add({
+        targets: [this.diagramScene.missionInfoImage, background],
+        alpha: { from: 0, to: 1 },
+        duration: 300,
+        ease: 'Sine.easeInOut',
+        onStart: () => {
+          this.diagramScene.missionInfoImage.setVisible(true);
+          background.setVisible(true);
+        },
+      });
+    };
 
     return missionInfoImg;
   };
