@@ -276,6 +276,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
     }
   };
 
+  // Delete(Cancel) Condition Button registered
   clearConditionButtonInput = (
     rowNumber: number, // 줄 순번 (index X_)
     sensorNumber: number // 등록된 Sensor 순번 (index X_)
@@ -290,6 +291,22 @@ export default class InputWindow extends Phaser.GameObjects.Container {
         sensorChecksOrder
       ].condition = undefined;
 
+      const rowRegisterCheck = this.tempStateInputs[
+        stateInputOrder
+      ].sensorChecks.every((sensorCheck) => {
+        return sensorCheck.condition === undefined;
+      });
+
+      if (rowRegisterCheck) {
+        this.tempStateInputs.splice(stateInputOrder, 1);
+
+        this.rowActiveCheck[rowNumber].active = false;
+        this[`registeredRow${rowNumber}`] = false;
+        this.inputRowCount--;
+        this.nextStateButtons[rowNumber - 1].setVisible(false);
+      }
+      console.log('줄 순번: ', rowNumber);
+      console.log('업데이트 된 StateInput', this.tempStateInputs);
       // StateCircle의 StateInputs 업데이트
       this.updateStateCircleStateInput();
     }
@@ -311,6 +328,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
     this.updateStateCircleStateInput();
   };
 
+  // Delete(Cancel) Move Button registered
   clearMoveButtonInput = (rowNumber: number, buttonsOrder: number): void => {
     const stateInputOrder = rowNumber - 1; // StateInput 배열의 index
     const moveButtonsOrder = buttonsOrder - 5; // SensorChecks 배열의 index
@@ -463,7 +481,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
   };
 
   // Used to create addtional dropdown button, when option select
-  addSensorDropdownButton(clickedDropdown: DropdownMenu) {
+  addSensorDropdownButton = (clickedDropdown: DropdownMenu) => {
     const registedSensorCount = this.tempSensorInputs.length;
 
     if (registedSensorCount < 4) {
@@ -482,7 +500,10 @@ export default class InputWindow extends Phaser.GameObjects.Container {
       this.dropdownButtons.push(newDropdownButton);
       return;
     }
-  }
+  };
+  // Delete sensor button
+  // deleteSensorDropdownButton = (clickedDropdown: DropdownMenu) => {
+  // }
 
   // TODO: 이거 다시 분류할 것
   checkRegistedSensor = (sensorType: SensorType): void => {
@@ -756,7 +777,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
     buttonImg.setVisible(true);
   };
 
-  /** Dummy Button Images for Input (Condition, Move) */
+  /** Dummy Button Images for Input (Condition buttons, Move buttons) */
   // Set DummyButton Images for condition input and move input draggable
   makeDummyButtonDraggable = (
     image: Phaser.GameObjects.Image,
