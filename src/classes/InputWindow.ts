@@ -125,6 +125,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
       const buttonTexture = 'nextStateButton2';
       const backgroundTexture = 'nextStateButton';
       const options = this.registeredStates;
+      const direction = nextStatePoints[i].key === '59' ? 'upward' : 'downward';
 
       const nextStateButton: NextStateButton = this.createNextStateButton(
         point.x,
@@ -132,11 +133,13 @@ export default class InputWindow extends Phaser.GameObjects.Container {
         buttonId,
         buttonTexture,
         backgroundTexture,
-        options
+        options,
+        direction
       );
       nextStateButton.setVisible(false);
       this.nextStateButtons.unshift(nextStateButton);
     }
+
     // Default: Set 1st.NextState Button visible
     this.nextStateButtons[0].setVisible(true);
 
@@ -300,7 +303,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
       if (rowRegisterCheck) {
         this.tempStateInputs.splice(stateInputOrder, 1);
 
-        this.rowActiveCheck[rowNumber].active = false;
+        this.rowActiveCheck[rowNumber - 1].active = false;
         this[`registeredRow${rowNumber}`] = false;
         this.inputRowCount--;
         this.nextStateButtons[rowNumber - 1].setVisible(false);
@@ -390,12 +393,12 @@ export default class InputWindow extends Phaser.GameObjects.Container {
   registerInputRow = (rowNumber: number) => {
     switch (rowNumber) {
       case 1:
-        this.rowActiveCheck[1].active = true;
+        this.rowActiveCheck[0].active = true;
         this.registeredRow1 = true;
         this.inputRowCount++;
         break;
       case 2:
-        this.rowActiveCheck[2].active = true;
+        this.rowActiveCheck[1].active = true;
         this.registeredRow2 = true;
         this.inputRowCount++;
         this.nextStateButtons[1].setVisible(true);
@@ -404,19 +407,19 @@ export default class InputWindow extends Phaser.GameObjects.Container {
         // }
         break;
       case 3:
-        this.rowActiveCheck[3].active = true;
+        this.rowActiveCheck[2].active = true;
         this.registeredRow3 = true;
         this.inputRowCount++;
         this.nextStateButtons[2].setVisible(true);
         break;
       case 4:
-        this.rowActiveCheck[4].active = true;
+        this.rowActiveCheck[3].active = true;
         this.registeredRow4 = true;
         this.inputRowCount++;
         this.nextStateButtons[3].setVisible(true);
         break;
       case 5:
-        // this.activatedRow2 = true;
+        this.rowActiveCheck[4].active = true;
         this.registeredRow5 = true;
         this.inputRowCount++;
         this.nextStateButtons[4].setVisible(true);
@@ -522,7 +525,8 @@ export default class InputWindow extends Phaser.GameObjects.Container {
     buttonId: number,
     buttonTexture: string,
     backgroundTexture: string,
-    options: { id: number; name: string }[]
+    options: { id: number; name: string }[],
+    direction: string
   ): NextStateButton => {
     const nextStateButton = new NextStateButton(
       this.scene,
@@ -532,6 +536,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
       buttonTexture,
       backgroundTexture,
       options,
+      direction,
       this
     );
 
