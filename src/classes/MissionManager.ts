@@ -6,6 +6,7 @@ import ClimbingUp from '../tasks/ClimbingUp';
 import BetweenWall from '../tasks/BetweenWall';
 import Stars from '../tasks/Stars';
 import AroundTheCorner from '../tasks/AroundTheCorner';
+import TunnelFinder2 from '../tasks/TunnelFinder2';
 import NazcaLine from '../tasks/NazcaLine';
 import { StateInput } from './InputManager';
 import { playButtonConfig } from '../configurations';
@@ -24,6 +25,7 @@ export default class MissionManager {
   private missionBetweenWall!: BetweenWall;
   private missionStars!: Stars;
   private missionAroundTheCorner!: AroundTheCorner;
+  private missionTunnelFinder2!: TunnelFinder2;
   private missionNazcaLine!: NazcaLine;
 
   bgmKeys = [
@@ -104,6 +106,13 @@ export default class MissionManager {
             break;
           case 2:
             this.missionAroundTheCorner = new AroundTheCorner(
+              this.diagramScene,
+              playButtonConfig.x,
+              playButtonConfig.y
+            );
+            break;
+          case 3:
+            this.missionTunnelFinder2 = new TunnelFinder2(
               this.diagramScene,
               playButtonConfig.x,
               playButtonConfig.y
@@ -250,6 +259,25 @@ export default class MissionManager {
                 );
               } else {
                 this.missionAroundTheCorner.startSimulation(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+                this.diagramScene.setIsMissionInitiated = true;
+              }
+              break;
+            } else {
+              console.log('Mission is not loaded yet.');
+              break;
+            }
+          case 3:
+            if (this.missionTunnelFinder2) {
+              if (this.diagramScene.getIsMissionInitiated) {
+                this.missionTunnelFinder2.restartSimulation(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+              } else {
+                this.missionTunnelFinder2.startSimulation(
                   stateInputData,
                   this.diagramScene.getIsHighlightOn
                 );

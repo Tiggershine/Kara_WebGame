@@ -286,15 +286,19 @@ export default class Player extends BaseSprite {
 
     switch (angle) {
       case 90:
+      case -270:
         dy = -50;
         break;
       case 0:
+      case -360:
         dx = -50;
         break;
       case 270:
+      case -90:
         dy = 50;
         break;
       case 180:
+      case -180:
         dx = 50;
         break;
       default:
@@ -322,15 +326,19 @@ export default class Player extends BaseSprite {
 
     switch (angle) {
       case 90:
+      case -270:
         dy = 50;
         break;
       case 0:
+      case -360:
         dx = 50;
         break;
       case 270:
+      case -90:
         dy = -50;
         break;
       case 180:
+      case -180:
         dx = -50;
         break;
       default:
@@ -358,15 +366,19 @@ export default class Player extends BaseSprite {
 
     switch (angle) {
       case 90:
+      case -270:
         dx = 50;
         break;
       case 0:
+      case -360:
         dy = -50;
         break;
       case 270:
+      case -90:
         dx = -50;
         break;
       case 180:
+      case -180:
         dy = 50;
         break;
       default:

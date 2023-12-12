@@ -35,7 +35,7 @@ const wallPositions = [
   { x: 505, y: 265 },
 ];
 
-export default class StarFindInForest extends Phaser.GameObjects.Container {
+export default class ClimbingUp extends Phaser.GameObjects.Container {
   private player!: Player;
   private star1!: Star;
   private star2!: Star;
