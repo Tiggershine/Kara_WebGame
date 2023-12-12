@@ -47,19 +47,9 @@ export default class Stars extends Phaser.GameObjects.Container {
     this.star2 = new Star(this.scene, 305, 315);
     this.scene.add.existing(this.star1);
     this.scene.add.existing(this.star2);
-    // this.stars = StarPositions.map((pos) => new Star(this.scene, pos.x, pos.y));
-    // this.stars.forEach((star) => this.scene.add.existing(star));
   };
 
   restartSimulation = (stateInputData: any, highlightOn: boolean) => {
-    // this.player.cleanUpStars();
-    // this.player.setPosition(155, 315).setAngle(90);
-    // this.player.playerHighlight.setPosition(155, 315);
-
-    // this.star1 = new Star(this.scene, 205, 315);
-    // this.star2 = new Star(this.scene, 305, 315);
-    // this.scene.add.existing(this.star1);
-    // this.scene.add.existing(this.star2);
     this.reoranizeGameObjects();
 
     if (!highlightOn && this.player.getPlayerHighlight) {

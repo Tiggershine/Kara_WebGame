@@ -54,17 +54,23 @@ export default class InputWindow extends Phaser.GameObjects.Container {
   private activatedRow4: boolean = false;
   private activatedRow5: boolean = false;
   private containerGraphic!: Phaser.GameObjects.Graphics;
+  private withSensorDropdown: boolean = false;
+  private withNextStatsDropdown: boolean = false;
   // Add a new property to keep track of ControlButton objects
 
   constructor(
     scene: Phaser.Scene,
     x: number,
     y: number,
-    stateCircleId: number
+    stateCircleId: number,
+    withSensorDropdown: boolean,
+    withNextStatsDropdown: boolean
   ) {
     super(scene, x, y);
 
     this.stateCircleId = stateCircleId;
+    this.withSensorDropdown = withSensorDropdown;
+    this.withNextStatsDropdown = withNextStatsDropdown;
 
     this.diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
     this.diagramScene.events.on(
@@ -119,29 +125,32 @@ export default class InputWindow extends Phaser.GameObjects.Container {
     this.add(nextStateLabel);
 
     // Initialize - NextState Button (default: invisible)
-    for (let i = nextStatePoints.length - 1; i >= 0; i--) {
-      const point = nextStatePoints[i];
-      const buttonId = i + 1;
-      const buttonTexture = 'nextStateButton2';
-      const backgroundTexture = 'nextStateButton';
-      const options = this.registeredStates;
-      const direction = nextStatePoints[i].key === '59' ? 'upward' : 'downward';
+    if (this.withNextStatsDropdown) {
+      for (let i = nextStatePoints.length - 1; i >= 0; i--) {
+        const point = nextStatePoints[i];
+        const buttonId = i + 1;
+        const buttonTexture = 'nextStateButton2';
+        const backgroundTexture = 'nextStateButton';
+        const options = this.registeredStates;
+        const direction =
+          nextStatePoints[i].key === '59' ? 'upward' : 'downward';
 
-      const nextStateButton: NextStateButton = this.createNextStateButton(
-        point.x,
-        point.y,
-        buttonId,
-        buttonTexture,
-        backgroundTexture,
-        options,
-        direction
-      );
-      nextStateButton.setVisible(false);
-      this.nextStateButtons.unshift(nextStateButton);
+        const nextStateButton: NextStateButton = this.createNextStateButton(
+          point.x,
+          point.y,
+          buttonId,
+          buttonTexture,
+          backgroundTexture,
+          options,
+          direction
+        );
+        nextStateButton.setVisible(false);
+        this.nextStateButtons.unshift(nextStateButton);
+      }
+
+      // Default: Set 1st.NextState Button visible
+      this.nextStateButtons[0].setVisible(true);
     }
-
-    // Default: Set 1st.NextState Button visible
-    this.nextStateButtons[0].setVisible(true);
 
     // Initialize - Condition button images (default: invisible)
     conditionInputPoints.forEach((point) => {
@@ -175,7 +184,8 @@ export default class InputWindow extends Phaser.GameObjects.Container {
     // Control Buttons (Condition buttons, Move buttons)
     this.addControlButtons();
     // Dropddown buttons (Sensors)
-    this.createSensorDropdownButton(580, 432, 'dropdownButton', options);
+    this.withSensorDropdown &&
+      this.createSensorDropdownButton(580, 432, 'dropdownButton', options);
 
     this.registerInputRow(0);
 

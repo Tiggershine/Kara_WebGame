@@ -113,7 +113,9 @@ export default class UIManager {
       stateName,
       newStateInput,
       this.diagramScene.edgeManager,
-      inputLabel
+      inputLabel,
+      true,
+      true
     );
 
     // Deselect all other circles
@@ -180,7 +182,9 @@ export default class UIManager {
       stateName,
       newStateInput,
       this.diagramScene.edgeManager,
-      inputLabel
+      inputLabel,
+      false,
+      true
     );
 
     // Deselect all other circles
@@ -236,7 +240,9 @@ export default class UIManager {
       stateName,
       newStateInput,
       this.diagramScene.edgeManager,
-      inputLabel
+      inputLabel,
+      false,
+      false
     );
 
     endStateCircle.deselect();

@@ -278,6 +278,9 @@ export default class TaskHelper {
                   ? 'WallError detected!'
                   : 'BoundaryError detected'
               );
+              this.player.playerHighlightOff();
+              this.simulationHighlight.simulationHighlightOff();
+
               this.scene.events.emit('simulationEnd');
               return;
             }

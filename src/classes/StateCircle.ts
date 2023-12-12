@@ -29,6 +29,8 @@ export default class StateCircle extends Phaser.GameObjects.Container {
   private inputWindow?: InputWindow;
   uiManager: UIManager;
   diagramScene: DiagramScene;
+  withSensorDropdown: boolean = false;
+  withNextStatsDropdown: boolean = false;
 
   constructor(
     diagramScene: DiagramScene,
@@ -38,7 +40,9 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     name: string,
     stateInputs: StateInput[],
     edgeManager: EdgeManager, // EdgeManager 인스턴스를 생성자로 전달
-    inputLabel: InputLabel
+    inputLabel: InputLabel,
+    withSensorDropdown: boolean,
+    withNextStatsDropdown: boolean
   ) {
     super(diagramScene, x, y);
     this.diagramScene = diagramScene;
@@ -51,6 +55,8 @@ export default class StateCircle extends Phaser.GameObjects.Container {
     this.edgeManager = edgeManager;
     this.inputLabel = inputLabel;
     this.uiManager = new UIManager(this.scene as DiagramScene);
+    this.withSensorDropdown = withSensorDropdown;
+    this.withNextStatsDropdown = withNextStatsDropdown;
 
     this.circle = new Phaser.GameObjects.Image(
       this.diagramScene,
@@ -126,7 +132,14 @@ export default class StateCircle extends Phaser.GameObjects.Container {
 
     this.diagramScene.add.existing(this);
 
-    this.inputWindow = new InputWindow(this.scene, 0, 0, id);
+    this.inputWindow = new InputWindow(
+      this.scene,
+      0,
+      0,
+      id,
+      this.withSensorDropdown,
+      this.withNextStatsDropdown
+    );
     diagramScene.inputWindows.push(this.inputWindow);
     // this.inputWindow.setVisible(false);
   }
