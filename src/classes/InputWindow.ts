@@ -393,12 +393,12 @@ export default class InputWindow extends Phaser.GameObjects.Container {
   registerInputRow = (rowNumber: number) => {
     switch (rowNumber) {
       case 1:
-        this.rowActiveCheck[0].active = true;
+        this.rowActiveCheck[1].active = true;
         this.registeredRow1 = true;
         this.inputRowCount++;
         break;
       case 2:
-        this.rowActiveCheck[1].active = true;
+        this.rowActiveCheck[2].active = true;
         this.registeredRow2 = true;
         this.inputRowCount++;
         this.nextStateButtons[1].setVisible(true);
@@ -407,19 +407,19 @@ export default class InputWindow extends Phaser.GameObjects.Container {
         // }
         break;
       case 3:
-        this.rowActiveCheck[2].active = true;
+        this.rowActiveCheck[3].active = true;
         this.registeredRow3 = true;
         this.inputRowCount++;
         this.nextStateButtons[2].setVisible(true);
         break;
       case 4:
-        this.rowActiveCheck[3].active = true;
+        this.rowActiveCheck[4].active = true;
         this.registeredRow4 = true;
         this.inputRowCount++;
         this.nextStateButtons[3].setVisible(true);
         break;
       case 5:
-        this.rowActiveCheck[4].active = true;
+        // this.rowActiveCheck[4].active = true;
         this.registeredRow5 = true;
         this.inputRowCount++;
         this.nextStateButtons[4].setVisible(true);
