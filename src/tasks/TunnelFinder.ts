@@ -133,9 +133,6 @@ export default class TunnelFinder extends Phaser.GameObjects.Container {
 
   reoranizeGameObjects = () => {
     this.player.cleanUpStars();
-    // this.player.destroy();
-    // this.player = new Player(this.scene, 55, 315);
-    // this.scene.add.existing(this.player);
     this.player.setPosition(55, 315).setAngle(90);
     this.player.playerHighlight.setPosition(55, 315);
 
@@ -164,78 +161,10 @@ export default class TunnelFinder extends Phaser.GameObjects.Container {
     this.taskHelper.executeSimulation(this, stateInputData, highlightOn);
   };
 
-  // executeSimulation = (stateInputData: any, highlightOn: boolean) => {
-  //   this.taskHelper.processStateInputData(stateInputData, highlightOn, () => {
-  //     if (this.taskHelper.wasInfiniteLoopDetected()) {
-  //       // Display infinite loop warning popup
-  //       setTimeout(() => {
-  //         const diagramScene = this.scene.scene.get(
-  //           'DiagramScene'
-  //         ) as DiagramScene;
-  //         diagramScene.popupWindow = new PopupWindow(
-  //           diagramScene,
-  //           'smAlert',
-  //           `" Oops! \n  Looks like we're going in circles! \n  Check your instructions again.    "`,
-  //           false
-  //         );
-  //         diagramScene.popupWindow.create();
-  //         diagramScene.add.existing(diagramScene.popupWindow);
-  //       }, 800);
-  //     } else {
-  //       const positionsCorrect = this.checkObjectPositions();
-
-  //       console.log('this.isSuccessPopupShowed', this.isSuccessPopupShowed);
-  //       if (!this.isSuccessPopupShowed) {
-  //         if (positionsCorrect) {
-  //           const diagramScene = this.scene.scene.get(
-  //             'DiagramScene'
-  //           ) as DiagramScene;
-
-  //           setTimeout(() => {
-  //             diagramScene.popupWindow = new PopupWindow(
-  //               diagramScene,
-  //               'sm',
-  //               `" Great job! \n  Let's take on the next mission. "`,
-  //               false
-  //             );
-  //             diagramScene.popupWindow.create();
-  //             diagramScene.add.existing(diagramScene.popupWindow);
-  //           }, 800);
-
-  //           this.isSuccessPopupShowed = true;
-  //         } else {
-  //           const diagramScene = this.scene.scene.get(
-  //             'DiagramScene'
-  //           ) as DiagramScene;
-
-  //           setTimeout(() => {
-  //             diagramScene.popupWindow = new PopupWindow(
-  //               diagramScene,
-  //               'smAlert',
-  //               `" That didn't work out.\n   Ready for another try? "`,
-  //               false
-  //             );
-  //             diagramScene.popupWindow.create();
-  //             diagramScene.add.existing(diagramScene.popupWindow);
-  //           }, 800);
-  //         }
-  //       }
-  //       this.scene.events.emit('simulationEnd');
-  //       console.log(positionsCorrect ? 'Success' : 'Fail');
-  //     }
-  //   });
-  // };
-
   checkObjectPositions(): boolean {
     const isPlayerAt355315 = this.scene.children.list.some(
       (child) => child instanceof Player && child.x === 355 && child.y === 315
     );
-    // const areWallsCorrect = wallPositions.every((pos) => {
-    //   this.scene.children.list.some(
-    //     (child) =>
-    //       child instanceof Wall && child.x === pos.x && child.y === pos.y
-    //   );
-    // });
     const isStarOBjectExist = this.scene.children.list.some(
       (child) => child instanceof Star
     );

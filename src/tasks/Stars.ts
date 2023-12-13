@@ -39,7 +39,6 @@ export default class Stars extends Phaser.GameObjects.Container {
 
   reoranizeGameObjects = () => {
     this.player.cleanUpStars();
-
     this.player.setPosition(155, 315).setAngle(90);
     this.player.playerHighlight.setPosition(155, 315);
 

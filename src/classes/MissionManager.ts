@@ -7,6 +7,7 @@ import BetweenWall from '../tasks/BetweenWall';
 import Stars from '../tasks/Stars';
 import AroundTheCorner from '../tasks/AroundTheCorner';
 import TunnelFinder2 from '../tasks/TunnelFinder2';
+import Labyrinth from '../tasks/Labyrinth';
 import NazcaLine from '../tasks/NazcaLine';
 import ReversePicture from '../tasks/ReversePicture';
 import { StateInput } from './InputManager';
@@ -27,6 +28,7 @@ export default class MissionManager {
   private missionStars!: Stars;
   private missionAroundTheCorner!: AroundTheCorner;
   private missionTunnelFinder2!: TunnelFinder2;
+  private missionLabyrinth!: Labyrinth;
   private missionNazcaLine!: NazcaLine;
   private missionReversePicture!: ReversePicture;
 
@@ -114,6 +116,13 @@ export default class MissionManager {
             break;
           case 3:
             this.missionTunnelFinder2 = new TunnelFinder2(
+              this.diagramScene,
+              playButtonConfig.x,
+              playButtonConfig.y
+            );
+            break;
+          case 4:
+            this.missionLabyrinth = new Labyrinth(
               this.diagramScene,
               playButtonConfig.x,
               playButtonConfig.y
@@ -286,6 +295,25 @@ export default class MissionManager {
                 );
               } else {
                 this.missionTunnelFinder2.startSimulation(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+                this.diagramScene.setIsMissionInitiated = true;
+              }
+              break;
+            } else {
+              console.log('Mission is not loaded yet.');
+              break;
+            }
+          case 4:
+            if (this.missionLabyrinth) {
+              if (this.diagramScene.getIsMissionInitiated) {
+                this.missionLabyrinth.restartSimulation(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+              } else {
+                this.missionLabyrinth.startSimulation(
                   stateInputData,
                   this.diagramScene.getIsHighlightOn
                 );
