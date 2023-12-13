@@ -8,6 +8,7 @@ import Stars from '../tasks/Stars';
 import AroundTheCorner from '../tasks/AroundTheCorner';
 import TunnelFinder2 from '../tasks/TunnelFinder2';
 import NazcaLine from '../tasks/NazcaLine';
+import ReversePicture from '../tasks/ReversePicture';
 import { StateInput } from './InputManager';
 import { playButtonConfig } from '../configurations';
 
@@ -27,6 +28,7 @@ export default class MissionManager {
   private missionAroundTheCorner!: AroundTheCorner;
   private missionTunnelFinder2!: TunnelFinder2;
   private missionNazcaLine!: NazcaLine;
+  private missionReversePicture!: ReversePicture;
 
   bgmKeys = [
     'softGameBGM',
@@ -70,7 +72,6 @@ export default class MissionManager {
               playButtonConfig.x,
               playButtonConfig.y
             );
-            // this.missionTestFlight.playBGM();
             break;
           case 2:
             this.minssionTunnelFinder = new TunnelFinder(
@@ -124,6 +125,13 @@ export default class MissionManager {
         switch (mission) {
           case 1:
             this.missionNazcaLine = new NazcaLine(
+              this.diagramScene,
+              playButtonConfig.x,
+              playButtonConfig.y
+            );
+            break;
+          case 2:
+            this.missionReversePicture = new ReversePicture(
               this.diagramScene,
               playButtonConfig.x,
               playButtonConfig.y
@@ -301,6 +309,25 @@ export default class MissionManager {
                 );
               } else {
                 this.missionNazcaLine.startSimulation(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+                this.diagramScene.setIsMissionInitiated = true;
+              }
+              break;
+            } else {
+              console.log('Mission is not loaded yet.');
+              break;
+            }
+          case 2:
+            if (this.missionReversePicture) {
+              if (this.diagramScene.getIsMissionInitiated) {
+                this.missionReversePicture.restartSimulation(
+                  stateInputData,
+                  this.diagramScene.getIsHighlightOn
+                );
+              } else {
+                this.missionReversePicture.startSimulation(
                   stateInputData,
                   this.diagramScene.getIsHighlightOn
                 );

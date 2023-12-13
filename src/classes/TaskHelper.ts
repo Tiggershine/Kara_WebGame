@@ -125,7 +125,7 @@ export default class TaskHelper {
 
     let previousStateId = null;
     let sameStateCount = 0;
-    const maxSameStateCount = 30; // Threshold for the same state repetition
+    const maxSameStateCount = 50; // Threshold for the same state repetition
     let stateTransitionCounts: { [key: string]: number } = {}; // 상태 전환 추적 객체
 
     // Set PlayerHighlight
