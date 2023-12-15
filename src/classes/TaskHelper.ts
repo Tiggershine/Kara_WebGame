@@ -112,14 +112,12 @@ export default class TaskHelper {
     hightlightSelected: boolean,
     callbackFunction?: () => void
   ) => {
-    const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
+    // const diagramScene = this.scene.scene.get('DiagramScene') as DiagramScene;
     // TODO: DELETE UNDER TEST CODE
     // console.log('stateInputData: ', stateInputData);
     // Reset the flag at the start of the function
     this.infiniteLoopDetected = false;
-
     const startState = stateInputData.find((state: State) => state.id === 0);
-
     let currentStateId = startState.stateInputs[0].nextState; // Start의 NextState로 Init (1번 State)
     // console.log('currentStateId', currentStateId);
 
@@ -127,13 +125,6 @@ export default class TaskHelper {
     let sameStateCount = 0;
     const maxSameStateCount = 50; // Threshold for the same state repetition
     let stateTransitionCounts: { [key: string]: number } = {}; // 상태 전환 추적 객체
-
-    // Set PlayerHighlight
-    // if (!hightlightSelected && this.player.getPlayerHighlight) {
-    //   this.player.playerHighlightOff();
-    // } else if (hightlightSelected) {
-    //   this.player.playerHighlightOn();
-    // }
 
     while (currentStateId !== 100 && this.isSimulationRunning) {
       // console.log('this.isSimulationRunning', this.isSimulationRunning);
