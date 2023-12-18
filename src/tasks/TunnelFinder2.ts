@@ -104,7 +104,7 @@ export default class TunnelFinder2 extends Phaser.GameObjects.Container {
   reoranizeGameObjects = () => {
     this.player.cleanUpStars();
     this.player.setPosition(155, 165).setAngle(90);
-    this.player.playerHighlight.setPosition(155, 565);
+    this.player.playerHighlight.setPosition(155, 165);
 
     this.star = new Star(this.scene, 155, 265);
     this.scene.add.existing(this.star);
