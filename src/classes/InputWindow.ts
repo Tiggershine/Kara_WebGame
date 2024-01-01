@@ -48,11 +48,11 @@ export default class InputWindow extends Phaser.GameObjects.Container {
     { id: 4, active: false },
     { id: 5, active: false },
   ];
-  private activatedRow1: boolean = true;
-  private activatedRow2: boolean = false;
-  private activatedRow3: boolean = false;
-  private activatedRow4: boolean = false;
-  private activatedRow5: boolean = false;
+  // private activatedRow1: boolean = true;
+  // private activatedRow2: boolean = false;
+  // private activatedRow3: boolean = false;
+  // private activatedRow4: boolean = false;
+  // private activatedRow5: boolean = false;
   private containerGraphic!: Phaser.GameObjects.Graphics;
   private withSensorDropdown: boolean = false;
   private withNextStatsDropdown: boolean = false;
@@ -187,7 +187,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
     this.withSensorDropdown &&
       this.createSensorDropdownButton(580, 432, 'dropdownButton', options);
 
-    this.registerInputRow(0);
+    // this.registerInputRow(0);
 
     // Divider graphics
     const dividerGraphics = this.scene.add.graphics({
@@ -266,13 +266,18 @@ export default class InputWindow extends Phaser.GameObjects.Container {
     const sensor = this.tempSensorInputs[sensorNumber - 1]; // Sensor 종류
     const sensorCheck = { sensor: sensor, condition: buttonType }; // 입력할 sensorCheck
     const stateInputOrder = rowNumber - 1; // StateInput에 들어갈 순서
+    const sensorChecksOrder = sensorNumber - 1; // SensorChecks 배열의 index
 
     const currentSensorCheckIndex = this.tempStateInputs[
       stateInputOrder
-    ].sensorChecks.findIndex((sensorCheck) => sensorCheck.sensor === sensor); // 기존에 등록된 sensor인지 index 확인
+    ]?.sensorChecks.findIndex((sensorCheck) => sensorCheck.sensor === sensor); // 기존에 등록된 sensor인지 index 확인
 
-    if (currentSensorCheckIndex !== -1) {
-      // 이미 있는 거면 update
+    if (
+      currentSensorCheckIndex !== -1 &&
+      this.tempStateInputs[stateInputOrder]?.sensorChecks[sensorChecksOrder]
+        .condition !== undefined
+    ) {
+      // 이미 등록된 row의 condition btn이면 -> update
       this.tempStateInputs[stateInputOrder].sensorChecks[
         currentSensorCheckIndex
       ].condition = buttonType;
@@ -281,8 +286,11 @@ export default class InputWindow extends Phaser.GameObjects.Container {
       this.updateStateCircleStateInput();
       return;
     } else {
+      // 새롭게 등록
       const targetElement = this.tempStateInputs[stateInputOrder];
-      targetElement.sensorChecks.push(sensorCheck);
+      if (targetElement?.sensorChecks) {
+        targetElement.sensorChecks.push(sensorCheck);
+      }
 
       // StateCircle의 StateInputs 업데이트
       this.updateStateCircleStateInput();
@@ -298,23 +306,28 @@ export default class InputWindow extends Phaser.GameObjects.Container {
     const sensorChecksOrder = sensorNumber - 1; // SensorChecks 배열의 index
 
     // 해당 sensorCheck가 존재하는지 확인
-    if (this.tempStateInputs[stateInputOrder].sensorChecks[sensorChecksOrder]) {
+    if (
+      this.tempStateInputs[stateInputOrder]?.sensorChecks[sensorChecksOrder]
+    ) {
       // 해당 sensorCheck의 condition만 -1로 설정
       this.tempStateInputs[stateInputOrder].sensorChecks[
         sensorChecksOrder
       ].condition = undefined;
 
+      // 해당 row의 입력값의 sensorChecks 배열의 모든 값이 undefined인지 check
       const rowRegisterCheck = this.tempStateInputs[
         stateInputOrder
       ].sensorChecks.every((sensorCheck) => {
         return sensorCheck.condition === undefined;
       });
 
+      // rowRegisterCheck이 true이면 해당 sensorChecks를 아예 삭제
       if (rowRegisterCheck) {
         this.tempStateInputs.splice(stateInputOrder, 1);
 
-        this.rowActiveCheck[rowNumber - 1].active = false;
-        this[`registeredRow${rowNumber}`] = false;
+        // this.rowActiveCheck[rowNumber - 1].active = false;
+        this.rowActiveCheck[rowNumber].active = false;
+        // this[`registeredRow${rowNumber}`] = false;
         this.inputRowCount--;
         this.nextStateButtons[rowNumber - 1].setVisible(false);
       }
@@ -401,15 +414,18 @@ export default class InputWindow extends Phaser.GameObjects.Container {
 
   // Change the boolean value indicating whether the line registered or not
   registerInputRow = (rowNumber: number) => {
+    // this.rowActiveCheck[rowNumber].active = true;
+    // this.inputRowCount++;
     switch (rowNumber) {
       case 1:
         this.rowActiveCheck[1].active = true;
-        this.registeredRow1 = true;
+        this.nextStateButtons[0].setVisible(true);
+        // this.registeredRow1 = true;
         this.inputRowCount++;
         break;
       case 2:
         this.rowActiveCheck[2].active = true;
-        this.registeredRow2 = true;
+        // this.registeredRow2 = true;
         this.inputRowCount++;
         this.nextStateButtons[1].setVisible(true);
         // for (let i = 0; i < this.inputRowCount; i++) {
@@ -418,19 +434,19 @@ export default class InputWindow extends Phaser.GameObjects.Container {
         break;
       case 3:
         this.rowActiveCheck[3].active = true;
-        this.registeredRow3 = true;
+        // this.registeredRow3 = true;
         this.inputRowCount++;
         this.nextStateButtons[2].setVisible(true);
         break;
       case 4:
         this.rowActiveCheck[4].active = true;
-        this.registeredRow4 = true;
+        // this.registeredRow4 = true;
         this.inputRowCount++;
         this.nextStateButtons[3].setVisible(true);
         break;
       case 5:
         // this.rowActiveCheck[4].active = true;
-        this.registeredRow5 = true;
+        // this.registeredRow5 = true;
         this.inputRowCount++;
         this.nextStateButtons[4].setVisible(true);
         break;
@@ -656,22 +672,27 @@ export default class InputWindow extends Phaser.GameObjects.Container {
               point.y
             );
 
-            if (distance <= 30) {
-              //20
+            if (distance <= 20) {
               newButton.destroy();
               this.diagramScene.sound.play('buttonSound1', { volume: 0.5 });
 
-              const registedSensorCount: number = this.tempSensorInputs.length; // 등록된 sensor 갯수
+              console.log('x좌표: ', newButton.x, 'y좌표: ', newButton.y);
+
+              const registereddSensorCount: number =
+                this.tempSensorInputs.length; // 등록된 sensor 갯수
               const targetSensorIndex: number = parseInt(
                 point.key.split('_')[1][1]
               ); // 입력 sensor 번호
               const rowNumber: number = parseInt(point.key.split('_')[1][0]); // 입력 row 번호
 
               if (
-                registedSensorCount === 0 ||
-                registedSensorCount < targetSensorIndex ||
+                registereddSensorCount === 0 ||
+                registereddSensorCount < targetSensorIndex ||
                 rowNumber > this.inputRowCount
               ) {
+                this.inputGuidelines.forEach((guideline) => {
+                  guideline.setGuidelineInvisible();
+                });
                 return;
               }
               const pointKey: string = point.key;
