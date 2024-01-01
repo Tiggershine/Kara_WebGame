@@ -125,12 +125,6 @@ export default class InputLabel extends Phaser.GameObjects.Container {
     htmlInput.style.opacity = '0'; // 보이지 않게 설정
     document.body.appendChild(htmlInput);
 
-    // HTML input 요소에 포커스 설정하여 가상 키보드 활성화
-    htmlInput.focus();
-
-    // 카메라를 이용하여 입력 필드를 화면 중앙으로 이동
-    this.scene.cameras.main.centerOn(this.x, this.y);
-
     // input 이벤트 리스너 함수
     const onInput = (event: Event) => {
       const target = event.target as HTMLInputElement;
