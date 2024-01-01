@@ -12,7 +12,6 @@ export default class InputLabel extends Phaser.GameObjects.Container {
   private timerEvent?: Phaser.Time.TimerEvent;
   private lastClickTime: number = 0;
   private doubleClickDelay: number = 300;
-  private isEditing: boolean = false;
 
   constructor(
     scene: Phaser.Scene,
@@ -115,7 +114,6 @@ export default class InputLabel extends Phaser.GameObjects.Container {
   }
 
   private editInputLabel = (): void => {
-    this.isEditing = true; // 편집 시작시 플래그 설정
     // Store the original text in case no new text is entered
     const originalText = this.label.text;
     // Change the label's color to indicate editing
@@ -152,9 +150,6 @@ export default class InputLabel extends Phaser.GameObjects.Container {
     this.scene.input.on(
       'pointerdown',
       (pointer: Phaser.Input.Pointer) => {
-        if (this.isEditing) {
-          return; // 편집 중일 때는 이벤트 핸들러의 나머지 부분을 실행하지 않음
-        }
         if (!this.getBounds().contains(pointer.x, pointer.y)) {
           htmlInput.style.display = 'none'; // HTML input 요소 숨기기
           htmlInput.removeEventListener('input', onInput); // 이벤트 리스너 제거
@@ -189,7 +184,6 @@ export default class InputLabel extends Phaser.GameObjects.Container {
     newText: string,
     originalText: string
   ): void => {
-    this.isEditing = false; // 편집 종료시 플래그 해제
     // Stop the cursor blinking effect
     cursorBlink.remove();
 
