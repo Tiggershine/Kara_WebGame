@@ -137,6 +137,25 @@ export default class InputLabel extends Phaser.GameObjects.Container {
     // HTML input 요소에 포커스 설정하여 가상 키보드 활성화
     htmlInput.focus();
 
+    // Blur 이벤트 리스너 추가
+    htmlInput.addEventListener('blur', () => {
+      finishEditingLogic();
+    });
+
+    // 편집 종료 로직을 별도의 함수로 분리
+    const finishEditingLogic = () => {
+      htmlInput.style.display = 'none'; // HTML input 요소 숨기기
+      htmlInput.removeEventListener('input', onInput); // 이벤트 리스너 제거
+      document.body.removeChild(htmlInput); // HTML input 요소 제거
+
+      if (!htmlInput.value) {
+        this.label.text = originalText; // 사용자 입력이 없는 경우 원래 텍스트 유지
+      }
+
+      cursorBlink.remove(); // cursorBlink 중지
+      this.finishEditing(cursorBlink, htmlInput.value, this.label.text); // 편집 완료 처리
+    };
+
     const cursorBlink = this.scene.time.addEvent({
       delay: 530,
       callback: () => {
