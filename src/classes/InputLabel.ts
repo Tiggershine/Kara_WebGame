@@ -12,6 +12,7 @@ export default class InputLabel extends Phaser.GameObjects.Container {
   private timerEvent?: Phaser.Time.TimerEvent;
   private lastClickTime: number = 0;
   private doubleClickDelay: number = 300;
+  private isEditing: boolean = false;
 
   constructor(
     scene: Phaser.Scene,
@@ -114,6 +115,7 @@ export default class InputLabel extends Phaser.GameObjects.Container {
   }
 
   private editInputLabel = (): void => {
+    this.isEditing = true; // 편집 시작시 플래그 설정
     // Store the original text in case no new text is entered
     const originalText = this.label.text;
     // Change the label's color to indicate editing
@@ -136,25 +138,6 @@ export default class InputLabel extends Phaser.GameObjects.Container {
 
     // HTML input 요소에 포커스 설정하여 가상 키보드 활성화
     htmlInput.focus();
-
-    // Blur 이벤트 리스너 추가
-    htmlInput.addEventListener('blur', () => {
-      finishEditingLogic();
-    });
-
-    // 편집 종료 로직을 별도의 함수로 분리
-    const finishEditingLogic = () => {
-      htmlInput.style.display = 'none'; // HTML input 요소 숨기기
-      htmlInput.removeEventListener('input', onInput); // 이벤트 리스너 제거
-      document.body.removeChild(htmlInput); // HTML input 요소 제거
-
-      if (!htmlInput.value) {
-        this.label.text = originalText; // 사용자 입력이 없는 경우 원래 텍스트 유지
-      }
-
-      cursorBlink.remove(); // cursorBlink 중지
-      this.finishEditing(cursorBlink, htmlInput.value, this.label.text); // 편집 완료 처리
-    };
 
     const cursorBlink = this.scene.time.addEvent({
       delay: 530,
@@ -203,6 +186,7 @@ export default class InputLabel extends Phaser.GameObjects.Container {
     newText: string,
     originalText: string
   ): void => {
+    this.isEditing = false; // 편집 종료시 플래그 해제
     // Stop the cursor blinking effect
     cursorBlink.remove();
 
