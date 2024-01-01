@@ -152,6 +152,9 @@ export default class InputLabel extends Phaser.GameObjects.Container {
     this.scene.input.on(
       'pointerdown',
       (pointer: Phaser.Input.Pointer) => {
+        if (this.isEditing) {
+          return; // 편집 중일 때는 이벤트 핸들러의 나머지 부분을 실행하지 않음
+        }
         if (!this.getBounds().contains(pointer.x, pointer.y)) {
           htmlInput.style.display = 'none'; // HTML input 요소 숨기기
           htmlInput.removeEventListener('input', onInput); // 이벤트 리스너 제거
