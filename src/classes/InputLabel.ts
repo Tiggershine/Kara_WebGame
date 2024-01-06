@@ -169,7 +169,7 @@ export default class InputLabel extends Phaser.GameObjects.Container {
 
   private formatText = (text: string): string => {
     // If the text is longer than 10 characters, truncate and add ellipsis
-    if (text.length > 8) {
+    if (text.length > 10) {
       return text.substring(0, 7) + '..';
     }
     // If the text is longer than 6 characters, insert a newline

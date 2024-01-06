@@ -678,7 +678,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
 
               console.log('x좌표: ', newButton.x, 'y좌표: ', newButton.y);
 
-              const registereddSensorCount: number =
+              const registeredSensorCount: number =
                 this.tempSensorInputs.length; // 등록된 sensor 갯수
               const targetSensorIndex: number = parseInt(
                 point.key.split('_')[1][1]
@@ -686,8 +686,8 @@ export default class InputWindow extends Phaser.GameObjects.Container {
               const rowNumber: number = parseInt(point.key.split('_')[1][0]); // 입력 row 번호
 
               if (
-                registereddSensorCount === 0 ||
-                registereddSensorCount < targetSensorIndex ||
+                registeredSensorCount === 0 ||
+                registeredSensorCount < targetSensorIndex ||
                 rowNumber > this.inputRowCount
               ) {
                 this.inputGuidelines.forEach((guideline) => {
@@ -731,8 +731,12 @@ export default class InputWindow extends Phaser.GameObjects.Container {
 
               const moveInputIndex = parseInt(point.key.split('_')[1][1]);
               const rowNumber = parseInt(point.key.split('_')[1][0]); // 1
-              const rowNumerBoolean = 'registeredRow' + rowNumber;
-              if (!(this as any)[rowNumerBoolean]) {
+              // const rowNumerBoolean = 'registeredRow' + rowNumber;
+              const rowNumerBoolean = this.rowActiveCheck[rowNumber].active;
+              // if (!(this as any)[rowNumerBoolean]) {
+              //   return;
+              // }
+              if (!rowNumerBoolean) {
                 return;
               }
               const pointKey: string = point.key;

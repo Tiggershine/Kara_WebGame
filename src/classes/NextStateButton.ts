@@ -97,7 +97,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
       const menuItemRectangle = this.scene.add
         .rectangle(0, 0, 73, 26, 142140)
         .setOrigin(0.5, 0.5);
-      const menuItemText = this.scene.add.text(-20, -7, option.name, {
+      const menuItemText = this.scene.add.text(-28, -7, option.name, {
         fontSize: '14px',
         fontFamily: 'Roboto Condensed',
         color: '#FCF6F5',
@@ -131,7 +131,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
       this.add(optionContainer);
     });
     // this.scene.add.existing(this);
-    // this.scene.input.on('pointerdown', this.handleOutsideClick, this);
+    this.scene.input.on('pointerdown', this.handleOutsideClick, this);
   }
 
   toggleMenu = () => {
