@@ -71,7 +71,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
       .setDepth(1);
     this.buttonContainer.on('pointerdown', this.toggleMenu, this);
     this.add(this.buttonContainer);
-    // this.unfoldOptions();
+    this.unfoldOptions();
     this.scene.events.once('create', () => {
       this.unfoldOptions();
     });
@@ -80,6 +80,10 @@ export class NextStateButton extends Phaser.GameObjects.Container {
   }
 
   unfoldOptions() {
+    if (!this.scene) {
+      console.error('Scene is not available in NextStateButton');
+      return;
+    }
     // Destroy existing menu items
     this.menuItems.forEach((item) => {
       item.destroy();
@@ -130,8 +134,8 @@ export class NextStateButton extends Phaser.GameObjects.Container {
       this.menuItems.push(optionContainer);
       this.add(optionContainer);
     });
-    // this.scene.add.existing(this);
-    this.scene.input.on('pointerdown', this.handleOutsideClick, this);
+    this.scene.add.existing(this);
+    // this.scene.input.on('pointerdown', this.handleOutsideClick, this);
   }
 
   toggleMenu = () => {
