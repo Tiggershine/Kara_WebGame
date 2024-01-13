@@ -132,8 +132,8 @@ export default class InputWindow extends Phaser.GameObjects.Container {
         const buttonTexture = 'nextStateButton2';
         const backgroundTexture = 'nextStateButton';
         const options = this.registeredStates;
-        const direction =
-          nextStatePoints[i].key === '59' ? 'upward' : 'downward';
+        // const direction =
+        //   nextStatePoints[i].key === '59' ? 'upward' : 'downward';
 
         const nextStateButton: NextStateButton = this.createNextStateButton(
           point.x,
@@ -141,14 +141,16 @@ export default class InputWindow extends Phaser.GameObjects.Container {
           buttonId,
           buttonTexture,
           backgroundTexture,
-          options,
-          direction
+          options
+          // direction
         );
         nextStateButton.setVisible(false);
         this.nextStateButtons.unshift(nextStateButton);
+        // this.nextStateButtons.push(nextStateButton);
       }
 
       // Default: Set 1st.NextState Button visible
+      // this.nextStateButtons[nextStatePoints.length - 1].setVisible(true);
       this.nextStateButtons[0].setVisible(true);
     }
 
@@ -551,8 +553,8 @@ export default class InputWindow extends Phaser.GameObjects.Container {
     buttonId: number,
     buttonTexture: string,
     backgroundTexture: string,
-    options: { id: number; name: string }[],
-    direction: string
+    options: { id: number; name: string }[]
+    // direction: string
   ): NextStateButton => {
     const nextStateButton = new NextStateButton(
       this.scene,
@@ -562,7 +564,7 @@ export default class InputWindow extends Phaser.GameObjects.Container {
       buttonTexture,
       backgroundTexture,
       options,
-      direction,
+      // direction,
       this
     );
 

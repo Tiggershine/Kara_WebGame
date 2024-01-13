@@ -24,7 +24,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
     buttonTexture: string,
     backgroundTexture: string,
     options: { id: number; name: string }[],
-    direction: string,
+    // direction: string,
     inputWindow: InputWindow // Adding a new parameter to store a reference to the InputWindow instance
   ) {
     super(scene, x, y);
@@ -38,7 +38,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
     this.options = options;
     this.buttonTexture = buttonTexture;
     this.backgroundTexture = backgroundTexture;
-    this.direction = direction;
+    // this.direction = direction;
     this.buttonContainer = this.scene.add.container(0, 0);
     // unfold 전에 보여지는 NextState 버튼
     const buttonRectangle = this.scene.add
@@ -80,10 +80,10 @@ export class NextStateButton extends Phaser.GameObjects.Container {
   }
 
   unfoldOptions() {
-    if (!this.scene) {
-      console.error('Scene is not available in NextStateButton');
-      return;
-    }
+    // if (!this.scene) {
+    //   console.error('Scene is not available in NextStateButton');
+    //   return;
+    // }
     // Destroy existing menu items
     this.menuItems.forEach((item) => {
       item.destroy();
@@ -134,7 +134,7 @@ export class NextStateButton extends Phaser.GameObjects.Container {
       this.menuItems.push(optionContainer);
       this.add(optionContainer);
     });
-    this.scene.add.existing(this);
+    // this.scene.add.existing(this);
     // this.scene.input.on('pointerdown', this.handleOutsideClick, this);
   }
 
@@ -145,11 +145,12 @@ export class NextStateButton extends Phaser.GameObjects.Container {
 
   private openMenu = () => {
     this.isMenuOpen = true;
-    const optionDirection = this.direction === 'downward' ? 1 : -1;
+    // const optionDirection = this.direction === 'downward' ? 1 : -1;
     this.menuItems.forEach((item, index) => {
       this.scene.tweens.add({
         targets: item,
-        y: index * 24 * optionDirection,
+        // y: index * 24 * optionDirection,
+        y: index * 24,
         duration: 300,
         ease: 'Sine.easeOut',
         onStart: () => item.setVisible(true).setDepth(10),
